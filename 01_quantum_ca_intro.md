@@ -238,4 +238,4 @@ openssl list -signature-algorithms -provider oqsprovider | grep -i dilithium
 
 ---
 
-**Next**: [Module 2 - Building the Root CA →](02-root-ca.md)
+**Next**: [Module 2 - Building the Root CA →](02_quantum_ca_root.md)

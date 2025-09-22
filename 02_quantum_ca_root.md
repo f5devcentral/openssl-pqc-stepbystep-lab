@@ -507,4 +507,4 @@ You have successfully created a CNSA 2.0 compliant quantum-resistant Root CA tha
 
 ---
 
-**Next**: [Module 3 - Building the Intermediate CA →](03-intermediate-ca.md)
+**Next**: [Module 3 - Building the Intermediate CA →](03_quantum_ca_intermediate.md)

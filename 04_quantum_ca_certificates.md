@@ -877,4 +877,4 @@ Each certificate you created includes:
 
 ---
 
-**Next**: [Module 5 - Certificate Revocation →](05-revocation.md)
+**Next**: [Module 5 - Certificate Revocation →](05_quantum_ca_revocation.md)

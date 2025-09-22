@@ -712,4 +712,4 @@ You have successfully created a CNSA 2.0 compliant quantum-resistant Intermediat
 
 ---
 
-**Next**: [Module 4 - Building Certificates →](04-certificates.md)
+**Next**: [Module 4 - Building Certificates →](04_quantum_ca_certificates.md)
