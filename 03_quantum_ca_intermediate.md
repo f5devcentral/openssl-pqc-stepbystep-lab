@@ -63,7 +63,7 @@ ls -la
 Create the OpenSSL configuration file for the Intermediate CA:
 
 ```bash
-nano /opt/sassycorp-ca/intermediate-ca/openssl.cnf
+vim /opt/sassycorp-ca/intermediate-ca/openssl.cnf
 ```
 
 Copy the following configuration into the file:
@@ -249,7 +249,7 @@ chmod 644 /opt/sassycorp-ca/intermediate-ca/openssl.cnf
 
 ## Step 3: Generate Intermediate CA Private Key
 
-Navigate to the Intermediate CA directory:
+Navigate to the Intermediate CA directory (if you went wandering around):
 
 ```bash
 cd /opt/sassycorp-ca/intermediate-ca
@@ -328,8 +328,6 @@ openssl ca -config openssl.cnf \
     -out /opt/sassycorp-ca/intermediate-ca/certs/intermediate-ca.crt
 ```
 
-When prompted, type 'y' to sign the certificate and 'y' to commit.
-
 Set appropriate permissions:
 
 ```bash
@@ -339,13 +337,13 @@ chmod 444 /opt/sassycorp-ca/intermediate-ca/certs/intermediate-ca.crt
 Verify the intermediate certificate:
 
 ```bash
-openssl x509 -noout -text -in /opt/sassycorp-ca/intermediate-ca/certs/intermediate-ca.crt
+openssl x509 -provider oqsprovider -provider default -noout -text -in /opt/sassycorp-ca/intermediate-ca/certs/intermediate-ca.crt
 ```
 
 Verify the certificate chain:
 
 ```bash
-openssl verify -CAfile /opt/sassycorp-ca/root-ca/certs/root-ca.crt \
+openssl verify -provider oqsprovider -provider default -CAfile /opt/sassycorp-ca/root-ca/certs/root-ca.crt \
     /opt/sassycorp-ca/intermediate-ca/certs/intermediate-ca.crt
 ```
 
@@ -409,7 +407,7 @@ chmod 644 crl/intermediate-ca.crl
 Verify the CRL:
 
 ```bash
-openssl crl -in crl/intermediate-ca.crl -noout -text
+openssl crl -provider oqsprovider -provider default -in crl/intermediate-ca.crl -noout -text
 ```
 
 ## Step 8: Create OCSP Signing Certificate
@@ -468,7 +466,7 @@ chmod 444 certs/ocsp.crt
 Verify the OCSP certificate:
 
 ```bash
-openssl x509 -noout -text -in certs/ocsp.crt
+openssl x509 -provider oqsprovider -provider default -noout -text -in certs/ocsp.crt
 ```
 
 Check that it has the OCSPSigning extended key usage:
@@ -484,13 +482,13 @@ Run the following verification commands to ensure your Intermediate CA meets CNS
 Display certificate details:
 
 ```bash
-openssl x509 -in /opt/sassycorp-ca/intermediate-ca/certs/intermediate-ca.crt -noout -subject -issuer -dates
+openssl x509 -provider oqsprovider -provider default -in /opt/sassycorp-ca/intermediate-ca/certs/intermediate-ca.crt -noout -subject -issuer -dates
 ```
 
 Verify signature algorithm is CNSA 2.0 compliant (should show mldsa65 or mldsa87):
 
 ```bash
-openssl x509 -in /opt/sassycorp-ca/intermediate-ca/certs/intermediate-ca.crt -noout -text | grep "Signature Algorithm" | head -1
+openssl x509 -provider oqsprovider -provider default -in /opt/sassycorp-ca/intermediate-ca/certs/intermediate-ca.crt -noout -text | grep "Signature Algorithm" | head -1
 ```
 
 **Expected Output**: The signature algorithm should show `mldsa65` (ML-DSA-65) or `mldsa87` (ML-DSA-87) for CNSA 2.0 compliance.
@@ -498,7 +496,7 @@ openssl x509 -in /opt/sassycorp-ca/intermediate-ca/certs/intermediate-ca.crt -no
 Check key usage:
 
 ```bash
-openssl x509 -in /opt/sassycorp-ca/intermediate-ca/certs/intermediate-ca.crt -noout -text | grep -A2 "Key Usage"
+openssl x509 -provider oqsprovider -provider default -in /opt/sassycorp-ca/intermediate-ca/certs/intermediate-ca.crt -noout -text | grep -A2 "Key Usage"
 ```
 
 Verify basic constraints (pathlen should be 0):
@@ -510,7 +508,7 @@ openssl x509 -in /opt/sassycorp-ca/intermediate-ca/certs/intermediate-ca.crt -no
 Display Subject Alternative Names:
 
 ```bash
-openssl x509 -in /opt/sassycorp-ca/intermediate-ca/certs/intermediate-ca.crt -noout -text | grep -A5 "Subject Alternative Name"
+openssl x509 -provider oqsprovider -provider default -in /opt/sassycorp-ca/intermediate-ca/certs/intermediate-ca.crt -noout -text | grep -A5 "Subject Alternative Name"
 ```
 
 Check CRL Distribution Points:
@@ -528,7 +526,7 @@ openssl x509 -in /opt/sassycorp-ca/intermediate-ca/certs/intermediate-ca.crt -no
 Verify certificate chain:
 
 ```bash
-openssl verify -CAfile /opt/sassycorp-ca/intermediate-ca/certs/ca-chain.crt \
+openssl verify -provider oqsprovider -provider default -CAfile /opt/sassycorp-ca/intermediate-ca/certs/ca-chain.crt \
     /opt/sassycorp-ca/intermediate-ca/certs/intermediate-ca.crt
 ```
 
@@ -588,7 +586,7 @@ chmod 755 /opt/sassycorp-ca/ocsp/{requests,responses}
 Create an OCSP responder configuration file:
 
 ```bash
-nano /opt/sassycorp-ca/ocsp/ocsp-responder.conf
+vim /opt/sassycorp-ca/ocsp/ocsp-responder.conf
 ```
 
 Add the following configuration:
@@ -635,36 +633,18 @@ openssl verify -CAfile /opt/sassycorp-ca/root-ca/certs/root-ca.crt \
 Test OCSP certificate:
 
 ```bash
-echo "Testing OCSP certificate..."
-openssl verify -CAfile /opt/sassycorp-ca/intermediate-ca/certs/ca-chain.crt \
+openssl verify -provider oqsprovider -provider default -CAfile /opt/sassycorp-ca/intermediate-ca/certs/ca-chain.crt \
     /opt/sassycorp-ca/intermediate-ca/certs/ocsp.crt
 ```
 
 Display certificate fingerprints:
 
 ```bash
-echo "Root CA SHA-512 fingerprint:"
 openssl x509 -in /opt/sassycorp-ca/root-ca/certs/root-ca.crt -noout -fingerprint -sha512
 
 echo "Intermediate CA SHA-512 fingerprint:"
 openssl x509 -in /opt/sassycorp-ca/intermediate-ca/certs/intermediate-ca.crt -noout -fingerprint -sha512
 ```
-
-## Security Checklist
-
-Manually verify the following security measures are in place:
-
-- [ ] Intermediate CA private key has 400 permissions
-- [ ] Intermediate CA uses ML-DSA-65 (mldsa65) algorithm
-- [ ] Intermediate CA certificate is signed by Root CA
-- [ ] Intermediate CA has pathlen:0 constraint
-- [ ] Certificate chain file is created and valid
-- [ ] OCSP certificate is created and signed
-- [ ] CRL is generated and accessible
-- [ ] Subject Alternative Names are properly configured
-- [ ] CRL Distribution Points are configured
-- [ ] Authority Information Access (OCSP) is configured
-- [ ] Backup is created with 600 permissions
 
 ## Troubleshooting
 
@@ -691,12 +671,6 @@ Verify pathlen is 0 for intermediate CA:
 ```bash
 openssl x509 -in certs/intermediate-ca.crt -noout -text | grep -A1 "Basic Constraints"
 ```
-
-### Algorithm Name Compatibility
-
-If you get errors about `mldsa65` or `mldsa87` not being found, you may be using an older version of the OQS provider. In that case, use:
-- `dilithium3` instead of `mldsa65`
-- `dilithium5` instead of `mldsa87`
 
 ## Summary
 

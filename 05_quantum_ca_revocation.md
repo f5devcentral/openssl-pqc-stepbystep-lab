@@ -118,7 +118,7 @@ chmod 400 revoke-test.key
 Create a simple configuration:
 
 ```bash
-nano revoke-test.cnf
+vim revoke-test.cnf
 ```
 
 Add:
@@ -170,7 +170,7 @@ Get the serial number of the certificate:
 openssl x509 -in certs/test/revoke-test/revoke-test.crt -noout -serial
 ```
 
-Note this serial number (e.g., 1004) for the next step.
+Note this serial number (e.g., 1005) for the next step.
 
 ### Step 5: Revoke the Certificate
 
@@ -193,8 +193,6 @@ openssl ca -config openssl.cnf \
     -revoke newcerts/1004.pem \
     -crl_reason keyCompromise
 ```
-
-Type 'y' when prompted to confirm revocation.
 
 ### Revocation Reasons
 
@@ -239,7 +237,7 @@ openssl crl -in crl/intermediate-ca.crl -noout -text | grep -A5 "Revoked Certifi
 Test with CRL checking:
 
 ```bash
-openssl verify -crl_check \
+openssl verify -provider oqsprovider -provider default -crl_check \
     -CAfile certs/ca-chain.crt \
     -CRLfile crl/intermediate-ca.crl \
     certs/test/revoke-test/revoke-test.crt
@@ -290,7 +288,7 @@ chmod 755 /opt/sassycorp-ca/ocsp/{db,certs,logs}
 Create OCSP responder configuration:
 
 ```bash
-nano /opt/sassycorp-ca/ocsp/ocsp-responder.cnf
+vim /opt/sassycorp-ca/ocsp/ocsp-responder.cnf
 ```
 
 Add:
@@ -454,7 +452,7 @@ openssl ocsp \
 Create an Nginx configuration example:
 
 ```bash
-nano /opt/sassycorp-ca/ocsp-stapling-nginx.conf
+vim /opt/sassycorp-ca/ocsp-stapling-nginx.conf
 ```
 
 Add:
@@ -496,7 +494,7 @@ server {
 Save and create an Apache example:
 
 ```bash
-nano /opt/sassycorp-ca/ocsp-stapling-apache.conf
+vim /opt/sassycorp-ca/ocsp-stapling-apache.conf
 ```
 
 Add:
@@ -730,14 +728,14 @@ openssl ocsp \
     -url http://localhost:2560 | grep "webserver01"
 
 # Test user certificate
-echo "Testing jane.smith certificate:"
+echo "Testing sassy.molassy certificate:"
 openssl ocsp \
     -provider oqsprovider \
     -provider default \
     -CAfile certs/ca-chain.crt \
     -issuer certs/intermediate-ca.crt \
-    -cert certs/users/jane.smith/jane.smith.crt \
-    -url http://localhost:2560 | grep "jane.smith"
+    -cert certs/users/sassy.molassy/sassy.molassy.crt \
+    -url http://localhost:2560 | grep "sassy.molassy"
 
 # Test revoked certificate
 echo "Testing revoked certificate:"

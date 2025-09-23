@@ -2,7 +2,7 @@
 
 ## Overview
 
-This module demonstrates creating various types of end-entity certificates using CNSA 2.0 compliant quantum-resistant algorithms. You'll learn to generate certificates manually using OpenSSL commands with the two approved ML-DSA algorithms.
+This module demonstrates creating various types of end-entity certificates using CNSA 2.0 compliant quantum-resistant algorithms. We'll generate certificates manually using OpenSSL commands with the two approved ML-DSA algorithms.
 
 ## CNSA 2.0 Compliant Algorithms
 
@@ -36,7 +36,7 @@ chmod 755 templates
 Create a server certificate configuration file:
 
 ```bash
-nano templates/server-cert.cnf
+vim templates/server-cert.cnf
 ```
 
 Add the following configuration:
@@ -103,7 +103,7 @@ chmod 644 templates/server-cert.cnf
 Create a user certificate configuration file:
 
 ```bash
-nano templates/user-cert.cnf
+vim templates/user-cert.cnf
 ```
 
 Add the following configuration:
@@ -232,13 +232,13 @@ chmod 444 certs/server/webserver01/webserver01.crt
 Verify the certificate:
 
 ```bash
-openssl x509 -noout -text -in certs/server/webserver01/webserver01.crt
+openssl x509 -noout -text -provider oqsprovider -provider default -in certs/server/webserver01/webserver01.crt
 ```
 
 Check the Subject Alternative Names:
 
 ```bash
-openssl x509 -in certs/server/webserver01/webserver01.crt -noout -text | grep -A10 "Subject Alternative Name"
+openssl x509 -provider oqsprovider -provider -in certs/server/webserver01/webserver01.crt -noout -text | grep -A10 "Subject Alternative Name"
 ```
 
 ## Step 3: Generate a User Certificate (ML-DSA-65 / mldsa65)
@@ -246,9 +246,9 @@ openssl x509 -in certs/server/webserver01/webserver01.crt -noout -text | grep -A
 Create a directory for user certificates:
 
 ```bash
-mkdir -p certs/users/jane.smith
-chmod 755 certs/users/jane.smith
-cd certs/users/jane.smith
+mkdir -p certs/users/sassy.molassy
+chmod 755 certs/users/sassy.molassy
+cd certs/users/sassy.molassy
 ```
 
 Generate an ML-DSA-65 (mldsa65) private key:
@@ -258,13 +258,13 @@ openssl genpkey \
     -provider oqsprovider \
     -provider default \
     -algorithm mldsa65 \
-    -out jane.smith.key
+    -out sassy.molassy.key
 ```
 
 Set restrictive permissions:
 
 ```bash
-chmod 400 jane.smith.key
+chmod 400 sassy.molassy.key
 ```
 
 Create a certificate signing request:
@@ -275,8 +275,8 @@ openssl req -config /opt/sassycorp-ca/intermediate-ca/templates/user-cert.cnf \
     -provider default \
     -new \
     -sha512 \
-    -key jane.smith.key \
-    -out jane.smith.csr
+    -key sassy.molassy.key \
+    -out sassy.molassy.csr
 ```
 
 When prompted, enter:
@@ -285,8 +285,8 @@ When prompted, enter:
 - Locality: `Glacier`
 - Organization: `SassyCorp`
 - Organizational Unit: `Human Resources`
-- Common Name: `Jane Smith`
-- Email: `jane.smith@sassycorp.internal`
+- Common Name: `Sassy Molassy`
+- Email: `sassy.molassy@sassycorp.internal`
 
 Sign the certificate:
 
@@ -299,14 +299,14 @@ openssl ca -config openssl.cnf \
     -extensions usr_cert \
     -days 365 \
     -notext \
-    -in certs/users/jane.smith/jane.smith.csr \
-    -out certs/users/jane.smith/jane.smith.crt
+    -in certs/users/sassy.molassy/sassy.molassy.csr \
+    -out certs/users/sassy.molassy/sassy.molassy.crt
 ```
 
 Set permissions:
 
 ```bash
-chmod 444 certs/users/jane.smith/jane.smith.crt
+chmod 444 certs/users/sassy.molassy/sassy.molassy.crt
 ```
 
 ## Step 4: Generate a High-Security Database Server Certificate (ML-DSA-87 / mldsa87)
@@ -338,7 +338,7 @@ chmod 400 db-primary01.key
 Create a custom configuration for the database server with specific SANs:
 
 ```bash
-nano db-primary01.cnf
+vim db-primary01.cnf
 ```
 
 Add the following configuration:
@@ -446,7 +446,7 @@ chmod 400 api-server01.key
 Create API server configuration:
 
 ```bash
-nano api-server01.cnf
+vim api-server01.cnf
 ```
 
 Add the following:
@@ -543,13 +543,13 @@ chmod 444 webserver01-bundle.pem
 ### User Certificate Bundle
 
 ```bash
-cd /opt/sassycorp-ca/intermediate-ca/certs/users/jane.smith
+cd /opt/sassycorp-ca/intermediate-ca/certs/users/sassy.molassy
 
-cat jane.smith.crt \
+cat sassy.molassy.crt \
     /opt/sassycorp-ca/intermediate-ca/certs/intermediate-ca.crt \
-    /opt/sassycorp-ca/root-ca/certs/root-ca.crt > jane.smith-bundle.pem
+    /opt/sassycorp-ca/root-ca/certs/root-ca.crt > sassy.molassy-bundle.pem
 
-chmod 444 jane.smith-bundle.pem
+chmod 444 sassy.molassy-bundle.pem
 ```
 
 ### Database Server Bundle
@@ -572,13 +572,16 @@ chmod 444 db-primary01-bundle.pem
 cd /opt/sassycorp-ca/intermediate-ca/certs/server/webserver01
 
 openssl pkcs12 \
+    -provider oqsprovider \
+    -provider default \
     -export \
     -out webserver01.p12 \
     -inkey webserver01.key \
     -in webserver01.crt \
-    -certfile /opt/sassycorp-ca/intermediate-ca/certs/ca-chain.crt \
-    -passout pass:sassycorp
+    -certfile /opt/sassycorp-ca/intermediate-ca/certs/ca-chain.crt
 ```
+
+Set the password for the pkcs12 package with your favorite password. :-)
 
 Set restrictive permissions:
 
@@ -589,21 +592,22 @@ chmod 400 webserver01.p12
 ### Create PKCS#12 for the user
 
 ```bash
-cd /opt/sassycorp-ca/intermediate-ca/certs/users/jane.smith
+cd /opt/sassycorp-ca/intermediate-ca/certs/users/sassy.molassy
 
 openssl pkcs12 \
+    -provider oqsprovider \
+    -provider default \
     -export \
-    -out jane.smith.p12 \
-    -inkey jane.smith.key \
-    -in jane.smith.crt \
-    -certfile /opt/sassycorp-ca/intermediate-ca/certs/ca-chain.crt \
-    -passout pass:sassycorp
+    -out sassy.molassy.p12 \
+    -inkey sassy.molassy.key \
+    -in sassy.molassy.crt \
+    -certfile /opt/sassycorp-ca/intermediate-ca/certs/ca-chain.crt
 ```
 
 Set restrictive permissions:
 
 ```bash
-chmod 400 jane.smith.p12
+chmod 400 sassy.molassy.p12
 ```
 
 ## Step 8: Verify Certificates
@@ -614,19 +618,19 @@ chmod 400 jane.smith.p12
 cd /opt/sassycorp-ca/intermediate-ca
 
 # Verify web server certificate
-openssl verify -CAfile certs/ca-chain.crt \
+openssl verify -provider oqsprovider -provider default -CAfile certs/ca-chain.crt \
     certs/server/webserver01/webserver01.crt
 
 # Verify user certificate
-openssl verify -CAfile certs/ca-chain.crt \
-    certs/users/jane.smith/jane.smith.crt
+openssl verify -provider oqsprovider -provider default -CAfile certs/ca-chain.crt \
+    certs/users/sassy.molassy/sassy.molassy.crt
 
 # Verify database server certificate
-openssl verify -CAfile certs/ca-chain.crt \
+openssl verify -provider oqsprovider -provider default -CAfile certs/ca-chain.crt \
     certs/server/db-primary01/db-primary01.crt
 
 # Verify API server certificate
-openssl verify -CAfile certs/ca-chain.crt \
+openssl verify -provider oqsprovider -provider default -CAfile certs/ca-chain.crt \
     certs/server/api-server01/api-server01.crt
 ```
 
@@ -642,7 +646,7 @@ echo "=== CNSA 2.0 Algorithm Key Size Comparison ==="
 # Check ML-DSA-65 (mldsa65) key sizes
 echo "ML-DSA-65 (mldsa65) - Standard Security:"
 ls -lh certs/server/webserver01/webserver01.key
-ls -lh certs/users/jane.smith/jane.smith.key
+ls -lh certs/users/sassy.molassy/sassy.molassy.key
 ls -lh certs/server/api-server01/api-server01.key
 
 echo ""
@@ -650,7 +654,7 @@ echo "ML-DSA-87 (mldsa87) - Highest Security:"
 ls -lh certs/server/db-primary01/db-primary01.key
 ```
 
-You'll notice that ML-DSA-87 (mldsa87) keys are larger than ML-DSA-65 (mldsa65) keys, reflecting the higher security level.
+You'll notice that ML-DSA-87 (mldsa87) keys are larger than ML-DSA-65 (mldsa65) keys, reflecting the higher security level. Husky key bois ammiright?
 
 ## Step 10: View Certificate Details
 
@@ -659,35 +663,35 @@ You'll notice that ML-DSA-87 (mldsa87) keys are larger than ML-DSA-65 (mldsa65) 
 For the web server certificate:
 
 ```bash
-openssl x509 -in certs/server/webserver01/webserver01.crt -noout -text | less
+openssl x509 -in certs/server/webserver01/webserver01.crt -provider oqsprovider -provider default -noout -text | less
 ```
 
 Check specific fields:
 
 ```bash
 # Subject
-openssl x509 -in certs/server/webserver01/webserver01.crt -noout -subject
+openssl x509 -in certs/server/webserver01/webserver01.crt -provider oqsprovider -provider default -noout -subject
 
 # Issuer
-openssl x509 -in certs/server/webserver01/webserver01.crt -noout -issuer
+openssl x509 -in certs/server/webserver01/webserver01.crt -provider oqsprovider -provider default -noout -issuer
 
 # Validity dates
-openssl x509 -in certs/server/webserver01/webserver01.crt -noout -dates
+openssl x509 -in certs/server/webserver01/webserver01.crt -provider oqsprovider -provider default -noout -dates
 
 # Serial number
-openssl x509 -in certs/server/webserver01/webserver01.crt -noout -serial
+openssl x509 -in certs/server/webserver01/webserver01.crt -provider oqsprovider -provider default -noout -serial
 
 # Signature algorithm (should show mldsa65 or mldsa87)
-openssl x509 -in certs/server/webserver01/webserver01.crt -noout -text | grep "Signature Algorithm" | head -1
+openssl x509 -in certs/server/webserver01/webserver01.crt -provider oqsprovider -provider default -noout -text | grep "Signature Algorithm" | head -1
 
 # Subject Alternative Names
-openssl x509 -in certs/server/webserver01/webserver01.crt -noout -text | grep -A10 "Subject Alternative Name"
+openssl x509 -in certs/server/webserver01/webserver01.crt -provider oqsprovider -provider default -noout -text | grep -A10 "Subject Alternative Name"
 
 # Key Usage
-openssl x509 -in certs/server/webserver01/webserver01.crt -noout -text | grep -A2 "Key Usage"
+openssl x509 -in certs/server/webserver01/webserver01.crt -provider oqsprovider -provider default -noout -text | grep -A2 "Key Usage"
 
 # Extended Key Usage
-openssl x509 -in certs/server/webserver01/webserver01.crt -noout -text | grep -A2 "Extended Key Usage"
+openssl x509 -in certs/server/webserver01/webserver01.crt -provider oqsprovider -provider default -noout -text | grep -A2 "Extended Key Usage"
 ```
 
 ## Step 11: Export Certificates for Different Platforms
@@ -704,7 +708,7 @@ chmod 444 webserver01.der
 ### Export public key only
 
 ```bash
-openssl x509 -in webserver01.crt -pubkey -noout > webserver01-pubkey.pem
+openssl x509 -in webserver01.crt -provider oqsprovider -provider default -pubkey -noout > webserver01-pubkey.pem
 chmod 444 webserver01-pubkey.pem
 ```
 
@@ -752,7 +756,7 @@ cd /opt/sassycorp-ca/intermediate-ca
 
 for cert in $(find certs -name "*.crt" -type f); do
     echo -n "Verifying $(basename $cert): "
-    if openssl verify -CAfile certs/ca-chain.crt "$cert" > /dev/null 2>&1; then
+    if openssl verify -provider oqsprovider -provider default -CAfile certs/ca-chain.crt "$cert" > /dev/null 2>&1; then
         echo "✓ Valid"
     else
         echo "✗ Invalid"
@@ -765,7 +769,7 @@ done
 ```bash
 echo "=== CNSA 2.0 Algorithm Verification ==="
 for cert in $(find certs -name "*.crt" -type f); do
-    ALGO=$(openssl x509 -in "$cert" -noout -text | grep "Signature Algorithm" | head -1 | awk '{print $3}')
+    ALGO=$(openssl x509 -in "$cert" -provider oqsprovider -provider default -noout -text | grep "Signature Algorithm" | head -1 | awk '{print $3}')
     echo -n "$(basename $cert): $ALGO"
     if [[ "$ALGO" == "mldsa65" ]] || [[ "$ALGO" == "mldsa87" ]]; then
         echo " ✓ CNSA 2.0 Compliant"
@@ -780,26 +784,10 @@ done
 ```bash
 for cert in $(find certs -name "*.crt" -type f | head -5); do
     echo "=== $(basename $cert) ==="
-    openssl x509 -in "$cert" -noout -text | grep -A5 "Subject Alternative Name" | grep -E "DNS:|email:|IP:|URI:"
+    openssl x509 -in "$cert" -provider oqsprovider -provider default -noout -text | grep -A5 "Subject Alternative Name" | grep -E "DNS:|email:|IP:|URI:"
     echo ""
 done
 ```
-
-## Security Checklist
-
-Verify the following for each certificate:
-
-- [ ] Private keys have 400 permissions
-- [ ] Certificates have 444 permissions
-- [ ] Only CNSA 2.0 compliant algorithms used (mldsa65 or mldsa87)
-- [ ] Subject Alternative Names include all required entries
-- [ ] Email addresses are properly formatted in SANs
-- [ ] CRL Distribution Points are included
-- [ ] Authority Information Access (OCSP) is included
-- [ ] Key Usage is appropriate for certificate type
-- [ ] Extended Key Usage matches intended use
-- [ ] Certificate chain validates correctly
-- [ ] SHA-512 is used for all certificates
 
 Check permissions:
 
@@ -826,7 +814,7 @@ These certificates are fully compliant with NSA's CNSA 2.0 requirements for quan
 Check the certificate chain:
 
 ```bash
-openssl verify -verbose -CAfile certs/ca-chain.crt [certificate.crt]
+openssl verify -provider oqsprovider -provider default -verbose -CAfile certs/ca-chain.crt [certificate.crt]
 ```
 
 ### Wrong Algorithm Error
@@ -844,17 +832,6 @@ Ensure the configuration file includes the v3_req extension:
 
 ```bash
 grep -A5 "v3_req" [config-file.cnf]
-```
-
-### Algorithm Name Compatibility
-
-If you encounter errors with `mldsa65` or `mldsa87`, you may be using an older version of the OQS provider. Use the legacy names:
-- `dilithium3` instead of `mldsa65`
-- `dilithium5` instead of `mldsa87`
-
-Check which names are available:
-```bash
-openssl list -signature-algorithms -provider oqsprovider | grep -E "mldsa|dilithium"
 ```
 
 ## Summary

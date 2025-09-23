@@ -56,7 +56,7 @@ ls -la
 Create the OpenSSL configuration file for the Root CA. Use your preferred text editor:
 
 ```bash
-nano /opt/sassycorp-ca/root-ca/openssl.cnf
+vim /opt/sassycorp-ca/root-ca/openssl.cnf
 ```
 
 Copy the following configuration into the file:
@@ -290,7 +290,7 @@ chmod 444 certs/root-ca.crt
 Verify the Root CA certificate:
 
 ```bash
-openssl x509 -noout -text -in certs/root-ca.crt
+openssl x509 -provider oqsprovider -provider default -noout -text -in certs/root-ca.crt
 ```
 
 ## Step 5: Verify CNSA 2.0 Compliance
@@ -298,7 +298,7 @@ openssl x509 -noout -text -in certs/root-ca.crt
 Check the signature algorithm (should show mldsa87 for ML-DSA-87):
 
 ```bash
-openssl x509 -in certs/root-ca.crt -noout -text | grep "Signature Algorithm"
+openssl x509 -in certs/root-ca.crt -provider oqsprovider -provider default -noout -text | grep "Signature Algorithm"
 ```
 
 **Expected Output**: You should see `mldsa87` which is ML-DSA-87 in CNSA 2.0.
@@ -318,7 +318,7 @@ openssl x509 -in certs/root-ca.crt -noout -text | grep -A1 "Key Usage"
 Check Subject Alternative Names:
 
 ```bash
-openssl x509 -in certs/root-ca.crt -noout -text | grep -A5 "Subject Alternative Name"
+openssl x509 -in certs/root-ca.crt -provider oqsprovider -provider default -noout -text | grep -A5 "Subject Alternative Name"
 ```
 
 Verify certificate hash with SHA-512:
@@ -348,7 +348,7 @@ chmod 644 crl/root-ca.crl
 Verify the CRL:
 
 ```bash
-openssl crl -in crl/root-ca.crl -noout -text
+openssl crl -in crl/root-ca.crl -provider oqsprovider -provider default -noout -text
 ```
 
 ## Step 7: Create Root CA Bundle and Distribution Files
@@ -430,13 +430,13 @@ Run these commands to perform a complete verification of your Root CA:
 Display certificate details:
 
 ```bash
-openssl x509 -in /opt/sassycorp-ca/root-ca/certs/root-ca.crt -noout -subject -issuer -dates
+openssl x509 -in /opt/sassycorp-ca/root-ca/certs/root-ca.crt -provider oqsprovider -provider default -noout -subject -issuer -dates
 ```
 
 Verify signature algorithm is ML-DSA-87 (mldsa87) for CNSA 2.0:
 
 ```bash
-openssl x509 -in /opt/sassycorp-ca/root-ca/certs/root-ca.crt -noout -text | grep "Signature Algorithm" | head -1
+openssl x509 -in /opt/sassycorp-ca/root-ca/certs/root-ca.crt -provider oqsprovider -provider default -noout -text | grep "Signature Algorithm" | head -1
 ```
 
 **Expected Output**: Should show `mldsa87` confirming ML-DSA-87 CNSA 2.0 compliance.
@@ -444,13 +444,13 @@ openssl x509 -in /opt/sassycorp-ca/root-ca/certs/root-ca.crt -noout -text | grep
 Display key usage:
 
 ```bash
-openssl x509 -in /opt/sassycorp-ca/root-ca/certs/root-ca.crt -noout -text | grep -A2 "Key Usage"
+openssl x509 -in /opt/sassycorp-ca/root-ca/certs/root-ca.crt -provider oqsprovider -provider default -noout -text | grep -A2 "Key Usage"
 ```
 
 Display Subject Alternative Names:
 
 ```bash
-openssl x509 -in /opt/sassycorp-ca/root-ca/certs/root-ca.crt -noout -text | grep -A5 "Subject Alternative Name"
+openssl x509 -in /opt/sassycorp-ca/root-ca/certs/root-ca.crt -provider oqsprovider -provider default -noout -text | grep -A5 "Subject Alternative Name"
 ```
 
 Check file permissions:
@@ -463,7 +463,7 @@ ls -la /opt/sassycorp-ca/root-ca/certs/root-ca.crt
 Verify certificate chain (should show OK):
 
 ```bash
-openssl verify -CAfile /opt/sassycorp-ca/root-ca/certs/root-ca.crt \
+openssl verify -provider oqsprovider -provider default -CAfile /opt/sassycorp-ca/root-ca/certs/root-ca.crt \
     /opt/sassycorp-ca/root-ca/certs/root-ca.crt
 ```
 
@@ -475,6 +475,16 @@ If you get an error about the OQS provider, verify installation:
 
 ```bash
 openssl list -providers -provider oqsprovider
+```
+
+You should see something similar to:
+
+```bash
+Providers:
+  oqsprovider
+    name: OpenSSL OQS Provider
+    version: 0.10.1-dev
+    status: active
 ```
 
 ### Permission Denied Errors
@@ -493,7 +503,7 @@ List available quantum-resistant algorithms:
 openssl list -signature-algorithms -provider oqsprovider | grep -i mldsa
 ```
 
-If you see `dilithium5` instead of `mldsa87`, you may be using an older version of the OQS provider. Use `dilithium5` in that case.
+If you see `dilithium5` instead of `mldsa87`, you may be using an older version of the OQS provider. Why?
 
 ## Summary
 

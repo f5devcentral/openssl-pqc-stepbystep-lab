@@ -39,7 +39,7 @@ The Commercial National Security Algorithm Suite 2.0 specifies the following qua
 2. **Operating System**: Linux (Ubuntu 22.04+ or RHEL 9+ recommended)
 3. **Permissions**: Root or sudo access for initial setup
 4. **Storage**: At least 1GB free space for certificates and keys
-5. **Text Editor**: Familiarity with vi, nano, or your preferred editor
+5. **Text Editor**: Familiarity with vi, vim, or your preferred editor
 
 ### Installing OpenSSL with Quantum Support
 
@@ -56,7 +56,7 @@ Clone and build liboqs:
 git clone -b main https://github.com/open-quantum-safe/liboqs.git
 cd liboqs
 mkdir build && cd build
-cmake -GNinja -DCMAKE_INSTALL_PREFIX=/usr/local ..
+cmake -GNinja -DCMAKE_INSTALL_PREFIX=/usr ..
 ninja
 sudo ninja install
 ```
@@ -68,7 +68,7 @@ cd ~/
 git clone https://github.com/open-quantum-safe/oqs-provider.git
 cd oqs-provider
 mkdir build && cd build
-cmake -DOPENSSL_ROOT_DIR=/usr/ -DCMAKE_INSTALL_PREFIX=/usr/ ..
+cmake -DOPENSSL_ROOT_DIR=/usr -DCMAKE_INSTALL_PREFIX=/usr ..
 make
 sudo make install
 ```
@@ -158,7 +158,7 @@ Example of creating a configuration file:
 
 ```bash
 # Create and edit a file
-nano /path/to/config.cnf
+vim /path/to/config.cnf
 
 # After saving, set appropriate permissions
 chmod 644 /path/to/config.cnf
@@ -177,7 +177,9 @@ This lab implements the following standards:
 - **FIPS 204** - Module-Lattice-Based Digital Signature Standard
 - **FIPS 203** - Module-Lattice-Based Key-Encapsulation Mechanism
 
-### Getting Started
+</br>
+
+## Getting Started
 
 Before proceeding to Module 2, complete these setup steps:
 
@@ -186,7 +188,11 @@ Before proceeding to Module 2, complete these setup steps:
 ```bash
 sudo useradd -r -s /bin/bash -m -d /opt/sassycorp-ca caadmin
 sudo usermod -aG sudo caadmin
+sudo passwd caadmin
 ```
+
+*Note: The last command will provide an interactive password prompt.*
+
 
 2. Switch to the CA admin user:
 
@@ -235,6 +241,8 @@ openssl list -signature-algorithms -provider oqsprovider | grep -i mldsa
 # If no results, check for legacy names
 openssl list -signature-algorithms -provider oqsprovider | grep -i dilithium
 ```
+
+If you see dilithium, you snagged an older version of oqs and MIGHT want to go back and check the liboqs build.  Otherwise you'll be substituting names all lab long.  That would be sad.
 
 ---
 
