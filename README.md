@@ -1,13 +1,13 @@
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![OpenSSL](https://img.shields.io/badge/OpenSSL-3.2%2B-green.svg)
+![CNSA](https://img.shields.io/badge/CNSA%202.0-Compliant-brightgreen.svg)
+![Security Level](https://img.shields.io/badge/Security-Quantum%20Resistant-orange.svg)
+
 # Quantum-Resistant Certificate Authority Lab Guide
 
 ## CNSA 2.0 Compliant PKI Infrastructure with OpenSSL
 
 A comprehensive hands-on lab guide for building a quantum-resistant Certificate Authority (CA) infrastructure using OpenSSL 3.0+ with full compliance to NSA's Commercial National Security Algorithm Suite 2.0 (CNSA 2.0) standards.
-
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![OpenSSL](https://img.shields.io/badge/OpenSSL-3.2%2B-green.svg)
-![CNSA](https://img.shields.io/badge/CNSA%202.0-Compliant-brightgreen.svg)
-![Security Level](https://img.shields.io/badge/Security-Quantum%20Resistant-orange.svg)
 
 ## 🎯 Objective
 
