@@ -5,13 +5,7 @@
 
 # Quantum-Resistant Certificate Authority Lab Guide
 
-<<<<<<< HEAD
 This hands-on guide provides basic understanding and a wee tutorial for building a quantum-resistant Certificate Authority (CA) infrastructure using OpenSSL 3.0+ with compliance to NSA's Commercial National Security Algorithm Suite 2.0 (CNSA 2.0) standards. Fun times
-=======
-## CNSA 2.0 Compliant PKI Infrastructure with OpenSSL
-
-A comprehensive hands-on lab guide for building a quantum-resistant Certificate Authority (CA) infrastructure using OpenSSL 3.0+ with full compliance to NSA's Commercial National Security Algorithm Suite 2.0 (CNSA 2.0) standards.
->>>>>>> 77fbcad97512b4b564b0bece4dd8273e1dbcb874
 
 ## 🎯 Objective
 
