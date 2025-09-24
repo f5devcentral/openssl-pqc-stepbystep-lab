@@ -2,7 +2,7 @@
 
 ## Overview
 
-This module covers the creation of a CNSA 2.0 compliant Root Certificate Authority with a 10-year validity period using quantum-resistant algorithms. You'll type each command directly to understand the process.
+This module covers the creation of a CNSA 2.0 compliant Root Certificate Authority with a 10-year validity period using quantum-resistant algorithms. Type each command directly to understand the process. Try to only copy the larger blocks that denote line breaks with `\` .
 
 ## Step 1: Create Root CA Directory Structure
 
@@ -508,10 +508,10 @@ If you see `dilithium5` instead of `mldsa87`, you may be using an older version 
 ## Summary
 
 You have successfully created a CNSA 2.0 compliant quantum-resistant Root CA that is:
+
 - ✅ CNSA 2.0 compliant using ML-DSA-87 (mldsa87)
 - ✅ Valid for 10 years as recommended for Root CAs
 - ✅ Using SHA-512 for hashing (CNSA 2.0 requirement)
-- ✅ Configured with proper SANs according to RFC specifications
 - ✅ Protected with appropriate Unix file permissions
 - ✅ Ready to sign intermediate CA certificates
 

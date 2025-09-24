@@ -2,7 +2,7 @@
 
 ## Overview
 
-This module covers creating a CNSA 2.0 compliant Intermediate Certificate Authority that will be signed by the Root CA created in Module 2. Continue typing each command to understand the complete PKI hierarchy.
+This module covers creating a CNSA 2.0 compliant Intermediate Certificate Authority that will be signed by the Root CA created in Module 2. Continue typing each command to understand the complete PKI hierarchy. And to develop powerful typing skills.
 
 ## Step 1: Create Intermediate CA Directory Structure
 
@@ -675,14 +675,12 @@ openssl x509 -in certs/intermediate-ca.crt -noout -text | grep -A1 "Basic Constr
 ## Summary
 
 You have successfully created a CNSA 2.0 compliant quantum-resistant Intermediate CA that is:
+
 - ✅ CNSA 2.0 compliant using ML-DSA-65 (mldsa65)
 - ✅ Signed by the Root CA with 5-year validity
 - ✅ Using SHA-512 for hashing (CNSA 2.0 requirement)
-- ✅ Configured with proper SANs and extensions
 - ✅ Includes CRL Distribution Points and OCSP configuration
 - ✅ Has OCSP responder certificate ready (also using ML-DSA-65)
-- ✅ Protected with appropriate Unix file permissions
-- ✅ Ready to issue CNSA 2.0 compliant end-entity certificates
 
 ---
 

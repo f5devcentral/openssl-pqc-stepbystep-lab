@@ -1,17 +1,15 @@
-# Quantum-Resistant Certificate Authority Lab Guide
-
-## CNSA 2.0 Compliant PKI Infrastructure with OpenSSL
-
-A comprehensive hands-on lab guide for building a quantum-resistant Certificate Authority (CA) infrastructure using OpenSSL 3.0+ with full compliance to NSA's Commercial National Security Algorithm Suite 2.0 (CNSA 2.0) standards.
-
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![OpenSSL](https://img.shields.io/badge/OpenSSL-3.2%2B-green.svg)
 ![CNSA](https://img.shields.io/badge/CNSA%202.0-Compliant-brightgreen.svg)
 ![Security Level](https://img.shields.io/badge/Security-Quantum%20Resistant-orange.svg)
 
+# Quantum-Resistant Certificate Authority Lab Guide
+
+This hands-on guide provides basic understanding and a wee tutorial for building a quantum-resistant Certificate Authority (CA) infrastructure using OpenSSL 3.0+ with compliance to NSA's Commercial National Security Algorithm Suite 2.0 (CNSA 2.0) standards. Fun times
+
 ## 🎯 Objective
 
-Learn to build a complete Public Key Infrastructure (PKI) that is resistant to quantum computing attacks, following NSA's guidelines for protecting classified information up to TOP SECRET level.
+Learn to build a complete Public Key Infrastructure (PKI) that is resistant to quantum computing attacks, following NSA and NIST requirements for evolving quantum-resistant mechanisms.
 
 ## 🔒 CNSA 2.0 Compliance
 
@@ -23,8 +21,6 @@ This lab uses NSA-approved quantum-resistant algorithms:
 | **Intermediate CA** | ML-DSA-65 | FIPS 204 | mldsa65 | Level 3 (Standard) |
 | **End-Entity Certificates** | ML-DSA-65/87 | FIPS 204 | mldsa65/87 | Level 3/5 |
 | **Hash Function** | SHA-512 | FIPS 180-4 | sha512 | 256-bit security |
-
-**Note**: Newer versions of the OQS provider use NIST standardized names (mldsa65, mldsa87) instead of legacy names (dilithium3, dilithium5).
 
 ## 📚 Lab Modules
 
@@ -65,7 +61,7 @@ This lab uses NSA-approved quantum-resistant algorithms:
 - Generating server certificates for web services
 - Creating user certificates for authentication
 - Building high-security certificates with ML-DSA-87
-- Configuring comprehensive SANs (DNS, IP, email, URI)
+- Configuring  SANs (DNS, IP, email, URI)
 - Exporting certificates in multiple formats
 - Managing certificate inventory
 
@@ -82,23 +78,12 @@ This lab uses NSA-approved quantum-resistant algorithms:
 
 **Duration**: 60 minutes
 
-## 🚀 Quick Start
-
-If you wish to follow this lab offline, grab a clone and consider contributing as you go.
-
-```bash
-git clone https://github.com/f5devcentral/openssl-pqc-stepbystep-lab.git
-cd openssl-pqc-stepbystep-lab
-```
-
-
 ## 🎓 Learning Outcomes
 
-After completing this lab, you will be able to:
+After completing this lab, hopefully you will be able to:
 
-- ✅ Build a complete CNSA 2.0 compliant PKI hierarchy
+- ✅ Build a complete PKI hierarchy
 - ✅ Generate quantum-resistant certificates using ML-DSA algorithms
-- ✅ Configure comprehensive Subject Alternative Names per RFC 5280
 - ✅ Implement both CRL and OCSP revocation mechanisms
 - ✅ Apply security best practices with proper file permissions
 - ✅ Manage certificate lifecycle from creation to revocation
@@ -146,12 +131,6 @@ SassyCorp PKI Hierarchy
 - **RFC 6960**: OCSP implementation
 - **FIPS 204**: Module-Lattice Digital Signature Standard
 
-### Educational Features
-- **Hands-On Learning**: Type every command manually
-- **No Scripts**: Direct command execution for understanding
-- **Clear Explanations**: Each step is documented
-- **Troubleshooting**: Common issues and solutions
-
 ## 📋 Lab Approach
 
 This lab guide uses a **manual, hands-on approach** where you:
@@ -179,7 +158,7 @@ Throughout the lab, we use the fictional **SassyCorp** organization:
 This lab is for **educational and internal testing purposes only**. In production:
 - Use Hardware Security Modules (HSMs)
 - Implement air-gapped Root CAs 
-- Enable comprehensive audit logging
+- Enable  audit logging
 - Conduct regular security assessments
 
 ### Algorithm Naming Compatibility
@@ -209,14 +188,6 @@ The following are **NOT** used (not CNSA 2.0 compliant):
 - **Module 3**: 45 minutes (Intermediate CA)
 - **Module 4**: 60 minutes (Certificates)
 - **Module 5**: 60 minutes (Revocation)
-
-## 🛠️ Troubleshooting
-
-Each module includes:
-- Verification commands to check your work
-- Common issues and solutions
-- Testing procedures
-- Security checklists
 
 ## 📚 Additional Resources
 
@@ -248,6 +219,7 @@ Contributions are welcome! Please:
 ## 💬 Support
 
 For questions or issues:
+
 - Open an issue in this repository
 - Check the troubleshooting sections in each module
 - Review the verification commands
@@ -258,6 +230,8 @@ For questions or issues:
 
 Begin your journey into quantum-resistant PKI:
 
-**[→ Start with Module 1: Introduction](01_quantum_ca_intro.md)**
+### [→ Start with Module 1: Introduction](01_quantum_ca_intro.md)
+
+</br>
 
 Hack the planet! 🔐🚀

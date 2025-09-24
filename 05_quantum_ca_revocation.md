@@ -541,7 +541,7 @@ chmod 644 /opt/sassycorp-ca/ocsp-stapling-*.conf
 
 ## Part 5: Testing and Validation
 
-### Step 14: Comprehensive Revocation Testing
+### Step 14:  Revocation Testing
 
 Test CRL accessibility:
 
@@ -672,7 +672,7 @@ grep '^R' index.txt | awk -F'\t' '{print "Serial: "$4", Revoked: "$3", Subject: 
 
 ### Step 17: Generate Revocation Report
 
-Create a comprehensive revocation report:
+Create a  revocation report:
 
 ```bash
 cd /opt/sassycorp-ca
@@ -770,21 +770,6 @@ ps aux | grep "openssl ocsp" | grep -v grep
 # Kill the process (replace PID with actual process ID)
 kill [PID]
 ```
-
-## Security Checklist
-
-Verify the following for revocation infrastructure:
-
-- [ ] CRLs are generated and accessible
-- [ ] CRLs have appropriate validity periods (30 days)
-- [ ] OCSP responder certificate is properly configured
-- [ ] OCSP responder has OCSPSigning extended key usage
-- [ ] Revocation reasons are properly recorded
-- [ ] CRL distribution points are accessible
-- [ ] OCSP responder responds correctly to queries
-- [ ] Revocation logs are maintained
-- [ ] Database reflects accurate certificate status
-- [ ] Revoked certificates fail validation
 
 Verify permissions:
 
@@ -941,7 +926,7 @@ Your PKI infrastructure is fully compliant with NSA's Commercial National Securi
 - ✅ Uses only ML-DSA-65 (mldsa65) and ML-DSA-87 (mldsa87) for signatures
 - ✅ Implements SHA-512 for all hashing operations
 - ✅ Ready for post-quantum cryptography requirements
-- ✅ Suitable for protecting classified information up to TOP SECRET level
+- ✅ Suitable for protecting classified information
 
 ### Key Commands Learned
 
@@ -954,15 +939,11 @@ You've mastered these essential OpenSSL commands:
 - `openssl ocsp` - Query and respond to OCSP requests
 - `openssl verify` - Validate certificate chains
 
-### What You've Accomplished
+## 🤝 Contributing
 
-- Created a complete PKI hierarchy with quantum-resistant algorithms
-- Configured proper Subject Alternative Names (DNS, IP, email, URI)
-- Implemented both CRL and OCSP revocation mechanisms
-- Applied secure Unix file permissions throughout
-- Learned to manually manage all aspects of a CA
+This lab was made because we wanted to learn this ourselves. We encourage you to help us expand this lab so we can cover more quantum-resistant content; or maybe cover more operating systems.  Or we might have inadvertently broken something.  Who knows... either way, characters welcome.
 
-This lab environment is ready for internal testing of quantum-resistant PKI infrastructure in preparation for the post-quantum cryptography era.
+Your lab is ready for internal testing of quantum-resistant PKI infrastructure in preparation for the post-quantum cryptography era. Nice work! Go take the rest of the day off.
 
 ---
 

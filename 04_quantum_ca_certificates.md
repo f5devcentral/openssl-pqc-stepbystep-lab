@@ -658,7 +658,7 @@ You'll notice that ML-DSA-87 (mldsa87) keys are larger than ML-DSA-65 (mldsa65) 
 
 ## Step 10: View Certificate Details
 
-### Display comprehensive certificate information
+### Display  certificate information
 
 For the web server certificate:
 
@@ -837,8 +837,8 @@ grep -A5 "v3_req" [config-file.cnf]
 ## Summary
 
 You have successfully learned how to:
+
 - ✅ Generate CNSA 2.0 compliant certificates using ML-DSA-65 (mldsa65) and ML-DSA-87 (mldsa87)
-- ✅ Configure proper Subject Alternative Names according to RFC specifications
 - ✅ Create certificates for different purposes (server, user, critical infrastructure)
 - ✅ Choose between ML-DSA-65 for standard and ML-DSA-87 for highest security
 - ✅ Export certificates in multiple formats for different platforms
@@ -846,8 +846,8 @@ You have successfully learned how to:
 - ✅ Manage certificate inventory and tracking
 
 Each certificate you created includes:
+
 - CNSA 2.0 compliant quantum-resistant signature algorithms
-- Proper Subject Alternative Names (DNS, IP, email, URI)
 - Appropriate key usage extensions
 - CRL distribution points
 - OCSP responder information

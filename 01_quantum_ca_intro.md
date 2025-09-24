@@ -2,22 +2,13 @@
 
 ## Introduction
 
-This lab guide provides a comprehensive walkthrough for building a quantum-resistant Certificate Authority (CA) infrastructure using OpenSSL 3.0+ with compliance to NSA's Commercial National Security Algorithm Suite 2.0 (CNSA 2.0) standards.
-
-### Overview
-
-This hands-on guide will teach you how to:
-- Build a quantum-resistant Root CA with 10-year validity
-- Create CNSA 2.0 compliant Intermediate CAs  
-- Generate quantum-resistant certificates with proper SAN configuration
-- Implement OCSP certificate revocation
-- Apply proper Unix file permissions for security
+This lab guide provides a  walkthrough for building a quantum-resistant Certificate Authority (CA) infrastructure using OpenSSL 3.0+ with compliance to NSA's Commercial National Security Algorithm Suite 2.0 (CNSA 2.0) standards.
 
 ### Important Note on Lab Approach
 
-This guide presents commands for you to type directly rather than using automated scripts. This hands-on approach ensures you understand each step of the process and learn the OpenSSL command syntax. Take time to read the output of each command and understand what it's doing.
+This guide presents commands for you to type directly rather than using automated scripts. This hands-on approach ensures you understand each step of the process and learn the OpenSSL command syntax. Take time to read the output of each command and understand what it's doing... or don't. I'm breezy.
 
-### CNSA 2.0 Requirements
+## CNSA 2.0 Requirements
 
 The Commercial National Security Algorithm Suite 2.0 specifies the following quantum-resistant algorithms:
 
@@ -36,12 +27,11 @@ The Commercial National Security Algorithm Suite 2.0 specifies the following qua
 ### Prerequisites
 
 1. **OpenSSL 3.2+** with OQS provider support
-2. **Operating System**: Linux (Ubuntu 22.04+ or RHEL 9+ recommended)
+2. **Operating System**: Ubuntu 25.04 but you do you. Installing liboqs might differ.
 3. **Permissions**: Root or sudo access for initial setup
-4. **Storage**: At least 1GB free space for certificates and keys
-5. **Text Editor**: Familiarity with vi, vim, or your preferred editor
+4. **Text Editor**: Familiarity with vi, vim, or your preferred editor
 
-### Installing OpenSSL with Quantum Support
+## Installing OpenSSL with Quantum Support
 
 First, install the required dependencies:
 
@@ -122,29 +112,6 @@ Our lab will use the following directory structure:
 4. **Audit logging** must be enabled and monitored
 5. **Regular security assessments** should be conducted
 
-### Organization Details
-
-Throughout this lab, we'll use the following organizational details:
-
-- **Organization**: SassyCorp
-- **Country**: US
-- **State**: Washington
-- **Locality**: Glacier
-- **Email Domain**: sassycorp.internal
-- **DNS Domain**: sassycorp.lab
-
-### Lab Modules
-
-This guide is organized into the following modules:
-
-1. **Introduction** (this document) - Overview and prerequisites
-2. **Building the Root CA** - Creating a CNSA 2.0 compliant Root CA with ML-DSA-87 (mldsa87)
-3. **Building the Intermediate CA** - Establishing the intermediate tier with ML-DSA-65 (mldsa65)
-4. **Building Certificates** - Generating end-entity certificates with CNSA 2.0 algorithms
-5. **Certificate Revocation** - Implementing OCSP and CRL with quantum-resistant signatures
-
-**CNSA 2.0 Compliance Note**: This lab uses only ML-DSA-65 (mldsa65) and ML-DSA-87 (mldsa87) algorithms throughout, ensuring full compliance with NSA's quantum-resistant cryptography requirements.
-
 ### Working with Configuration Files
 
 Throughout this lab, you'll create several configuration files. When you see a configuration file in the guide:
@@ -167,21 +134,9 @@ chmod 644 /path/to/config.cnf
 ls -la /path/to/config.cnf
 ```
 
-### Compliance Notes
-
-This lab implements the following standards:
-- **CNSA 2.0** - NSA's quantum-resistant algorithm requirements
-- **RFC 5280** - Internet X.509 Public Key Infrastructure
-- **RFC 6960** - Online Certificate Status Protocol (OCSP)
-- **RFC 8446** - TLS 1.3 specifications
-- **FIPS 204** - Module-Lattice-Based Digital Signature Standard
-- **FIPS 203** - Module-Lattice-Based Key-Encapsulation Mechanism
-
-</br>
-
 ## Getting Started
 
-Before proceeding to Module 2, complete these setup steps:
+Before proceeding to Module 2, install the prerequisite packages and compile the liboqs libraries:
 
 1. Create a dedicated user for CA operations:
 
@@ -221,16 +176,8 @@ Before proceeding to Module 2, ensure you have:
 - ✅ Created the caadmin user
 - ✅ Created the base directory structure
 - ✅ Verified the OQS provider is available
-- ✅ Understood the security considerations
 
 ### Algorithm Naming and Version Compatibility
-
-The OQS provider algorithm names have evolved to match NIST standards:
-
-| NIST Standard | New Name (Current) | Legacy Name (Older versions) |
-|--------------|-------------------|------------------------------|
-| ML-DSA-65 | mldsa65 | dilithium3 |
-| ML-DSA-87 | mldsa87 | dilithium5 |
 
 **Version Check**: After installing the OQS provider, check which names are available:
 
