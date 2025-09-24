@@ -197,6 +197,7 @@ openssl ca -config openssl.cnf \
 ### Revocation Reasons
 
 Valid revocation reasons are:
+
 - `unspecified` - No specific reason (0)
 - `keyCompromise` - Private key compromised (1)
 - `CACompromise` - CA key compromised (2)
@@ -650,6 +651,7 @@ cat index.txt
 ```
 
 The format is:
+
 - First column: V (Valid) or R (Revoked)
 - Second column: Expiry date
 - Third column: Revocation date (if revoked)
@@ -845,11 +847,13 @@ openssl crl -in crl/intermediate-ca.crl -noout -text | grep -A20 "Revoked Certif
 The complete manual process for revoking a certificate:
 
 1. Identify the certificate serial number:
+
    ```bash
    openssl x509 -in [certificate.crt] -noout -serial
    ```
 
 2. Revoke the certificate:
+
    ```bash
    openssl ca -config openssl.cnf \
        -provider oqsprovider \
@@ -859,6 +863,7 @@ The complete manual process for revoking a certificate:
    ```
 
 3. Update the CRL:
+
    ```bash
    openssl ca -config openssl.cnf \
        -provider oqsprovider \
@@ -868,16 +873,19 @@ The complete manual process for revoking a certificate:
    ```
 
 4. Copy CRL to distribution point:
+
    ```bash
    cp crl/intermediate-ca.crl /opt/sassycorp-ca/crl-dist/intermediate/
    ```
 
 5. Log the revocation:
+
    ```bash
    echo "$(date +%Y%m%d_%H%M%S)|intermediate|[SERIAL]|[reason]|$(whoami)" >> /opt/sassycorp-ca/revocation.log
    ```
 
 6. Verify revocation with CRL:
+
    ```bash
    openssl verify -crl_check \
        -CAfile certs/ca-chain.crt \
@@ -886,6 +894,7 @@ The complete manual process for revoking a certificate:
    ```
 
 7. Verify with OCSP (if running):
+
    ```bash
    openssl ocsp \
        -provider oqsprovider \
@@ -899,6 +908,7 @@ The complete manual process for revoking a certificate:
 ## Summary
 
 You have successfully implemented:
+
 - ✅ Certificate Revocation Lists (CRL) with distribution points
 - ✅ Manual certificate revocation with reason codes
 - ✅ Online Certificate Status Protocol (OCSP) responder
@@ -923,6 +933,7 @@ Congratulations! You have built a complete CNSA 2.0 compliant quantum-resistant 
 ### CNSA 2.0 Compliance Achievement
 
 Your PKI infrastructure is fully compliant with NSA's Commercial National Security Algorithm Suite 2.0:
+
 - ✅ Uses only ML-DSA-65 (mldsa65) and ML-DSA-87 (mldsa87) for signatures
 - ✅ Implements SHA-512 for all hashing operations
 - ✅ Ready for post-quantum cryptography requirements
@@ -931,6 +942,7 @@ Your PKI infrastructure is fully compliant with NSA's Commercial National Securi
 ### Key Commands Learned
 
 You've mastered these essential OpenSSL commands:
+
 - `openssl genpkey` - Generate quantum-resistant private keys
 - `openssl req` - Create certificate signing requests
 - `openssl ca` - Sign certificates and manage CA operations

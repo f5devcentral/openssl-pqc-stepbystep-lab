@@ -196,6 +196,7 @@ openssl req -config /opt/sassycorp-ca/intermediate-ca/templates/server-cert.cnf 
 ```
 
 When prompted, enter:
+
 - Country Name: `US`
 - State: `Washington`
 - Locality: `Glacier`
@@ -280,6 +281,7 @@ openssl req -config /opt/sassycorp-ca/intermediate-ca/templates/user-cert.cnf \
 ```
 
 When prompted, enter:
+
 - Country Name: `US`
 - State: `Washington`
 - Locality: `Glacier`
@@ -799,6 +801,7 @@ find /opt/sassycorp-ca/intermediate-ca/certs -name "*.crt" -exec ls -la {} \;
 ## CNSA 2.0 Compliance Summary
 
 All certificates created in this module use:
+
 - ✅ **ML-DSA-65 (mldsa65)** for standard security requirements
 - ✅ **ML-DSA-87 (mldsa87)** for highest security requirements  
 - ✅ **SHA-512** for all hashing operations

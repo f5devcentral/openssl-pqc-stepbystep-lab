@@ -75,7 +75,7 @@ You should see the OQS provider listed in the output.
 
 Our lab will use the following directory structure:
 
-```
+```bash
 /opt/sassycorp-ca/
 ├── root-ca/
 │   ├── private/          # Root CA private keys (700)
@@ -148,20 +148,19 @@ sudo passwd caadmin
 
 *Note: The last command will provide an interactive password prompt.*
 
-
-2. Switch to the CA admin user:
+2.Switch to the CA admin user:
 
 ```bash
 sudo su - caadmin
 ```
 
-3. Create the base directory structure:
+3.Create the base directory structure:
 
 ```bash
 mkdir -p /opt/sassycorp-ca/{root-ca,intermediate-ca,ocsp}
 ```
 
-4. Verify you have the correct user and directories:
+4.Verify you have the correct user and directories:
 
 ```bash
 whoami  # Should show: caadmin

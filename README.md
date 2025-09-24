@@ -91,7 +91,7 @@ After completing this lab, hopefully you will be able to:
 
 ## 🏗️ Infrastructure Overview
 
-```
+```bash
 SassyCorp PKI Hierarchy
 │
 ├── Root CA (ML-DSA-87 / mldsa87)
@@ -120,12 +120,14 @@ SassyCorp PKI Hierarchy
 ## 🔑 Key Features
 
 ### Security Features
+
 - **Quantum-Resistant Algorithms**: ML-DSA-65 and ML-DSA-87 only
 - **SHA-512 Hashing**: Throughout the infrastructure
 - **Secure Permissions**: 400 for keys, 444 for certificates
 - **Complete Revocation**: CRL and OCSP support
 
 ### Compliance Features
+
 - **CNSA 2.0**: Full compliance with NSA requirements
 - **RFC 5280**: Internet X.509 PKI standards
 - **RFC 6960**: OCSP implementation
@@ -155,26 +157,33 @@ Throughout the lab, we use the fictional **SassyCorp** organization:
 ## ⚠️ Important Notes
 
 ### Security Warning
+
 This lab is for **educational and internal testing purposes only**. In production:
+
 - Use Hardware Security Modules (HSMs)
-- Implement air-gapped Root CAs 
+- Implement air-gapped Root CAs
 - Enable  audit logging
 - Conduct regular security assessments
 
 ### Algorithm Naming Compatibility
+
 The OQS provider has updated to use NIST standard names:
+
 - **Current**: `mldsa65` and `mldsa87`
 - **Legacy**: `dilithium3` and `dilithium5`
 
 Check your version and use the appropriate names. The lab guide uses the current NIST standard names.
 
 ### CNSA 2.0 Strict Compliance
+
 This lab uses **ONLY** the following algorithms:
+
 - ✅ ML-DSA-65 (mldsa65) - Standard security
 - ✅ ML-DSA-87 (mldsa87) - Highest security
 - ✅ SHA-512 - Hashing
 
 The following are **NOT** used (not CNSA 2.0 compliant):
+
 - ❌ ML-DSA-44 (mldsa44/dilithium2)
 - ❌ Falcon algorithms
 - ❌ SPHINCS+ algorithms
@@ -192,6 +201,7 @@ The following are **NOT** used (not CNSA 2.0 compliant):
 ## 📚 Additional Resources
 
 ### Standards and Specifications
+
 - [NIST Post-Quantum Cryptography](https://csrc.nist.gov/projects/post-quantum-cryptography)
 - [NSA CNSA 2.0 Suite](https://www.nsa.gov/Press-Room/News-Highlights/Article/Article/3148990/nsa-releases-future-quantum-resistant-qr-algorithm-requirements-for-national-se/)
 - [FIPS 204: Module-Lattice-Based Digital Signature Standard](https://csrc.nist.gov/pubs/fips/204/ipd)
@@ -199,6 +209,7 @@ The following are **NOT** used (not CNSA 2.0 compliant):
 - [RFC 6960: OCSP](https://www.rfc-editor.org/rfc/rfc6960.html)
 
 ### OpenSSL Resources
+
 - [OpenSSL Documentation](https://www.openssl.org/docs/)
 - [Open Quantum Safe Project](https://openquantumsafe.org/)
 - [OQS Provider for OpenSSL 3](https://github.com/open-quantum-safe/oqs-provider)
@@ -210,6 +221,7 @@ This lab guide is provided under the MIT License. See [LICENSE](LICENSE) file fo
 ## 🤝 Contributing
 
 Contributions are welcome! Please:
+
 1. Fork the repository
 2. Create a feature branch
 3. Commit your changes
@@ -224,7 +236,6 @@ For questions or issues:
 - Check the troubleshooting sections in each module
 - Review the verification commands
 - Ask us a quetion [@DevCentral!](https://community.f5.com)
-
 
 ## 🚦 Ready to Start?
 
