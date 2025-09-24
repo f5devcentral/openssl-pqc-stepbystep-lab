@@ -243,9 +243,6 @@ Begin your journey into quantum-resistant PKI:
 
 ### [→ Start with Module 1: Introduction](01_quantum_ca_intro.md)
 
-<<<<<<< HEAD
 </br>
 
-=======
->>>>>>> 77fbcad97512b4b564b0bece4dd8273e1dbcb874
 Hack the planet! 🔐🚀
