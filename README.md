@@ -1,4 +1,4 @@
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)
 ![OpenSSL](https://img.shields.io/badge/OpenSSL-3.2%2B-green.svg)
 ![CNSA](https://img.shields.io/badge/CNSA%202.0-Compliant-brightgreen.svg)
 ![Security Level](https://img.shields.io/badge/Security-Quantum%20Resistant-orange.svg)
@@ -216,7 +216,7 @@ The following are **NOT** used (not CNSA 2.0 compliant):
 
 ## 📄 License
 
-This lab guide is provided under the MIT License. See [LICENSE](LICENSE) file for details.
+This lab guide is provided under the Apache 2.0 License. See [LICENSE](LICENSE) file for details.
 
 ## 🤝 Contributing
 
