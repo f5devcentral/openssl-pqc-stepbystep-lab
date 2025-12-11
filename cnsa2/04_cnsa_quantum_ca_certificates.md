@@ -841,12 +841,12 @@ grep -A5 "v3_req" [config-file.cnf]
 
 You have successfully learned how to:
 
-- ✅ Generate CNSA 2.0 compliant certificates using ML-DSA-65 (mldsa65) and ML-DSA-87 (mldsa87)
-- ✅ Create certificates for different purposes (server, user, critical infrastructure)
-- ✅ Choose between ML-DSA-65 for standard and ML-DSA-87 for highest security
-- ✅ Export certificates in multiple formats for different platforms
-- ✅ Verify certificate compliance and validity
-- ✅ Manage certificate inventory and tracking
+- Generate CNSA 2.0 compliant certificates using ML-DSA-65 (mldsa65) and ML-DSA-87 (mldsa87)
+- Create certificates for different purposes (server, user, critical infrastructure)
+- Choose between ML-DSA-65 for standard and ML-DSA-87 for highest security
+- Export certificates in multiple formats for different platforms
+- Verify certificate compliance and validity
+- Manage certificate inventory and tracking
 
 Each certificate you created includes:
 
@@ -857,4 +857,4 @@ Each certificate you created includes:
 
 ---
 
-**Next**: [Module 5 - Certificate Revocation →](05_quantum_ca_revocation.md)
+**Next**: [Certificate Revocation →](05_quantum_ca_revocation.md)

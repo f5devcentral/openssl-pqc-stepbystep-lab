@@ -1,4 +1,4 @@
-# Quantum-Resistant Certificate Authority Lab Guide
+# Module 1: CNSA 2.0 Post-Quantum Certificate Authority Lab Guide
 
 ## Introduction
 
@@ -102,38 +102,6 @@ Our lab will use the following directory structure:
     └── requests/         # OCSP requests (755)
 ```
 
-### Security Considerations
-
-**⚠️ IMPORTANT**: This lab guide is for **internal testing and educational purposes only**. In a production environment:
-
-1. **Hardware Security Modules (HSMs)** should be used to protect private keys
-2. **Air-gapped systems** should be used for Root CA operations
-3. **Multi-person control** should be implemented for Root CA access
-4. **Audit logging** must be enabled and monitored
-5. **Regular security assessments** should be conducted
-
-### Working with Configuration Files
-
-Throughout this lab, you'll create several configuration files. When you see a configuration file in the guide:
-
-1. Create the file using your preferred text editor
-2. Copy the configuration content carefully
-3. Save the file with the specified name and path
-4. Verify the file permissions match what's specified
-
-Example of creating a configuration file:
-
-```bash
-# Create and edit a file
-vim /path/to/config.cnf
-
-# After saving, set appropriate permissions
-chmod 644 /path/to/config.cnf
-
-# Verify the file was created correctly
-ls -la /path/to/config.cnf
-```
-
 ## Getting Started
 
 Before proceeding to Module 2, install the prerequisite packages and compile the liboqs libraries:
@@ -171,10 +139,10 @@ ls -la /opt/sassycorp-ca/  # Should show three directories
 
 Before proceeding to Module 2, ensure you have:
 
-- ✅ Installed OpenSSL 3.2+ with OQS provider
-- ✅ Created the caadmin user
-- ✅ Created the base directory structure
-- ✅ Verified the OQS provider is available
+- Installed OpenSSL 3.2+ with OQS provider
+- Created the caadmin user
+- Created the base directory structure
+- Verified the OQS provider is available
 
 ### Algorithm Naming and Version Compatibility
 
@@ -192,4 +160,4 @@ If you see dilithium, you snagged an older version of oqs and MIGHT want to go b
 
 ---
 
-**Next**: [Module 2 - Building the Root CA →](02_quantum_ca_root.md)
+**Next**: [Building the Root CA →](02_cnsa_quantum_ca_root.md)

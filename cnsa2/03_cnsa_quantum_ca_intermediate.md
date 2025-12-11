@@ -676,12 +676,12 @@ openssl x509 -in certs/intermediate-ca.crt -noout -text | grep -A1 "Basic Constr
 
 You have successfully created a CNSA 2.0 compliant quantum-resistant Intermediate CA that is:
 
-- ✅ CNSA 2.0 compliant using ML-DSA-65 (mldsa65)
-- ✅ Signed by the Root CA with 5-year validity
-- ✅ Using SHA-512 for hashing (CNSA 2.0 requirement)
-- ✅ Includes CRL Distribution Points and OCSP configuration
-- ✅ Has OCSP responder certificate ready (also using ML-DSA-65)
+- CNSA 2.0 compliant using ML-DSA-65 (mldsa65)
+- Signed by the Root CA with 5-year validity
+- Using SHA-512 for hashing (CNSA 2.0 requirement)
+- Includes CRL Distribution Points and OCSP configuration
+- Has OCSP responder certificate ready (also using ML-DSA-65)
 
 ---
 
-**Next**: [Module 4 - Building Certificates →](04_quantum_ca_certificates.md)
+**Next**: [Building Certificates →](04_quantum_ca_certificates.md)

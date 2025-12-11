@@ -509,12 +509,12 @@ If you see `dilithium5` instead of `mldsa87`, you may be using an older version 
 
 You have successfully created a CNSA 2.0 compliant quantum-resistant Root CA that is:
 
-- ✅ CNSA 2.0 compliant using ML-DSA-87 (mldsa87)
-- ✅ Valid for 10 years as recommended for Root CAs
-- ✅ Using SHA-512 for hashing (CNSA 2.0 requirement)
-- ✅ Protected with appropriate Unix file permissions
-- ✅ Ready to sign intermediate CA certificates
+- CNSA 2.0 compliant using ML-DSA-87 (mldsa87)
+- Valid for 10 years as recommended for Root CAs
+- Using SHA-512 for hashing (CNSA 2.0 requirement)
+- Protected with appropriate Unix file permissions
+- Ready to sign intermediate CA certificates
 
 ---
 
-**Next**: [Module 3 - Building the Intermediate CA →](03_quantum_ca_intermediate.md)
+**Next**: [Building the Intermediate CA →](03_quantum_ca_intermediate.md)

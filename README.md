@@ -1,248 +1,205 @@
-![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![OpenSSL](https://img.shields.io/badge/OpenSSL-3.2%2B-green.svg)
-![CNSA](https://img.shields.io/badge/CNSA%202.0-Compliant-brightgreen.svg)
+![NIST PQC](https://img.shields.io/badge/NIST%20PQC-FIPS%20203%2F204%2F205-blue.svg)
+![CNSA 2.0](https://img.shields.io/badge/CNSA%202.0-Compliant-brightgreen.svg)
 ![Security Level](https://img.shields.io/badge/Security-Quantum%20Resistant-orange.svg)
 
-# Quantum-Resistant Certificate Authority Lab Guide
+# Post-Quantum Cryptography Certificate Authority Lab
 
-This hands-on guide provides basic understanding and a wee tutorial for building a quantum-resistant Certificate Authority (CA) infrastructure using OpenSSL 3.0+ with compliance to NSA's Commercial National Security Algorithm Suite 2.0 (CNSA 2.0) standards. Fun times
+## Hands-On Learning for Quantum-Resistant PKI Infrastructure
 
-## 🎯 Objective
+This hands-on lab guide provides basic understanding and a tiny tutorial for building quantum-resistant Certificate Authority (CA) infrastructure using OpenSSL. This repository provides two distinct learning paths based on your compliance requirements
 
-Learn to build a complete Public Key Infrastructure (PKI) that is resistant to quantum computing attacks, following NSA and NIST requirements for evolving quantum-resistant mechanisms.
+---
+<br>
 
-## 🔒 CNSA 2.0 Compliance
+## 🎯 Choose Your Learning Path
 
-This lab uses NSA-approved quantum-resistant algorithms:
+This repository offers two parallel learning tracks. Select the path that aligns with your organization's requirements:
 
-| Component | Algorithm | NIST Designation | OpenSSL Name | Security Level |
-|-----------|-----------|-----------------|--------------|----------------|
-| **Root CA** | ML-DSA-87 | FIPS 204 | mldsa87 | Level 5 (Highest) |
-| **Intermediate CA** | ML-DSA-65 | FIPS 204 | mldsa65 | Level 3 (Standard) |
-| **End-Entity Certificates** | ML-DSA-65/87 | FIPS 204 | mldsa65/87 | Level 3/5 |
-| **Hash Function** | SHA-512 | FIPS 180-4 | sha512 | 256-bit security |
+| | **FIPS 203/204/205 Path** | **CNSA 2.0 Path** |
+|---|---|---|
+| **Target Audience** | Commercial organizations, compliance needs | Government contractors, classified systems |
+| **Compliance Standard** | NIST FIPS standards | NSA Commercial National Security Algorithm Suite 2.0 |
+| **Algorithm Flexibility** | Full FIPS algorithm suites (ML-DSA-44/65/87, SLH-DSA) | Restricted to CNSA 2.0 approved (ML-DSA-65/87 only) |
+| **Use Case** | General quantum-resistant infrastructure | National security systems, defense contracts |
 
-## 📚 Lab Modules
+---
+<br>
 
-### [Module 1: Introduction](01_quantum_ca_intro.md)
+## 📚 [Learning Path: NIST FIPS 203/204/205](/fipsqs/00_fips_quantum_ca_intro.md)
 
-- Prerequisites and system requirements
-- Installing OpenSSL with quantum-resistant support
-- Understanding CNSA 2.0 requirements
-- Setting up the lab environment
-- Creating directory structures and users
+**For commercial organizations implementing quantum-resistant cryptography using NIST standards.**
 
-**Duration**: 30 minutes
+This path uses OpenSSL 3.5.3's native post-quantum cryptography support—no external quantum library providers required. So nice, so easy.
 
-### [Module 2: Building the Root CA](02_quantum_ca_root.md)
+### Modules
 
-- Creating a 10-year Root CA with ML-DSA-87 (mldsa87)
-- Configuring OpenSSL for quantum resistance
-- Implementing proper Unix file permissions
-- Setting up Subject Alternative Names (SANs)
-- Creating Certificate Revocation Lists (CRL)
-- Backing up the Root CA
+| Module | Description | Duration |
+|--------|-------------|----------|
+| [00 - Introduction](fips/00_fips_quantum_ca_intro.md) | Overview of FIPS 203/204/205, prerequisites, and lab objectives | 15 min |
+| [01 - Environment Setup](fipsqs/01_fips_quantum_ca_environment.md) | Installing and configuring OpenSSL 3.5.3 with PQC support | 30 min |
+| [02 - Root CA](fipsqs/02_fips_quantum_ca_root.md) | Building a Root CA with ML-DSA-87 | 45 min |
+| [03 - Intermediate CA](fipsqs/03_fips_quantum_ca_intermediate.md) | Creating an Intermediate CA with ML-DSA-65 | 45 min |
+| [04 - Certificates](fipsqs/04-fips_quantum_ca_certs.md) | Issuing end-entity certificates for servers and users | 60 min |
+| [05 - Revocation](fipsqs/05_fips_quantum_ca_recovation.md) | Implementing OCSP and CRL certificate revocation | 60 min |
+| [06 - Hybrid Methods](fipsqs/06_fips_quantum_ca_hybrid_methods.md) | IETF hybrid PQC methods (X25519MLKEM768, composite signatures) | 45 min |
 
-**Duration**: 45 minutes
 
-### [Module 3: Building the Intermediate CA](03_quantum_ca_intermediate.md)
 
-- Creating a 5-year Intermediate CA with ML-DSA-65 (mldsa65)
-- Establishing the certificate chain
-- Configuring CRL Distribution Points
-- Setting up OCSP responder certificates
-- Implementing Authority Information Access (AIA)
-- Creating certificate bundles
+### Algorithms Covered
 
-**Duration**: 45 minutes
+- **ML-DSA-44** (FIPS 204) - NIST Security Level 2
+- **ML-DSA-65** (FIPS 204) - NIST Security Level 3
+- **ML-DSA-87** (FIPS 204) - NIST Security Level 5
+- **SLH-DSA** variants (FIPS 205) - Hash-based signatures
+- **ML-KEM** variants (FIPS 203) - Key encapsulation
+- **Hybrid Key Exchange (Hybrid KEX)** - X25519MLKEM768 for TLS 1.3 *(IETF-based bonus learning)*
 
-### [Module 4: Building Certificates](04_quantum_ca_certificates.md)
+---
+<br>
 
-- Generating server certificates for web services
-- Creating user certificates for authentication
-- Building high-security certificates with ML-DSA-87
-- Configuring  SANs (DNS, IP, email, URI)
-- Exporting certificates in multiple formats
-- Managing certificate inventory
+## 📚 [Learning Path: NSA CNSA 2.0](/cnsa2/01_cnsa_quantum_ca_intro.md)
 
-**Duration**: 60 minutes
+**For government contractors and organizations requiring CNSA 2.0 compliance.**
 
-### [Module 5: Certificate Revocation](05_quantum_ca_revocation.md)
+This path uses OpenSSL 3.2+ with the Open Quantum Safe (OQS) provider for strict CNSA 2.0 algorithm compliance.
 
-- Implementing Certificate Revocation Lists (CRL)
-- Setting up OCSP responders
-- Revoking certificates with reason codes
-- Testing revocation mechanisms
-- Configuring OCSP stapling
-- Creating revocation reports
+### Modules
 
-**Duration**: 60 minutes
+| Module | Description | Duration |
+|--------|-------------|----------|
+| [00 - Introduction](cnsa2/00-INTRODUCTION.md) | Overview of CNSA 2.0 requirements and compliance deadlines | 15 min |
+| [01 - Environment Setup](cnsa2/01-ENVIRONMENT-SETUP.md) | Installing OpenSSL with OQS provider | 45 min |
+| [02 - Root CA](cnsa2/02-ROOT-CA.md) | Building a Root CA with ML-DSA-87 (Dilithium5) | 45 min |
+| [03 - Intermediate CA](cnsa2/03-INTERMEDIATE-CA.md) | Creating an Intermediate CA with ML-DSA-65 (Dilithium3) | 45 min |
+| [04 - Certificates](cnsa2/04-CERTIFICATES.md) | Issuing CNSA 2.0 compliant certificates | 60 min |
+| [05 - Revocation](cnsa2/05-REVOCATION.md) | Implementing OCSP and CRL certificate revocation | 60 min |
 
-## 🎓 Learning Outcomes
+### CNSA 2.0 Algorithm Requirements
 
-After completing this lab, hopefully you will be able to:
+| Algorithm Type | Approved Algorithms | NIST Designation |
+|----------------|---------------------|------------------|
+| Digital Signatures | ML-DSA-65, ML-DSA-87 | FIPS 204 |
+| Key Establishment | ML-KEM-768, ML-KEM-1024 | FIPS 203 |
+| Hash Functions | SHA-384, SHA-512 | FIPS 180-4 |
 
-- ✅ Build a complete PKI hierarchy
-- ✅ Generate quantum-resistant certificates using ML-DSA algorithms
-- ✅ Implement both CRL and OCSP revocation mechanisms
-- ✅ Apply security best practices with proper file permissions
-- ✅ Manage certificate lifecycle from creation to revocation
-- ✅ Prepare infrastructure for the post-quantum era
+**Note:** *CNSA 2.0 currently does NOT approve ML-DSA-44, SLH-DSA, or Falcon algorithms.* 
 
-## 🏗️ Infrastructure Overview
+---
+<br>
 
-```bash
-SassyCorp PKI Hierarchy
-│
-├── Root CA (ML-DSA-87 / mldsa87)
-│   ├── Validity: 10 years
-│   ├── Security Level: 5 (Highest)
-│   └── Purpose: Sign Intermediate CAs only
-│
-└── Intermediate CA (ML-DSA-65 / mldsa65)
-    ├── Validity: 5 years
-    ├── Security Level: 3 (Standard)
-    ├── Purpose: Issue end-entity certificates
-    │
-    ├── Server Certificates
-    │   ├── Web Servers (ML-DSA-65 / mldsa65)
-    │   ├── Database Servers (ML-DSA-87 / mldsa87)
-    │   └── API Servers (ML-DSA-65 / mldsa65)
-    │
-    ├── User Certificates (ML-DSA-65 / mldsa65)
-    │   ├── Email Protection
-    │   └── Client Authentication
-    │
-    └── OCSP Responder (ML-DSA-65 / mldsa65)
-        └── Certificate Status
-```
+## 🔧 Prerequisites
 
-## 🔑 Key Features
+### System Requirements
 
-### Security Features
+- **Operating System(S):** For CNSA 2.0, use a recent Ubuntu LTS with OpenSSL 3.2+. For the FIPS lab, we relied on Ubuntu 25.10 with OpenSSL 3.5.3.
+- **Permissions:** Root or sudo access
+- **Note** *The CNSA guide is intended to require using external OQS libraries with earlier versions of OpenSSL (in this case 3.2).  The FIPS lab relies on a curent release of Ubuntu (25.10) with current version of OpenSSL (3.5.3) which has all FIPS quantum requirements built in. I mean, you can compile if you want to.... We're not your mom.*
 
-- **Quantum-Resistant Algorithms**: ML-DSA-65 and ML-DSA-87 only
-- **SHA-512 Hashing**: Throughout the infrastructure
-- **Secure Permissions**: 400 for keys, 444 for certificates
-- **Complete Revocation**: CRL and OCSP support
+### Required Knowledge
 
-### Compliance Features
+- Basic Linux command line familiarity
+- Understanding of PKI concepts (certificates, CAs, chains)
+- Familiarity with X.509 certificate structure
 
-- **CNSA 2.0**: Full compliance with NSA requirements
-- **RFC 5280**: Internet X.509 PKI standards
-- **RFC 6960**: OCSP implementation
-- **FIPS 204**: Module-Lattice Digital Signature Standard
-
-## 📋 Lab Approach
-
-This lab guide uses a **manual, hands-on approach** where you:
-
-1. Type each command directly
-2. Observe the output in real-time
-3. Understand what each parameter does
-4. Learn to troubleshoot issues
-5. Build muscle memory for OpenSSL commands
-
-## 🏢 Organization Details
-
-Throughout the lab, we use the fictional **SassyCorp** organization:
-
-- **Organization**: SassyCorp
-- **Country**: US
-- **State**: Washington
-- **Locality**: Glacier
-- **Email Domain**: sassycorp.internal
-- **DNS Domain**: sassycorp.lab
+---
+<br>
 
 ## ⚠️ Important Notes
 
-### Security Warning
+### Security Considerations
 
-This lab is for **educational and internal testing purposes only**. In production:
+This lab guide is for **internal testing and educational purposes only**. In a production environment:
 
-- Use Hardware Security Modules (HSMs)
-- Implement air-gapped Root CAs
-- Enable  audit logging
-- Conduct regular security assessments
+1. **Hardware Security Modules (HSMs)** should be used to protect private keys
+2. **Air-gapped systems** should be used for Root CA operations
+3. **Multi-person control** should be implemented for Root CA access
+4. **Audit logging** must be enabled and monitored
+5. **Regular security assessments** should be conducted
 
-### Algorithm Naming Compatibility
+### Manual Command Entry
 
-The OQS provider has updated to use NIST standard names:
+Both learning paths use **manual command entry only**—no scripts. This approach ensures you:
 
-- **Current**: `mldsa65` and `mldsa87`
-- **Legacy**: `dilithium3` and `dilithium5`
+- Understand each step of the PKI workflow
+- Observe the output in real-time
+- Learn proper OpenSSL syntax and options
+- Build troubleshooting skills
+- Develop muscle memory for cryptographic operations
 
-Check your version and use the appropriate names. The lab guide uses the current NIST standard names.
+### Working with Configuration Files
 
-### CNSA 2.0 Strict Compliance
+Throughout this lab, you'll create several configuration files. When you see a configuration file in the guide:
 
-This lab uses **ONLY** the following algorithms:
+1. Create the file using your preferred text editor
+2. Copy the configuration content carefully
+3. Save the file with the specified name and path
+4. Verify the file permissions match what's specified
 
-- ✅ ML-DSA-65 (mldsa65) - Standard security
-- ✅ ML-DSA-87 (mldsa87) - Highest security
-- ✅ SHA-512 - Hashing
+Example of creating a configuration file:
 
-The following are **NOT** used (not CNSA 2.0 compliant):
+```bash
+# Create and edit a file
+vim /path/to/config.cnf
 
-- ❌ ML-DSA-44 (mldsa44/dilithium2)
-- ❌ Falcon algorithms
-- ❌ SPHINCS+ algorithms
-- ❌ Classic RSA/ECDSA
+# After saving, set appropriate permissions
+chmod 644 /path/to/config.cnf
 
-## 📊 Time Commitment
+# Verify the file was created correctly
+ls -la /path/to/config.cnf
+```
 
-- **Total Lab Duration**: 4-5 hours
-- **Module 1**: 30 minutes (Setup)
-- **Module 2**: 45 minutes (Root CA)
-- **Module 3**: 45 minutes (Intermediate CA)
-- **Module 4**: 60 minutes (Certificates)
-- **Module 5**: 60 minutes (Revocation)
 
-## 📚 Additional Resources
 
-### Standards and Specifications
+---
+<br>
 
+## 📖 Additional Resources
+
+### NIST Standards
+
+- [FIPS 203: ML-KEM Standard](https://csrc.nist.gov/pubs/fips/203/final)
+- [FIPS 204: ML-DSA Standard](https://csrc.nist.gov/pubs/fips/204/final)
+- [FIPS 205: SLH-DSA Standard](https://csrc.nist.gov/pubs/fips/205/final)
 - [NIST Post-Quantum Cryptography](https://csrc.nist.gov/projects/post-quantum-cryptography)
-- [NSA CNSA 2.0 Suite](https://www.nsa.gov/Press-Room/News-Highlights/Article/Article/3148990/nsa-releases-future-quantum-resistant-qr-algorithm-requirements-for-national-se/)
-- [FIPS 204: Module-Lattice-Based Digital Signature Standard](https://csrc.nist.gov/pubs/fips/204/ipd)
-- [RFC 5280: Internet X.509 PKI](https://www.rfc-editor.org/rfc/rfc5280.html)
-- [RFC 6960: OCSP](https://www.rfc-editor.org/rfc/rfc6960.html)
 
-### OpenSSL Resources
+### NSA CNSA 2.0
 
-- [OpenSSL Documentation](https://www.openssl.org/docs/)
+- [CNSA 2.0 Announcement](https://media.defense.gov/2022/Sep/07/2003071834/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS_.PDF)
+- [CNSA 2.0 FAQ](https://media.defense.gov/2022/Sep/07/2003071836/-1/-1/0/CSI_CNSA_2.0_FAQ_.PDF)
+
+### OpenSSL
+
+- [OpenSSL 3.5 Documentation](https://www.openssl.org/docs/)
+- [OpenSSL PQC Announcement](https://openssl-library.org/post/2025-02-04-release-announcement-3.5/)
 - [Open Quantum Safe Project](https://openquantumsafe.org/)
 - [OQS Provider for OpenSSL 3](https://github.com/open-quantum-safe/oqs-provider)
 
-## 📄 License
+### IETF Standards
 
-This lab guide is provided under the Apache 2.0 License. See [LICENSE](LICENSE) file for details.
+- [RFC 9794: PQ/T Hybrid Terminology](https://datatracker.ietf.org/doc/rfc9794/)
+- [Hybrid Key Exchange in TLS 1.3](https://datatracker.ietf.org/doc/draft-ietf-tls-hybrid-design/)
+- [Composite ML-DSA for X.509](https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/)
+
+---
+<br>
 
 ## 🤝 Contributing
 
 Contributions are welcome! Please:
 
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Open a Pull Request
+Please refer to [contributing.md](contributing.md) for more details.
 
-## 💬 Support
+---
+<br>
 
-For questions or issues:
+## 📄 License
 
-- Open an issue in this repository
-- Check the troubleshooting sections in each module
-- Review the verification commands
-- Ask us a quetion [@DevCentral!](https://community.f5.com)
+This lab guide is provided under the MIT License. See [LICENSE](LICENSE) file for details.
 
-## 🚦 Ready to Start?
-
-Begin your journey into quantum-resistant PKI:
-
-### [→ Start with Module 1: Introduction](01_quantum_ca_intro.md)
-
-</br>
-
-Hack the planet! 🔐🚀
+---
+<br>
+<br>
+<br>
+I know someone who LOVES emojis... 🫵👻😻🤡🦹‍♀️🙆‍♂️🧚‍♀️🧛‍♀️🫵
