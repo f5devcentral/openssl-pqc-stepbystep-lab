@@ -150,8 +150,6 @@ chmod 644 /path/to/config.cnf
 ls -la /path/to/config.cnf
 ```
 
-
-
 ---
 <br>
 
@@ -183,7 +181,6 @@ ls -la /path/to/config.cnf
 - [Composite ML-DSA for X.509](https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/)
 
 ---
-<br>
 
 ## 🤝 Contributing
 
@@ -192,7 +189,6 @@ Contributions are welcome! Please:
 Please refer to [contributing.md](contributing.md) for more details.
 
 ---
-<br>
 
 ## 📄 License
 
