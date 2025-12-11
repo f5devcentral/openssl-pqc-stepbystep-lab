@@ -866,13 +866,14 @@ rm -rf ~/openssl-build
 
 After completing your chosen path, return to your learning path documentation:
 
-- 📘 **FIPS 203/204/205 Path:** Continue with Module 01 (Environment Setup) or Module 02 (Root CA)
-- 📗 **CNSA 2.0 Path:** Continue with the Root CA module
+- 📘 [**FIPS 203/204/205 Path:**](/fipsqs/00_fips_quantum_ca_intro.md) Continue with the FIPS Lab
+- 📗 [**CNSA 2.0 Path:**](/cnsa2/01_cnsa_quantum_ca_intro.md) Continue with the CNSA 2.0 Lab
 
 Remember to use the appropriate command syntax:
 - 🅰️ **Path A (OQS):** Include `-provider oqsprovider -provider default` flags
 - 🅱️ **Path B (OpenSSL 3.5):** Use `openssl-pqc` instead of `openssl`
 
 ---
-
+<br>
+<br>
 🔐 Happy quantum-safe computing, Rebecca! 🎉🦾
