@@ -2,7 +2,7 @@
 
 ## 📋 Overview
 
-This addendum provides detailed instructions for enabling post-quantum cryptography support on Ubuntu systems. Choose the path that matches your Ubuntu version and requirements. Yea, we know not everyone is using Ubuntu but this is basd on our lab guides and that's what we used. 🐧 What it will do is give you a better idea of what you might want to do internally with our installations, either updating OpenSSL fully or "simply" adding OQS support as needed. 
+This addendum provides detailed instructions for enabling post-quantum cryptography support on Ubuntu systems. Choose the path that matches your Ubuntu version and requirements. Yea, we know not everyone is using Ubuntu but this is based on our lab guides and that's what we used. 🐧 What it will do is give you a better idea of what you might want to do internally with our installations, either updating OpenSSL fully or "simply" adding OQS support as needed. 
 
 And [contributions](contributing.md) welcome! 🤝 Add your linux flavor or unique use case we're probably forgetting.
 
