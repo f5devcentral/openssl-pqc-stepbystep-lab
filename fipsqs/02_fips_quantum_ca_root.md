@@ -182,7 +182,7 @@ DNS.1 = intermediate.sassycorp.lab
 email.1 = pki@sassycorp.internal
 ```
 
-Save and exit (Ctrl+X, Y, Enter in vim).
+Save and exit.
 
 Set appropriate permissions on the configuration file:
 

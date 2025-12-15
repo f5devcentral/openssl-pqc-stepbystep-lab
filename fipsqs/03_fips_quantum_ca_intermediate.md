@@ -186,7 +186,7 @@ noCheck = ignored
 authorityKeyIdentifier = keyid:always
 ```
 
-Save and exit (Ctrl+X, Y, Enter).
+Save and exit.
 
 Set permissions:
 

@@ -20,14 +20,12 @@ The Commercial National Security Algorithm Suite 2.0 specifies the following qua
 | Key Establishment | ML-KEM-1024 (FIPS 203) | mlkem1024 | kyber1024 | Highest security key exchange |
 | Hash Functions | SHA-384 or SHA-512 | sha384, sha512 | - | Integrity verification |
 
-**Important Note**: Only ML-DSA-65 (mldsa65) and ML-DSA-87 (mldsa87) are CNSA 2.0 compliant for digital signatures. Other algorithms like ML-DSA-44, Falcon-512, and Falcon-1024 are NOT part of CNSA 2.0.
-
-**Algorithm Naming**: Newer versions of the OQS provider use NIST standardized names (mldsa65, mldsa87) instead of the legacy names (dilithium3, dilithium5).
+**Important Note**: *Only ML-DSA-65 (mldsa65) and ML-DSA-87 (mldsa87) are CNSA 2.0 compliant for digital signatures. Other algorithms like ML-DSA-44, Falcon-512, and Falcon-1024 are NOT part of CNSA 2.0.*
 
 ### Prerequisites
 
-1. **OpenSSL 3.2+** with OQS provider support
-2. **Operating System**: Ubuntu 25.04 but you do you. Installing liboqs might differ.
+1. **OpenSSL 3.2+** with OQS provider support installed
+2. **Operating System**: Ubuntu 25.04 but you do you. Installing liboqs might differ
 3. **Permissions**: Root or sudo access for initial setup
 4. **Text Editor**: Familiarity with vi, vim, or your preferred editor
 

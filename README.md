@@ -8,7 +8,7 @@
 
 ## Hands-On Learning for Quantum-Resistant PKI Infrastructure
 
-This hands-on lab guide provides basic understanding and a tiny tutorial for building quantum-resistant Certificate Authority (CA) infrastructure using OpenSSL. This repository provides two distinct learning paths based on your compliance requirements
+This hands-on lab guide provides basic understanding and a tutorial for building quantum-resistant Certificate Authority (CA) infrastructure using OpenSSL. This repository provides distinct learning paths that mirror federal or enterprise complaince requirements plus alternate methods to utilize OpenSSL. You're excited, I can tell.
 
 ---
 <br>
@@ -63,7 +63,7 @@ This path uses OpenSSL 3.5.3's native post-quantum cryptography support—no ext
 
 **For government contractors and organizations requiring CNSA 2.0 compliance.**
 
-This path uses OpenSSL 3.2+ with the Open Quantum Safe (OQS) provider for strict CNSA 2.0 algorithm compliance.
+This path uses OpenSSL 3.2+ with the Open Quantum Safe (OQS) provider and strict CNSA 2.0 algorithm compliance.
 
 ### Modules
 
@@ -93,9 +93,9 @@ This path uses OpenSSL 3.2+ with the Open Quantum Safe (OQS) provider for strict
 
 ### System Requirements
 
-- **Operating System(S):** For CNSA 2.0, use a recent Ubuntu LTS with OpenSSL 3.2+. For the FIPS lab, we relied on Ubuntu 25.10 with OpenSSL 3.5.3.
+- **Operating System(S):** CNSA 2.0 - Ubuntu 25.04 with OpenSSL 3.2+. NIST FIPS - Ubuntu 25.10 with OpenSSL 3.5.3.
 - **Permissions:** Root or sudo access
-- **Note** *The CNSA guide is intended to require using external OQS libraries with earlier versions of OpenSSL (in this case 3.2).  The FIPS lab relies on a curent release of Ubuntu (25.10) with current version of OpenSSL (3.5.3) which has all FIPS quantum requirements built in. I mean, you can compile if you want to.... We're not your mom.*
+- **Note** *The CNSA guide is intended to require using external OQS libraries with earlier versions of OpenSSL (in this case 3.2).  The FIPS lab relies on a curent release of Ubuntu (25.10) with current version of OpenSSL (3.5.3) which has all FIPS PQC requirements built in. I mean, you can compile if you want to.... We're not your mom.*
 
 ### Required Knowledge
 

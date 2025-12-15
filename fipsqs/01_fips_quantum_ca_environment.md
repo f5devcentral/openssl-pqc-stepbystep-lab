@@ -1,8 +1,8 @@
 # Module 1: Environment Setup
 
-This module guides you through verifying your system's OpenSSL installation has native post-quantum cryptography support and preparing the directory structure for Sassy Corp's quantum-resistant PKI. In the CNSA 2.0 lab we purposefully use an LTS version of Ubuntu with OpenSSL 3.2 which requires us to isntall and compile the OQC libraries for PQC support.  This is a good simulation for what users will have to do in more locked down environments where they can't just upgrade all willy nilly.
+This module guides you through verifying your system's OpenSSL installation has native post-quantum cryptography support and preparing the directory structure for Sassy Corp's quantum-resistant PKI.
 
-For FIPS PQC we're going to rely on OpenSSL 3.5 which has NIST standardized algorithms already installed making our lives much easier. OpenSSL 3.5.x is the first version to include built-in support for FIPS 203, 204, and 205 algorithms—no external providers required. For this we lab we used Ubuntu 25.10 but any linux variant that has OpenSSL 3.5.x will suffice. Basic instructions shouldn't deviate.
+For FIPS PQC we're going to rely on OpenSSL 3.5 which has NIST standardized algorithms already installed making our lives much easier. OpenSSL 3.5 is the first version to include built-in support for FIPS 203, 204, and 205 algorithms—no external providers required. For this we lab we used Ubuntu 25.10 but any linux variant that has OpenSSL 3.5.x will suffice. Basic instructions shouldn't deviate.
 
 ---
 
@@ -31,7 +31,7 @@ openssl version
 OpenSSL 3.5.x <date>
 ```
 
-If your version is below 3.5.0, you will need to upgrade your operating system or install a newer OpenSSL package before continuing.
+If your version is below 3.5.0, you will need to upgrade your operating system or [install a newer OpenSSL package](/addenum_updating_openssl_pqc.md) before continuing.
 
 ---
 

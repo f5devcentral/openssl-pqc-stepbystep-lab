@@ -1,4 +1,4 @@
-# Module 6: IETF Hybrid PQC Methods *(Addendum/Bonus Module)*
+# Module 6: IETF Hybrid PQC Methods *(addendum/bonus module)*
 
 ## Overview
 
