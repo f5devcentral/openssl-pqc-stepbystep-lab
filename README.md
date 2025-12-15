@@ -37,7 +37,7 @@ This path uses OpenSSL 3.5.3's native post-quantum cryptography support—no ext
 
 | Module | Description | Duration |
 |--------|-------------|----------|
-| [00 - Introduction](/fips/00_fips_quantum_ca_intro.md) | Overview of FIPS 203/204/205, prerequisites, and lab objectives | 15 min |
+| [00 - Introduction](/fipsqs/00_fips_quantum_ca_intro.md) | Overview of FIPS 203/204/205, prerequisites, and lab objectives | 15 min |
 | [01 - Environment Setup](/fipsqs/01_fips_quantum_ca_environment.md) | Installing and configuring OpenSSL 3.5.3 with PQC support | 30 min |
 | [02 - Root CA](/fipsqs/02_fips_quantum_ca_root.md) | Building a Root CA with ML-DSA-87 | 45 min |
 | [03 - Intermediate CA](/fipsqs/03_fips_quantum_ca_intermediate.md) | Creating an Intermediate CA with ML-DSA-65 | 45 min |
@@ -69,12 +69,12 @@ This path uses OpenSSL 3.2+ with the Open Quantum Safe (OQS) provider for strict
 
 | Module | Description | Duration |
 |--------|-------------|----------|
-| [00 - Introduction](/cnsa2/00-INTRODUCTION.md) | Overview of CNSA 2.0 requirements and compliance deadlines | 15 min |
-| [01 - Environment Setup](/cnsa2/01-ENVIRONMENT-SETUP.md) | Installing OpenSSL with OQS provider | 45 min |
-| [02 - Root CA](/cnsa2/02-ROOT-CA.md) | Building a Root CA with ML-DSA-87 (Dilithium5) | 45 min |
-| [03 - Intermediate CA](/cnsa2/03-INTERMEDIATE-CA.md) | Creating an Intermediate CA with ML-DSA-65 (Dilithium3) | 45 min |
-| [04 - Certificates](/cnsa2/04-CERTIFICATES.md) | Issuing CNSA 2.0 compliant certificates | 60 min |
-| [05 - Revocation](/cnsa2/05-REVOCATION.md) | Implementing OCSP and CRL certificate revocation | 60 min |
+| [01 - Introduction](/cnsa2/01_cnsa_quantum_ca_intro.md) | Overview of CNSA 2.0 requirements and compliance deadlines | 15 min |
+| [02 - Environment Setup](/cnsa2/02_cnsa_quantum_ca_root.md) | Installing OpenSSL with OQS provider | 45 min |
+| [03 - Root CA](/cnsa2/03_cnsa_quantum_ca_intermediate.md) | Building a Root CA with ML-DSA-87 (Dilithium5) | 45 min |
+| [04 - Intermediate CA](/cnsa2/03_cnsa_quantum_ca_intermediate.md) | Creating an Intermediate CA with ML-DSA-65 (Dilithium3) | 45 min |
+| [05 - Certificates](/cnsa2/04_cnsa_quantum_ca_certificates.md) | Issuing CNSA 2.0 compliant certificates | 60 min |
+| [06 - Revocation](/cnsa2/05_cnsa_quantum_ca_revocation.md) | Implementing OCSP and CRL certificate revocation | 60 min |
 
 ### CNSA 2.0 Algorithm Requirements
 
