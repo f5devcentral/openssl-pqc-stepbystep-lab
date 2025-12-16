@@ -40,19 +40,19 @@ The Intermediate CA uses ML-DSA-65 because:
 
 ## Step 1: Ensure Correct User Context
 
-Verify you are operating as the pqcadmin user:
+**Verify you are operating as the pqcadmin user:**
 
 ```bash
 whoami
 ```
 
-If not, switch to the pqcadmin user:
+**If not, switch to the pqcadmin user:**
 
 ```bash
 sudo su - pqcadmin
 ```
 
-Navigate to the Intermediate CA directory:
+**Navigate to the Intermediate CA directory:**
 
 ```bash
 cd /opt/sassycorp-pqc/intermediate-ca
@@ -62,13 +62,13 @@ cd /opt/sassycorp-pqc/intermediate-ca
 
 ## Step 2: Create Intermediate CA OpenSSL Configuration
 
-Create the OpenSSL configuration file:
+**Create the OpenSSL configuration file:**
 
 ```bash
 vim /opt/sassycorp-pqc/intermediate-ca/openssl.cnf
 ```
 
-Enter the following configuration:
+**Enter the following configuration:**
 
 ```ini
 # Sassy Corp Intermediate CA - OpenSSL Configuration
@@ -188,7 +188,7 @@ authorityKeyIdentifier = keyid:always
 
 Save and exit.
 
-Set permissions:
+**Set permissions:**
 
 ```bash
 chmod 644 /opt/sassycorp-pqc/intermediate-ca/openssl.cnf
@@ -198,19 +198,19 @@ chmod 644 /opt/sassycorp-pqc/intermediate-ca/openssl.cnf
 
 ## Step 3: Generate Intermediate CA Private Key
 
-Generate the ML-DSA-65 private key:
+**Generate the ML-DSA-65 private key:**
 
 ```bash
 openssl genpkey -algorithm ML-DSA-65 -out /opt/sassycorp-pqc/intermediate-ca/private/intermediate-ca.key
 ```
 
-Set restrictive permissions:
+**Set restrictive permissions:**
 
 ```bash
 chmod 400 /opt/sassycorp-pqc/intermediate-ca/private/intermediate-ca.key
 ```
 
-Verify the key:
+**Verify the key:**
 
 ```bash
 openssl pkey -in /opt/sassycorp-pqc/intermediate-ca/private/intermediate-ca.key -noout -text | head -5
@@ -228,7 +228,7 @@ priv:
 
 ## Step 4: Create Certificate Signing Request
 
-Create a CSR for the Intermediate CA:
+**Create a CSR for the Intermediate CA:**
 
 ```bash
 openssl req -config /opt/sassycorp-pqc/intermediate-ca/openssl.cnf \
@@ -237,7 +237,7 @@ openssl req -config /opt/sassycorp-pqc/intermediate-ca/openssl.cnf \
     -out /opt/sassycorp-pqc/intermediate-ca/csr/intermediate-ca.csr
 ```
 
-Verify the CSR:
+**Verify the CSR:**
 
 ```bash
 openssl req -in /opt/sassycorp-pqc/intermediate-ca/csr/intermediate-ca.csr -noout -text
@@ -254,7 +254,7 @@ Certificate Request:
             Public Key Algorithm: ML-DSA-65
 ```
 
-Verify the CSR signature:
+**Verify the CSR signature:**
 
 ```bash
 openssl req -in /opt/sassycorp-pqc/intermediate-ca/csr/intermediate-ca.csr -noout -verify
@@ -270,7 +270,7 @@ Certificate request self-signature verify OK
 
 ## Step 5: Sign the Intermediate CA with Root CA
 
-Sign the CSR using the Root CA (valid for 5 years / 1825 days):
+**Sign the CSR using the Root CA** (valid for 5 years / 1825 days):
 
 ```bash
 openssl ca -config /opt/sassycorp-pqc/root-ca/openssl.cnf \
@@ -282,7 +282,7 @@ openssl ca -config /opt/sassycorp-pqc/root-ca/openssl.cnf \
     -out /opt/sassycorp-pqc/intermediate-ca/certs/intermediate-ca.crt
 ```
 
-When prompted, confirm the signing:
+**When prompted, confirm the signing:**
 
 ```
 Sign the certificate? [y/n]: y
@@ -301,7 +301,7 @@ Sign the certificate? [y/n]: y
 | `-in` | Input CSR file |
 | `-out` | Output certificate file |
 
-Set permissions on the certificate:
+**Set permissions on the certificate:**
 
 ```bash
 chmod 444 /opt/sassycorp-pqc/intermediate-ca/certs/intermediate-ca.crt
@@ -311,7 +311,7 @@ chmod 444 /opt/sassycorp-pqc/intermediate-ca/certs/intermediate-ca.crt
 
 ## Step 6: Verify the Intermediate CA Certificate
 
-View the certificate:
+**View the certificate:**
 
 ```bash
 openssl x509 -in /opt/sassycorp-pqc/intermediate-ca/certs/intermediate-ca.crt -noout -text
@@ -319,7 +319,7 @@ openssl x509 -in /opt/sassycorp-pqc/intermediate-ca/certs/intermediate-ca.crt -n
 
 ### Check Critical Fields
 
-Verify the issuer (should be Root CA):
+**Verify the issuer (should be Root CA):**
 
 ```bash
 openssl x509 -in /opt/sassycorp-pqc/intermediate-ca/certs/intermediate-ca.crt -noout -issuer
@@ -331,7 +331,7 @@ openssl x509 -in /opt/sassycorp-pqc/intermediate-ca/certs/intermediate-ca.crt -n
 issuer=C=US, ST=Washington, L=Winthrop, O=Sassy Corp, OU=PKI Operations, CN=Sassy Corp Root CA, emailAddress=pki@sassycorp.internal
 ```
 
-Verify the subject:
+**Verify the subject:**
 
 ```bash
 openssl x509 -in /opt/sassycorp-pqc/intermediate-ca/certs/intermediate-ca.crt -noout -subject
@@ -343,7 +343,7 @@ openssl x509 -in /opt/sassycorp-pqc/intermediate-ca/certs/intermediate-ca.crt -n
 subject=C=US, ST=Washington, L=Winthrop, O=Sassy Corp, OU=PKI Operations, CN=Sassy Corp Intermediate CA, emailAddress=pki@sassycorp.internal
 ```
 
-Verify the signature algorithm:
+**Verify the signature algorithm:**
 
 ```bash
 openssl x509 -in /opt/sassycorp-pqc/intermediate-ca/certs/intermediate-ca.crt -noout -text | grep "Signature Algorithm"
@@ -358,7 +358,7 @@ openssl x509 -in /opt/sassycorp-pqc/intermediate-ca/certs/intermediate-ca.crt -n
 
 > Note: The signature is ML-DSA-87 because the Root CA signed the certificate.
 
-Verify Basic Constraints:
+**Verify Basic Constraints:**
 
 ```bash
 openssl x509 -in /opt/sassycorp-pqc/intermediate-ca/certs/intermediate-ca.crt -noout -text | grep -A1 "Basic Constraints"
@@ -375,7 +375,7 @@ openssl x509 -in /opt/sassycorp-pqc/intermediate-ca/certs/intermediate-ca.crt -n
 
 ## Step 7: Verify Certificate Chain
 
-Verify the Intermediate CA certificate against the Root CA:
+**Verify the Intermediate CA certificate against the Root CA:**
 
 ```bash
 openssl verify -CAfile /opt/sassycorp-pqc/root-ca/certs/root-ca.crt /opt/sassycorp-pqc/intermediate-ca/certs/intermediate-ca.crt
@@ -391,19 +391,19 @@ openssl verify -CAfile /opt/sassycorp-pqc/root-ca/certs/root-ca.crt /opt/sassyco
 
 ## Step 8: Create Certificate Chain Bundle
 
-Create a certificate chain file (Intermediate + Root):
+**Create a certificate chain file** (Intermediate + Root):
 
 ```bash
 cat /opt/sassycorp-pqc/intermediate-ca/certs/intermediate-ca.crt /opt/sassycorp-pqc/root-ca/certs/root-ca.crt > /opt/sassycorp-pqc/intermediate-ca/certs/ca-chain.crt
 ```
 
-Set permissions:
+**Set permissions:**
 
 ```bash
 chmod 444 /opt/sassycorp-pqc/intermediate-ca/certs/ca-chain.crt
 ```
 
-Verify the chain bundle contains both certificates:
+**Verify the chain bundle contains both certificates:**
 
 ```bash
 openssl crl2pkcs7 -nocrl -certfile /opt/sassycorp-pqc/intermediate-ca/certs/ca-chain.crt | openssl pkcs7 -print_certs -noout
@@ -423,7 +423,7 @@ issuer=C=US, ST=Washington, L=Winthrop, O=Sassy Corp, OU=PKI Operations, CN=Sass
 
 ## Step 9: Generate Initial Intermediate CA CRL
 
-Create the initial CRL:
+**Create the initial CRL:**
 
 ```bash
 openssl ca -config /opt/sassycorp-pqc/intermediate-ca/openssl.cnf \
@@ -431,13 +431,13 @@ openssl ca -config /opt/sassycorp-pqc/intermediate-ca/openssl.cnf \
     -out /opt/sassycorp-pqc/intermediate-ca/crl/intermediate-ca.crl
 ```
 
-Set permissions:
+**Set permissions:** (Cert revocation lists will be updated with frequency hence the 644)
 
 ```bash
-chmod 444 /opt/sassycorp-pqc/intermediate-ca/crl/intermediate-ca.crl
+chmod 644 /opt/sassycorp-pqc/intermediate-ca/crl/intermediate-ca.crl
 ```
 
-Verify the CRL:
+**Verify the CRL:**
 
 ```bash
 openssl crl -in /opt/sassycorp-pqc/intermediate-ca/crl/intermediate-ca.crl -noout -text
@@ -462,19 +462,19 @@ No Revoked Certificates.
 
 ## Step 10: Create OCSP Signing Certificate
 
-Generate a key for the OCSP responder:
+**Generate a key for the OCSP responder:**
 
 ```bash
 openssl genpkey -algorithm ML-DSA-65 -out /opt/sassycorp-pqc/ocsp/private/ocsp.key
 ```
 
-Set permissions:
+**Set permissions:**
 
 ```bash
 chmod 400 /opt/sassycorp-pqc/ocsp/private/ocsp.key
 ```
 
-Create a CSR for the OCSP responder:
+**Create a CSR for the OCSP responder:**
 
 ```bash
 openssl req -new \
@@ -483,7 +483,7 @@ openssl req -new \
     -out /opt/sassycorp-pqc/ocsp/certs/ocsp.csr
 ```
 
-Sign the OCSP certificate (valid for 1 year):
+**Sign the OCSP certificate (valid for 1 year):**
 
 ```bash
 openssl ca -config /opt/sassycorp-pqc/intermediate-ca/openssl.cnf \
@@ -496,13 +496,13 @@ openssl ca -config /opt/sassycorp-pqc/intermediate-ca/openssl.cnf \
 
 Confirm the signing when prompted.
 
-Set permissions:
+**Set permissions:**
 
 ```bash
 chmod 444 /opt/sassycorp-pqc/ocsp/certs/ocsp.crt
 ```
 
-Verify the OCSP certificate:
+**Verify the OCSP certificate:**
 
 ```bash
 openssl x509 -in /opt/sassycorp-pqc/ocsp/certs/ocsp.crt -noout -text | grep -A1 "Extended Key Usage"
@@ -519,7 +519,7 @@ openssl x509 -in /opt/sassycorp-pqc/ocsp/certs/ocsp.crt -noout -text | grep -A1 
 
 ## Step 11: Export Public Key
 
-Extract and save the Intermediate CA public key:
+**Extract and save the Intermediate CA public key:**
 
 ```bash
 openssl x509 -in /opt/sassycorp-pqc/intermediate-ca/certs/intermediate-ca.crt -noout -pubkey > /opt/sassycorp-pqc/intermediate-ca/certs/intermediate-ca.pub
@@ -533,7 +533,7 @@ chmod 444 /opt/sassycorp-pqc/intermediate-ca/certs/intermediate-ca.pub
 
 ## Step 12: Verify Database Update
 
-Check that the Root CA database was updated:
+**Check that the Root CA database was updated:**
 
 ```bash
 cat /opt/sassycorp-pqc/root-ca/index.txt
@@ -545,7 +545,7 @@ cat /opt/sassycorp-pqc/root-ca/index.txt
 V	<expiry date>		1000	unknown	/C=US/ST=Washington/L=Winthrop/O=Sassy Corp/OU=PKI Operations/CN=Sassy Corp Intermediate CA/emailAddress=pki@sassycorp.internal
 ```
 
-Check the serial number:
+**Check the serial number:**
 
 ```bash
 cat /opt/sassycorp-pqc/root-ca/serial
@@ -567,7 +567,7 @@ cat /opt/sassycorp-pqc/intermediate-ca/index.txt
 
 ## Step 13: Verify Final Directory State
 
-List all Intermediate CA files:
+**List all Intermediate CA files:**
 
 ```bash
 find /opt/sassycorp-pqc/intermediate-ca -type f | sort

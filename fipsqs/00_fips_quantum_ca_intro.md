@@ -212,7 +212,7 @@ Throughout this lab:
 
 ## Ready to Begin
 
-You now understand the purpose and structure of this lab. Prepare yourself and let's get PQCing!
+You now understand the structure of this lab and the methods to our madness. Prepare yourself and let's get typing!
 
 ---
 

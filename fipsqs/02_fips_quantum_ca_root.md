@@ -40,19 +40,19 @@ The Root CA requires the highest security level because:
 
 ## Step 1: Ensure Correct User Context
 
-Verify you are operating as the pqcadmin user:
+**Verify you are operating as the pqcadmin user:**
 
 ```bash
 whoami
 ```
 
-If not, switch to the pqcadmin user:
+**If not, switch to the pqcadmin user:**
 
 ```bash
 sudo su - pqcadmin
 ```
 
-Navigate to the Root CA directory:
+**Navigate to the Root CA directory:**
 
 ```bash
 cd /opt/sassycorp-pqc/root-ca
@@ -62,13 +62,13 @@ cd /opt/sassycorp-pqc/root-ca
 
 ## Step 2: Create Root CA OpenSSL Configuration
 
-Create the OpenSSL configuration file for the Root CA:
+**Create the OpenSSL configuration file for the Root CA (and of course you can modify this to your own internal needs):**
 
 ```bash
 vim /opt/sassycorp-pqc/root-ca/openssl.cnf
 ```
 
-Enter the following configuration:
+**Enter the following configuration:**
 
 ```ini
 # Sassy Corp Root CA - OpenSSL Configuration
@@ -184,7 +184,7 @@ email.1 = pki@sassycorp.internal
 
 Save and exit.
 
-Set appropriate permissions on the configuration file:
+**Set appropriate permissions on the configuration file:**
 
 ```bash
 chmod 644 /opt/sassycorp-pqc/root-ca/openssl.cnf
@@ -194,19 +194,19 @@ chmod 644 /opt/sassycorp-pqc/root-ca/openssl.cnf
 
 ## Step 3: Generate Root CA Private Key
 
-Generate the ML-DSA-87 private key:
+**Generate the ML-DSA-87 private key:**
 
 ```bash
 openssl genpkey -algorithm ML-DSA-87 -out /opt/sassycorp-pqc/root-ca/private/root-ca.key
 ```
 
-Set restrictive permissions on the private key:
+**Set restrictive permissions on the private key:**
 
 ```bash
 chmod 400 /opt/sassycorp-pqc/root-ca/private/root-ca.key
 ```
 
-Verify the key was created:
+**Verify the key was created:**
 
 ```bash
 ls -la /opt/sassycorp-pqc/root-ca/private/
@@ -222,7 +222,7 @@ ls -la /opt/sassycorp-pqc/root-ca/private/
 
 ## Step 4: Examine the Private Key
 
-View the private key details (without exposing the actual key material):
+**View the private key details** (without exposing the actual key material):
 
 ```bash
 openssl pkey -in /opt/sassycorp-pqc/root-ca/private/root-ca.key -noout -text | head -20
@@ -236,7 +236,7 @@ priv:
     <hexadecimal values representing the private key>
 ```
 
-Extract and view the public key component:
+**Extract and view the public key component:**
 
 ```bash
 openssl pkey -in /opt/sassycorp-pqc/root-ca/private/root-ca.key -pubout -out /opt/sassycorp-pqc/root-ca/certs/root-ca.pub
@@ -250,7 +250,7 @@ openssl pkey -pubin -in /opt/sassycorp-pqc/root-ca/certs/root-ca.pub -noout -tex
 
 ## Step 5: Create Self-Signed Root CA Certificate
 
-Generate the self-signed Root CA certificate valid for 10 years (3650 days):
+**Generate the self-signed Root CA certificate valid for 10 years (3650 days):**
 
 ```bash
 openssl req -config /opt/sassycorp-pqc/root-ca/openssl.cnf \
@@ -272,7 +272,7 @@ openssl req -config /opt/sassycorp-pqc/root-ca/openssl.cnf \
 | `-extensions v3_ca` | Use v3_ca extension section |
 | `-out` | Output file for the certificate |
 
-Set permissions on the certificate:
+**Set permissions on the certificate:**
 
 ```bash
 chmod 444 /opt/sassycorp-pqc/root-ca/certs/root-ca.crt
@@ -282,7 +282,7 @@ chmod 444 /opt/sassycorp-pqc/root-ca/certs/root-ca.crt
 
 ## Step 6: Verify the Root CA Certificate
 
-View the complete certificate:
+**View the complete certificate:**
 
 ```bash
 openssl x509 -in /opt/sassycorp-pqc/root-ca/certs/root-ca.crt -noout -text
@@ -290,7 +290,7 @@ openssl x509 -in /opt/sassycorp-pqc/root-ca/certs/root-ca.crt -noout -text
 
 ### Verify Key Fields
 
-Check the issuer and subject (should be identical for self-signed):
+**Check the issuer and subject (should be identical for self-signed):**
 
 ```bash
 openssl x509 -in /opt/sassycorp-pqc/root-ca/certs/root-ca.crt -noout -issuer -subject
@@ -303,7 +303,7 @@ issuer=C=US, ST=Washington, L=Winthrop, O=Sassy Corp, OU=PKI Operations, CN=Sass
 subject=C=US, ST=Washington, L=Winthrop, O=Sassy Corp, OU=PKI Operations, CN=Sassy Corp Root CA, emailAddress=pki@sassycorp.internal
 ```
 
-Check the validity dates:
+**Check the validity dates:**
 
 ```bash
 openssl x509 -in /opt/sassycorp-pqc/root-ca/certs/root-ca.crt -noout -dates
@@ -316,7 +316,7 @@ notBefore=<current date>
 notAfter=<date 10 years from now>
 ```
 
-Check the signature algorithm:
+**Check the signature algorithm:**
 
 ```bash
 openssl x509 -in /opt/sassycorp-pqc/root-ca/certs/root-ca.crt -noout -text | grep "Signature Algorithm"
@@ -329,7 +329,7 @@ openssl x509 -in /opt/sassycorp-pqc/root-ca/certs/root-ca.crt -noout -text | gre
     Signature Algorithm: ML-DSA-87
 ```
 
-Verify the Basic Constraints extension:
+**Verify the Basic Constraints extension:**
 
 ```bash
 openssl x509 -in /opt/sassycorp-pqc/root-ca/certs/root-ca.crt -noout -text | grep -A1 "Basic Constraints"
@@ -342,7 +342,7 @@ openssl x509 -in /opt/sassycorp-pqc/root-ca/certs/root-ca.crt -noout -text | gre
                 CA:TRUE, pathlen:1
 ```
 
-Verify the Key Usage extension:
+**Verify the Key Usage extension:**
 
 ```bash
 openssl x509 -in /opt/sassycorp-pqc/root-ca/certs/root-ca.crt -noout -text | grep -A1 "Key Usage"
@@ -359,7 +359,7 @@ openssl x509 -in /opt/sassycorp-pqc/root-ca/certs/root-ca.crt -noout -text | gre
 
 ## Step 7: Verify Certificate Self-Signature
 
-Verify the certificate signature is valid:
+**Verify the certificate signature is valid:**
 
 ```bash
 openssl verify -CAfile /opt/sassycorp-pqc/root-ca/certs/root-ca.crt /opt/sassycorp-pqc/root-ca/certs/root-ca.crt
@@ -375,7 +375,7 @@ openssl verify -CAfile /opt/sassycorp-pqc/root-ca/certs/root-ca.crt /opt/sassyco
 
 ## Step 8: Generate Initial CRL
 
-Create the initial Certificate Revocation List:
+**Create the initial Certificate Revocation List:**
 
 ```bash
 openssl ca -config /opt/sassycorp-pqc/root-ca/openssl.cnf \
@@ -383,19 +383,19 @@ openssl ca -config /opt/sassycorp-pqc/root-ca/openssl.cnf \
     -out /opt/sassycorp-pqc/root-ca/crl/root-ca.crl
 ```
 
-Set permissions on the CRL:
+**Set permissions on the CRL:**
 
 ```bash
-chmod 444 /opt/sassycorp-pqc/root-ca/crl/root-ca.crl
+chmod 644 /opt/sassycorp-pqc/root-ca/crl/root-ca.crl
 ```
 
-Verify the CRL:
+**Verify the CRL:**
 
 ```bash
 openssl crl -in /opt/sassycorp-pqc/root-ca/crl/root-ca.crl -noout -text
 ```
 
-**Expected output:**
+**Expected output (partial):**
 
 ```
 Certificate Revocation List (CRL):
@@ -408,13 +408,14 @@ Certificate Revocation List (CRL):
             X509v3 Authority Key Identifier:
                 <key identifier>
 No Revoked Certificates.
+...
 ```
 
 ---
 
 ## Step 9: Create Certificate Fingerprints
 
-Generate fingerprints for certificate verification:
+**Generate fingerprints for certificate verification:**
 
 SHA-256 fingerprint:
 
@@ -434,7 +435,7 @@ Record these fingerprints securely—they can be used to verify certificate auth
 
 ## Step 10: Create DER Format Certificate
 
-Create a DER-encoded version for systems that require it:
+**Create a DER-encoded version for systems that require it:**
 
 ```bash
 openssl x509 -in /opt/sassycorp-pqc/root-ca/certs/root-ca.crt -outform DER -out /opt/sassycorp-pqc/root-ca/certs/root-ca.der
@@ -448,13 +449,13 @@ chmod 444 /opt/sassycorp-pqc/root-ca/certs/root-ca.der
 
 ## Step 11: Backup the Root CA
 
-Create a secure backup of the Root CA (in production, this would go to offline storage):
+**Create a secure backup of the Root CA (in production, this would go to offline storage):**
 
 ```bash
 mkdir -p /opt/sassycorp-pqc/backups
 ```
 
-Create an encrypted backup archive:
+**Create an encrypted backup archive:**
 
 ```bash
 tar -czf - /opt/sassycorp-pqc/root-ca/private/root-ca.key | openssl enc -aes-256-cbc -pbkdf2 -out /opt/sassycorp-pqc/backups/root-ca-key-backup.tar.gz.enc
@@ -462,13 +463,13 @@ tar -czf - /opt/sassycorp-pqc/root-ca/private/root-ca.key | openssl enc -aes-256
 
 You will be prompted for a password. Use a strong password and store it securely.
 
-> **Warning:** In a production environment, the Root CA private key should be stored on an air-gapped system or Hardware Security Module (HSM). Never leave the private key on an internet-connected system.
+> **Warning:** In a production environment, the Root CA private key should be stored on a secured air-gapped system or Hardware Security Module (HSM). Never leave the private key on an internet-connected system. There's more you SHOULD do but this is very bare minimum.
 
 ---
 
 ## Step 12: Verify Final Directory State
 
-List all files in the Root CA directory:
+**List all files in the Root CA directory:**
 
 ```bash
 find /opt/sassycorp-pqc/root-ca -type f -exec ls -la {} \;

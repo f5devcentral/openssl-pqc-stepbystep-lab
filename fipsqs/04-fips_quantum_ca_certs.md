@@ -31,19 +31,19 @@ After completing this module, you will be able to:
 
 ## Step 1: Ensure Correct User Context
 
-Verify you are operating as the pqcadmin user:
+**Verify you are operating as the pqcadmin user:**
 
 ```bash
 whoami
 ```
 
-If not, switch users:
+**If not, switch users:**
 
 ```bash
 sudo su - pqcadmin
 ```
 
-Create a working directory for certificate requests:
+**Create a working directory for certificate requests:**
 
 ```bash
 mkdir -p /opt/sassycorp-pqc/requests
@@ -55,19 +55,19 @@ mkdir -p /opt/sassycorp-pqc/requests
 
 ### Step 2: Generate Server Private Key
 
-Generate an ML-DSA-65 key for the web server:
+**Generate an ML-DSA-65 key for the web server:**
 
 ```bash
 openssl genpkey -algorithm ML-DSA-65 -out /opt/sassycorp-pqc/requests/www.sassycorp.lab.key
 ```
 
-Set permissions:
+**Set permissions:**
 
 ```bash
 chmod 400 /opt/sassycorp-pqc/requests/www.sassycorp.lab.key
 ```
 
-Verify the key algorithm:
+**Verify the key algorithm:**
 
 ```bash
 openssl pkey -in /opt/sassycorp-pqc/requests/www.sassycorp.lab.key -noout -text | head -3
@@ -85,7 +85,7 @@ priv:
 
 ### Step 3: Create Server Certificate Configuration
 
-Create a configuration file for the server certificate:
+**Create a configuration file for the server certificate:**
 
 ```bash
 vim /opt/sassycorp-pqc/requests/www.sassycorp.lab.cnf
@@ -130,7 +130,7 @@ Save and exit.
 
 ### Step 4: Create Server CSR
 
-Generate the Certificate Signing Request:
+**Generate the Certificate Signing Request:**
 
 ```bash
 openssl req -new \
@@ -139,7 +139,7 @@ openssl req -new \
     -out /opt/sassycorp-pqc/requests/www.sassycorp.lab.csr
 ```
 
-Verify the CSR includes the Subject Alternative Names:
+**Verify the CSR includes the Subject Alternative Names:**
 
 ```bash
 openssl req -in /opt/sassycorp-pqc/requests/www.sassycorp.lab.csr -noout -text | grep -A10 "Subject Alternative Name"
@@ -156,7 +156,7 @@ openssl req -in /opt/sassycorp-pqc/requests/www.sassycorp.lab.csr -noout -text |
 
 ### Step 5: Sign the Server Certificate
 
-Sign the CSR with the Intermediate CA (valid for 2 years):
+**Sign the CSR with the Intermediate CA (valid for 2 years):**
 
 ```bash
 openssl ca -config /opt/sassycorp-pqc/intermediate-ca/openssl.cnf \
@@ -167,14 +167,14 @@ openssl ca -config /opt/sassycorp-pqc/intermediate-ca/openssl.cnf \
     -out /opt/sassycorp-pqc/requests/www.sassycorp.lab.crt
 ```
 
-Confirm the signing when prompted:
+**Confirm the signing when prompted:**
 
 ```
 Sign the certificate? [y/n]: y
 1 out of 1 certificate requests certified, commit? [y/n]: y
 ```
 
-Set permissions:
+**Set permissions:**
 
 ```bash
 chmod 444 /opt/sassycorp-pqc/requests/www.sassycorp.lab.crt
@@ -184,13 +184,13 @@ chmod 444 /opt/sassycorp-pqc/requests/www.sassycorp.lab.crt
 
 ### Step 6: Verify the Server Certificate
 
-Check the certificate details:
+**Check the certificate details:**
 
 ```bash
 openssl x509 -in /opt/sassycorp-pqc/requests/www.sassycorp.lab.crt -noout -text
 ```
 
-Verify the issuer is the Intermediate CA:
+**Verify the issuer is the Intermediate CA:**
 
 ```bash
 openssl x509 -in /opt/sassycorp-pqc/requests/www.sassycorp.lab.crt -noout -issuer
@@ -202,13 +202,13 @@ openssl x509 -in /opt/sassycorp-pqc/requests/www.sassycorp.lab.crt -noout -issue
 issuer=C=US, ST=Washington, L=Winthrop, O=Sassy Corp, OU=PKI Operations, CN=Sassy Corp Intermediate CA, emailAddress=pki@sassycorp.internal
 ```
 
-Verify the Subject Alternative Names:
+**Verify the Subject Alternative Names:**
 
 ```bash
 openssl x509 -in /opt/sassycorp-pqc/requests/www.sassycorp.lab.crt -noout -text | grep -A2 "Subject Alternative Name"
 ```
 
-Verify the signature algorithm (should show the Intermediate CA's algorithm):
+**Verify the signature algorithm (should show the Intermediate CA's algorithm):**
 
 ```bash
 openssl x509 -in /opt/sassycorp-pqc/requests/www.sassycorp.lab.crt -noout -text | grep "Signature Algorithm" | head -1
@@ -220,7 +220,7 @@ openssl x509 -in /opt/sassycorp-pqc/requests/www.sassycorp.lab.crt -noout -text 
     Signature Algorithm: ML-DSA-65
 ```
 
-Verify Extended Key Usage:
+**Verify Extended Key Usage:**
 
 ```bash
 openssl x509 -in /opt/sassycorp-pqc/requests/www.sassycorp.lab.crt -noout -text | grep -A1 "Extended Key Usage"
@@ -237,7 +237,7 @@ openssl x509 -in /opt/sassycorp-pqc/requests/www.sassycorp.lab.crt -noout -text 
 
 ### Step 7: Verify Server Certificate Chain
 
-Verify the certificate against the CA chain:
+**Verify the certificate against the CA chain:**
 
 ```bash
 openssl verify -CAfile /opt/sassycorp-pqc/intermediate-ca/certs/ca-chain.crt /opt/sassycorp-pqc/requests/www.sassycorp.lab.crt
@@ -255,19 +255,19 @@ openssl verify -CAfile /opt/sassycorp-pqc/intermediate-ca/certs/ca-chain.crt /op
 
 ### Step 8: Generate User Private Key
 
-Generate an ML-DSA-44 key for the user (smaller, appropriate for client auth):
+**Generate an ML-DSA-44 key for the user (smaller, appropriate for client auth):**
 
 ```bash
 openssl genpkey -algorithm ML-DSA-44 -out /opt/sassycorp-pqc/requests/alice.smith.key
 ```
 
-Set permissions:
+**Set permissions:**
 
 ```bash
 chmod 400 /opt/sassycorp-pqc/requests/alice.smith.key
 ```
 
-Verify the algorithm:
+**Verify the algorithm:**
 
 ```bash
 openssl pkey -in /opt/sassycorp-pqc/requests/alice.smith.key -noout -text | head -2
@@ -284,7 +284,7 @@ priv:
 
 ### Step 9: Create User Certificate Configuration
 
-Create a configuration file:
+**Create a configuration file:**
 
 ```bash
 vim /opt/sassycorp-pqc/requests/alice.smith.cnf
@@ -326,7 +326,7 @@ Save and exit.
 
 ### Step 10: Create User CSR
 
-Generate the CSR:
+**Generate the CSR:**
 
 ```bash
 openssl req -new \
@@ -335,7 +335,7 @@ openssl req -new \
     -out /opt/sassycorp-pqc/requests/alice.smith.csr
 ```
 
-Verify the CSR:
+**Verify the CSR:**
 
 ```bash
 openssl req -in /opt/sassycorp-pqc/requests/alice.smith.csr -noout -text | head -20
@@ -345,7 +345,7 @@ openssl req -in /opt/sassycorp-pqc/requests/alice.smith.csr -noout -text | head 
 
 ### Step 11: Sign the User Certificate
 
-Sign with the Intermediate CA (valid for 1 year):
+**Sign with the Intermediate CA** (valid for 1 year):
 
 ```bash
 openssl ca -config /opt/sassycorp-pqc/intermediate-ca/openssl.cnf \
@@ -358,7 +358,7 @@ openssl ca -config /opt/sassycorp-pqc/intermediate-ca/openssl.cnf \
 
 Confirm the signing when prompted.
 
-Set permissions:
+**Set permissions:**
 
 ```bash
 chmod 444 /opt/sassycorp-pqc/requests/alice.smith.crt
@@ -368,7 +368,7 @@ chmod 444 /opt/sassycorp-pqc/requests/alice.smith.crt
 
 ### Step 12: Verify User Certificate
 
-Check extended key usage:
+**Check extended key usage:**
 
 ```bash
 openssl x509 -in /opt/sassycorp-pqc/requests/alice.smith.crt -noout -text | grep -A2 "Extended Key Usage"
@@ -381,13 +381,13 @@ openssl x509 -in /opt/sassycorp-pqc/requests/alice.smith.crt -noout -text | grep
                 TLS Web Client Authentication, E-mail Protection
 ```
 
-Check Subject Alternative Names:
+**Check Subject Alternative Names:**
 
 ```bash
 openssl x509 -in /opt/sassycorp-pqc/requests/alice.smith.crt -noout -text | grep -A3 "Subject Alternative Name"
 ```
 
-Verify the chain:
+**Verify the chain:**
 
 ```bash
 openssl verify -CAfile /opt/sassycorp-pqc/intermediate-ca/certs/ca-chain.crt /opt/sassycorp-pqc/requests/alice.smith.crt
@@ -399,7 +399,7 @@ openssl verify -CAfile /opt/sassycorp-pqc/intermediate-ca/certs/ca-chain.crt /op
 
 ### Step 13: Generate High-Security Key
 
-For critical infrastructure, use ML-DSA-87:
+**For critical infrastructure, use ML-DSA-87:**
 
 ```bash
 openssl genpkey -algorithm ML-DSA-87 -out /opt/sassycorp-pqc/requests/vault.sassycorp.lab.key
@@ -454,7 +454,7 @@ Save and exit.
 
 ### Step 15: Create and Sign High-Security Certificate
 
-Create CSR:
+**Create CSR:**
 
 ```bash
 openssl req -new \
@@ -463,7 +463,7 @@ openssl req -new \
     -out /opt/sassycorp-pqc/requests/vault.sassycorp.lab.csr
 ```
 
-Sign the certificate:
+**Sign the certificate:**
 
 ```bash
 openssl ca -config /opt/sassycorp-pqc/intermediate-ca/openssl.cnf \
@@ -478,7 +478,7 @@ openssl ca -config /opt/sassycorp-pqc/intermediate-ca/openssl.cnf \
 chmod 444 /opt/sassycorp-pqc/requests/vault.sassycorp.lab.crt
 ```
 
-Verify the certificate uses the ML-DSA-87 public key:
+**Verify the certificate uses the ML-DSA-87 public key:**
 
 ```bash
 openssl x509 -in /opt/sassycorp-pqc/requests/vault.sassycorp.lab.crt -noout -text | grep "Public Key Algorithm"
@@ -496,7 +496,7 @@ openssl x509 -in /opt/sassycorp-pqc/requests/vault.sassycorp.lab.crt -noout -tex
 
 ### Step 16: Export to PKCS#12 (PFX) Format
 
-Create a PKCS#12 bundle for the server certificate (includes key, cert, and chain):
+**Create a PKCS#12 bundle for the server certificate (includes key, cert, and chain):**
 
 ```bash
 openssl pkcs12 -export \
@@ -509,7 +509,7 @@ openssl pkcs12 -export \
 
 You will be prompted to enter an export password. Use a strong password.
 
-Set permissions:
+**Set permissions:**
 
 ```bash
 chmod 400 /opt/sassycorp-pqc/requests/www.sassycorp.lab.p12
@@ -519,7 +519,7 @@ chmod 400 /opt/sassycorp-pqc/requests/www.sassycorp.lab.p12
 
 ### Step 17: Export to DER Format
 
-Create DER-encoded versions:
+**Create DER-encoded versions:**
 
 ```bash
 openssl x509 -in /opt/sassycorp-pqc/requests/www.sassycorp.lab.crt -outform DER -out /opt/sassycorp-pqc/requests/www.sassycorp.lab.der
@@ -533,7 +533,7 @@ chmod 444 /opt/sassycorp-pqc/requests/www.sassycorp.lab.der
 
 ### Step 18: Create Full Chain PEM File
 
-Create a PEM file with the full certificate chain (useful for web servers):
+**Create a PEM file with the full certificate chain** (useful for web servers):
 
 ```bash
 cat /opt/sassycorp-pqc/requests/www.sassycorp.lab.crt /opt/sassycorp-pqc/intermediate-ca/certs/ca-chain.crt > /opt/sassycorp-pqc/requests/www.sassycorp.lab.fullchain.pem
@@ -547,7 +547,7 @@ chmod 444 /opt/sassycorp-pqc/requests/www.sassycorp.lab.fullchain.pem
 
 ## Step 19: View Certificate Database
 
-Check the Intermediate CA database to see all issued certificates:
+**Check the Intermediate CA database to see all issued certificates:**
 
 ```bash
 cat /opt/sassycorp-pqc/intermediate-ca/index.txt
@@ -568,7 +568,7 @@ The `V` indicates Valid certificates.
 
 ## Step 20: Test Signature Operations
 
-Test signing and verifying with the user certificate:
+**Test signing and verifying with the user certificate:**
 
 Create test data:
 
@@ -576,19 +576,19 @@ Create test data:
 echo "This is a test message from Sassy Corp" > /tmp/testmessage.txt
 ```
 
-Sign the message:
+**Sign the message:**
 
 ```bash
 openssl dgst -sign /opt/sassycorp-pqc/requests/alice.smith.key -out /tmp/testmessage.sig /tmp/testmessage.txt
 ```
 
-Extract the public key:
+**Extract the public key:**
 
 ```bash
 openssl x509 -in /opt/sassycorp-pqc/requests/alice.smith.crt -pubkey -noout > /tmp/alice.pub
 ```
 
-Verify the signature:
+**Verify the signature:**
 
 ```bash
 openssl dgst -verify /tmp/alice.pub -signature /tmp/testmessage.sig /tmp/testmessage.txt
@@ -600,7 +600,7 @@ openssl dgst -verify /tmp/alice.pub -signature /tmp/testmessage.sig /tmp/testmes
 Verified OK
 ```
 
-Clean up:
+**Clean up:**
 
 ```bash
 rm /tmp/testmessage.txt /tmp/testmessage.sig /tmp/alice.pub

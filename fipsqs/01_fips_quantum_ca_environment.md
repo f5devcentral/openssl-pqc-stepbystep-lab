@@ -39,7 +39,7 @@ If your version is below 3.5.0, you will need to upgrade your operating system o
 
 ### Check Available Signature Algorithms
 
-List available ML-DSA signature algorithms:
+**List available ML-DSA signature algorithms:**
 
 ```bash
 openssl list -signature-algorithms | grep -i ml-dsa
@@ -53,7 +53,7 @@ openssl list -signature-algorithms | grep -i ml-dsa
   ML-DSA-87 @ default
 ```
 
-List available SLH-DSA signature algorithms:
+**List available SLH-DSA signature algorithms:**
 
 ```bash
 openssl list -signature-algorithms | grep -i slh-dsa
@@ -74,21 +74,22 @@ openssl list -signature-algorithms | grep -i slh-dsa
 
 ### Check Available Key Encapsulation Mechanisms
 
-List available ML-KEM algorithms:
+**List available ML-KEM algorithms:**
 
 ```bash
 openssl list -kem-algorithms | grep -i mlkem
 ```
 
-**Expected output:**
+**Expected output (partial):**
 
 ```
   MLKEM512 @ default
   MLKEM768 @ default
   MLKEM1024 @ default
+  ...
 ```
 
-List hybrid KEM algorithms:
+**List hybrid KEM algorithms:**
 
 ```bash
 openssl list -kem-algorithms | grep -i x25519
@@ -106,7 +107,7 @@ openssl list -kem-algorithms | grep -i x25519
 
 ## Step 3: Create CA Administrator Account
 
-Create a dedicated user account for CA administration:
+**Create a dedicated user account for CA administration:**
 
 ```bash
 sudo useradd -r -m -d /opt/sassycorp-pqc -s /bin/bash pqcadmin
@@ -121,13 +122,13 @@ sudo useradd -r -m -d /opt/sassycorp-pqc -s /bin/bash pqcadmin
 | `-d /opt/sassycorp-pqc` | Home directory location |
 | `-s /bin/bash` | Login shell |
 
-Set a password for the account:
+**Set a password for the account:**
 
 ```bash
 sudo passwd pqcadmin
 ```
 
-Add your user to the pqcadmin group (optional, for easier administration):
+**Add your user to the pqcadmin group (optional, for easier administration):**
 
 ```bash
 sudo usermod -aG pqcadmin $USER
@@ -137,25 +138,25 @@ sudo usermod -aG pqcadmin $USER
 
 ## Step 4: Create Directory Structure
 
-Switch to the pqcadmin user:
+**Switch to the pqcadmin user:**
 
 ```bash
 sudo su - pqcadmin
 ```
 
-Create the Root CA directory structure:
+**Create the Root CA directory structure:**
 
 ```bash
 mkdir -p /opt/sassycorp-pqc/root-ca/{private,certs,crl,newcerts}
 ```
 
-Create the Intermediate CA directory structure:
+**Create the Intermediate CA directory structure:**
 
 ```bash
 mkdir -p /opt/sassycorp-pqc/intermediate-ca/{private,certs,crl,newcerts,csr}
 ```
 
-Create the OCSP responder directory structure:
+**Create the OCSP responder directory structure:**
 
 ```bash
 mkdir -p /opt/sassycorp-pqc/ocsp/{private,certs,logs}
@@ -165,7 +166,7 @@ mkdir -p /opt/sassycorp-pqc/ocsp/{private,certs,logs}
 
 ## Step 5: Set Directory Permissions
 
-Set restrictive permissions on private key directories:
+**Set restrictive permissions on private key directories:**
 
 ```bash
 chmod 700 /opt/sassycorp-pqc/root-ca/private
@@ -179,7 +180,7 @@ chmod 700 /opt/sassycorp-pqc/intermediate-ca/private
 chmod 700 /opt/sassycorp-pqc/ocsp/private
 ```
 
-Set appropriate permissions on other directories:
+**Set appropriate permissions on other directories:**
 
 ```bash
 chmod 755 /opt/sassycorp-pqc/root-ca/{certs,crl,newcerts}
@@ -199,25 +200,25 @@ chmod 755 /opt/sassycorp-pqc/ocsp/{certs,logs}
 
 ### Root CA Database
 
-Create the certificate database:
+**Create the certificate database** (these files allow the CA to track issuing and revocation information and other such stuff):
 
 ```bash
 touch /opt/sassycorp-pqc/root-ca/index.txt
 ```
 
-Create the database attributes file:
+**Create the database attributes file (and forces unique subjects for certs):**
 
 ```bash
 echo 'unique_subject = yes' > /opt/sassycorp-pqc/root-ca/index.txt.attr
 ```
 
-Create the serial number file (starting at 1000):
+**Create the serial number file (starting at 1000):**
 
 ```bash
 echo 1000 > /opt/sassycorp-pqc/root-ca/serial
 ```
 
-Create the CRL number file:
+**Create the CRL number file:**
 
 ```bash
 echo 1000 > /opt/sassycorp-pqc/root-ca/crlnumber
@@ -241,7 +242,7 @@ echo 2000 > /opt/sassycorp-pqc/intermediate-ca/serial
 echo 2000 > /opt/sassycorp-pqc/intermediate-ca/crlnumber
 ```
 
-Set permissions on database files:
+**Set permissions on database files:**
 
 ```bash
 chmod 644 /opt/sassycorp-pqc/root-ca/{index.txt,index.txt.attr,serial,crlnumber}
@@ -255,7 +256,7 @@ chmod 644 /opt/sassycorp-pqc/intermediate-ca/{index.txt,index.txt.attr,serial,cr
 
 ## Step 7: Verify Directory Structure
 
-Display the complete directory structure:
+**Display the complete directory structure:**
 
 ```bash
 find /opt/sassycorp-pqc -type d | sort
@@ -282,7 +283,7 @@ find /opt/sassycorp-pqc -type d | sort
 /opt/sassycorp-pqc/root-ca/private
 ```
 
-Verify permissions on private directories:
+**Verify permissions on private directories:**
 
 ```bash
 ls -la /opt/sassycorp-pqc/root-ca/private
@@ -298,13 +299,13 @@ drwx------ 2 pqcadmin pqcadmin 4096 <date> .
 
 ## Step 8: Test PQC Key Generation
 
-Test ML-DSA key generation to ensure everything works:
+**Test ML-DSA key generation to ensure everything works:**
 
 ```bash
 openssl genpkey -algorithm ML-DSA-65 -out /tmp/test-ml-dsa-65.key
 ```
 
-Verify the key was created:
+**Verify the key was created:**
 
 ```bash
 openssl pkey -in /tmp/test-ml-dsa-65.key -noout -text | head -5
@@ -318,25 +319,25 @@ priv:
     <hex values>
 ```
 
-Clean up the test key:
+**Clean up the test key:**
 
 ```bash
 rm /tmp/test-ml-dsa-65.key
 ```
 
-Test ML-KEM key generation:
+**Test ML-KEM key generation:**
 
 ```bash
 openssl genpkey -algorithm MLKEM768 -out /tmp/test-ml-kem-768.key
 ```
 
-Verify the key:
+**Verify the key:**
 
 ```bash
 openssl pkey -in /tmp/test-ml-kem-768.key -noout -text | head -5
 ```
 
-Clean up:
+**Clean up:**
 
 ```bash
 rm /tmp/test-ml-kem-768.key
@@ -393,7 +394,7 @@ whoami  # Should show: pqcadmin
 
 ## Security Checklist
 
-Before proceeding, verify:
+**Before proceeding, verify:**
 
 - [ ] OpenSSL version is 3.5.0 or later
 - [ ] PQC algorithms are available

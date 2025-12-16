@@ -66,7 +66,270 @@ Hybrid schemes combine both algorithm types so that:
 
 ## Part A: Hybrid Key Exchange in TLS 1.3
 
-OpenSSL 3.5.x supports hybrid key exchange groups that combine X25519 with ML-KEM.
+OpenSSL 3.5.x supports hybrid key exchange groups that combine X25519 with ML-KEM for TLS 1.3 connections.
+
+### Understanding Hybrid KEMs
+
+Unlike signature algorithms (ML-DSA) where you generate and store key pairs, hybrid KEMs like X25519MLKEM768 are **ephemeral**—keys are generated on-the-fly during the TLS handshake and discarded after session establishment.
+
+This means:
+
+- You cannot use `genpkey` to create standalone hybrid KEM keys
+- Hybrid KEMs are demonstrated through TLS connections, not key files
+- The security benefit comes from the key exchange, not stored keys
+
+---
+
+### Step 1: List Available Hybrid Groups
+
+Check available KEM algorithms:
+
+```bash
+openssl list -kem-algorithms | grep -i mlkem
+```
+
+**Expected output includes:**
+
+```bash
+MLKEM512 @ default
+MLKEM768 @ default
+MLKEM1024 @ default
+X25519MLKEM768 @ default
+```
+
+The `X25519MLKEM768` is a hybrid that combines:
+- **X25519**: Elliptic curve Diffie-Hellman (classical)
+- **ML-KEM-768**: Module-Lattice Key Encapsulation (post-quantum)
+
+Both algorithms run during the TLS handshake. The resulting shared secret is derived from both, so an attacker would need to break **both** algorithms to compromise the session.
+
+---
+
+### Step 2: Start a TLS Server with Hybrid Key Exchange
+
+Start a TLS server configured to prefer hybrid key exchange:
+
+```bash
+openssl s_server \
+    -key /opt/sassycorp-pqc/requests/www.sassycorp.lab.key \
+    -cert /opt/sassycorp-pqc/requests/www.sassycorp.lab.fullchain.pem \
+    -port 4433 \
+    -tls1_3 \
+    -groups X25519MLKEM768:X25519 \
+    -www
+```
+
+**Options explained:**
+
+| Option | Purpose |
+|--------|---------|
+| `-tls1_3` | Force TLS 1.3 (required for hybrid KEM) |
+| `-groups X25519MLKEM768:X25519` | Prefer hybrid, fallback to X25519 |
+| `-www` | Serve a simple HTML response |
+
+The server is now listening. Open a **new terminal** for the client test.
+
+---
+
+### Step 3: Connect with Hybrid Key Exchange
+
+In the new terminal:
+
+```bash
+sudo su - pqcadmin
+```
+
+Connect to the server requesting hybrid key exchange:
+
+```bash
+openssl s_client \
+    -connect localhost:4433 \
+    -tls1_3 \
+    -groups X25519MLKEM768 \
+    -CAfile /opt/sassycorp-pqc/intermediate-ca/certs/ca-chain.crt
+```
+
+**Look for these lines in the output:**
+
+```
+Peer signature type: mldsa65
+Negotiated TLS1.3 group: X25519MLKEM768
+```
+
+This confirms:
+- **Hybrid key exchange** was used (X25519MLKEM768)
+- **PQC certificate signature** was verified (mldsa65)
+
+The session is now protected by both classical (X25519) and post-quantum (ML-KEM-768) algorithms.
+
+You'll also see:
+
+```
+New, TLSv1.3, Cipher is TLS_AES_256_GCM_SHA384
+Server public key is 15616 bit
+Verification: OK
+```
+
+Type `GET /` to see the server response, then `QUIT` to exit.
+
+Return to the original terminal and press `Ctrl+C` to stop the server.
+
+---
+
+### Step 4: Compare Hybrid vs Classical Key Exchange
+
+Start the server again:
+
+```bash
+openssl s_server \
+    -key /opt/sassycorp-pqc/requests/www.sassycorp.lab.key \
+    -cert /opt/sassycorp-pqc/requests/www.sassycorp.lab.fullchain.pem \
+    -port 4433 \
+    -tls1_3 \
+    -groups X25519MLKEM768:X25519 \
+    -www
+```
+
+In the client terminal, let's compare hybrid vs classical key exchange and observe the differences.
+
+**Hybrid connection:**
+
+```bash
+echo | openssl s_client \
+    -connect localhost:4433 \
+    -tls1_3 \
+    -groups X25519MLKEM768 \
+    -CAfile /opt/sassycorp-pqc/intermediate-ca/certs/ca-chain.crt 2>&1 | \
+    grep -E "Negotiated|Peer signature"
+```
+
+**Output:**
+
+```
+Peer signature type: mldsa65
+Negotiated TLS1.3 group: X25519MLKEM768
+```
+
+**Classical-only connection:**
+
+```bash
+echo | openssl s_client \
+    -connect localhost:4433 \
+    -tls1_3 \
+    -groups X25519 \
+    -CAfile /opt/sassycorp-pqc/intermediate-ca/certs/ca-chain.crt 2>&1 | \
+    grep -E "Negotiated|Peer signature"
+```
+
+**Output:**
+
+```
+Peer signature type: mldsa65
+```
+
+Notice what's **missing**: the `Negotiated TLS1.3 group` line doesn't appear for classical-only key exchange. This line is only present when a hybrid or PQC group is negotiated. The absence of this line confirms classical-only key exchange was used.
+
+> **Learning point:** When reviewing TLS connections, the presence of `Negotiated TLS1.3 group: X25519MLKEM768` is your indicator that hybrid PQC protection is active. If you only see `Peer signature type` without a `Negotiated` line, the key exchange used classical algorithms only.
+
+---
+
+### Step 5: Observe Handshake Size Differences
+
+Hybrid key exchange transmits significantly more data due to the larger ML-KEM key material. Let's measure this:
+
+**Hybrid handshake size:**
+
+```bash
+echo | openssl s_client \
+    -connect localhost:4433 \
+    -tls1_3 \
+    -groups X25519MLKEM768 \
+    -CAfile /opt/sassycorp-pqc/intermediate-ca/certs/ca-chain.crt 2>&1 | \
+    grep "SSL handshake has read"
+```
+
+**Example output:**
+
+```
+SSL handshake has read 11033 bytes and written 1482 bytes
+```
+
+**Classical handshake size:**
+
+```bash
+echo | openssl s_client \
+    -connect localhost:4433 \
+    -tls1_3 \
+    -groups X25519 \
+    -CAfile /opt/sassycorp-pqc/intermediate-ca/certs/ca-chain.crt 2>&1 | \
+    grep "SSL handshake has read"
+```
+
+**Example output:**
+
+```
+SSL handshake has read 10043 bytes and written 350 bytes
+```
+
+**Key observations:**
+
+| Metric | Classical (X25519) | Hybrid (X25519MLKEM768) |
+|--------|-------------------|-------------------------|
+| Bytes written (client) | ~350 | ~1,482 |
+| Bytes read (server response) | ~10,043 | ~11,033 |
+
+The client writes significantly more data with hybrid (~4x) because it must send both the X25519 public key (32 bytes) and the ML-KEM-768 encapsulation key (1,184 bytes). The server response difference is smaller because most of the data is the ML-DSA-65 certificate, which is the same in both cases.
+
+> **Learning point:** This size increase is the trade-off for quantum resistance. For most applications, the additional ~1KB per handshake is negligible. However, for extremely latency-sensitive or bandwidth-constrained environments, this overhead should be considered during capacity planning.
+
+---
+
+### Step 6: Test Fallback Behavior
+
+What happens when a client doesn't support hybrid but connects to a hybrid-capable server?
+
+With the server still running (configured for `X25519MLKEM768:X25519`), the classical-only client connection we tested above demonstrates graceful fallback:
+
+- Server offered: X25519MLKEM768 (preferred), X25519 (fallback)
+- Client requested: X25519 only
+- Result: Server fell back to X25519
+
+The connection succeeded because the server's group list included a classical option. However, notice that even with classical key exchange, the **certificate signature** still used ML-DSA-65 (`Peer signature type: mldsa65`). 
+
+This means:
+- **Key exchange**: Classical only (X25519) — vulnerable to future quantum attack on session data
+- **Authentication**: Post-quantum (ML-DSA-65) — resistant to quantum attack on identity verification
+
+For full quantum protection, both key exchange AND authentication should use PQC algorithms. The hybrid key exchange addresses the key exchange side.
+
+Stop the server with `Ctrl+C`.
+
+---
+
+### Why This Matters
+
+The hybrid key exchange protects against "harvest now, decrypt later" attacks:
+
+| Scenario | X25519 Only | X25519MLKEM768 |
+|----------|-------------|----------------|
+| Classical attacker today | ✅ Secure | ✅ Secure |
+| Quantum attacker in future | ❌ Compromised | ✅ Secure |
+| Flaw found in ML-KEM | N/A | ✅ Still secure (X25519 backup) |
+
+By enabling hybrid key exchange now, you protect today's encrypted sessions against future quantum decryption—even before quantum computers exist.
+
+OpenSSL 3.5.x supports hybrid key exchange groups that combine X25519 with ML-KEM for TLS 1.3 connections.
+
+### Understanding Hybrid KEMs
+
+Unlike signature algorithms (ML-DSA) where you generate and store key pairs, hybrid KEMs like X25519MLKEM768 are **ephemeral**—keys are generated on-the-fly during the TLS handshake and discarded after session establishment.
+
+This means:
+- You cannot use `genpkey` to create standalone hybrid KEM keys
+- Hybrid KEMs are demonstrated through TLS connections, not key files
+- The security benefit comes from the key exchange, not stored keys
+
+---
 
 ### Step 1: List Available Hybrid Groups
 
@@ -89,41 +352,13 @@ The `X25519MLKEM768` is a hybrid that combines:
 - **X25519**: Elliptic curve Diffie-Hellman (classical)
 - **ML-KEM-768**: Module-Lattice Key Encapsulation (post-quantum)
 
----
-
-### Step 2: Generate a Hybrid KEM Key
-
-Generate an X25519MLKEM768 key pair:
-
-```bash
-openssl genpkey -algorithm X25519MLKEM768 -out /tmp/hybrid-kem.key
-```
-
-View the key details:
-
-```bash
-openssl pkey -in /tmp/hybrid-kem.key -noout -text | head -20
-```
-
-Extract the public key:
-
-```bash
-openssl pkey -in /tmp/hybrid-kem.key -pubout -out /tmp/hybrid-kem.pub
-```
-
-Clean up:
-
-```bash
-rm /tmp/hybrid-kem.key /tmp/hybrid-kem.pub
-```
+Both algorithms run during the TLS handshake. The resulting shared secret is derived from both, so an attacker would need to break **both** algorithms to compromise the session.
 
 ---
 
-### Step 3: Test TLS 1.3 with Hybrid Key Exchange
+### Step 2: Start a TLS Server with Hybrid Key Exchange
 
-Create a test server certificate (using our existing server cert):
-
-Start a TLS server with hybrid key exchange:
+Start a TLS server configured to prefer hybrid key exchange:
 
 ```bash
 openssl s_server \
@@ -139,15 +374,15 @@ openssl s_server \
 
 | Option | Purpose |
 |--------|---------|
-| `-tls1_3` | Force TLS 1.3 |
+| `-tls1_3` | Force TLS 1.3 (required for hybrid KEM) |
 | `-groups X25519MLKEM768:X25519` | Prefer hybrid, fallback to X25519 |
 | `-www` | Serve a simple HTML response |
 
-Open a **new terminal** for the client test.
+The server is now listening. Open a **new terminal** for the client test.
 
 ---
 
-### Step 4: Connect with Hybrid Key Exchange
+### Step 3: Connect with Hybrid Key Exchange
 
 In the new terminal:
 
@@ -165,12 +400,25 @@ openssl s_client \
     -CAfile /opt/sassycorp-pqc/intermediate-ca/certs/ca-chain.crt
 ```
 
-After connecting, look for:
+**Look for these lines in the output:**
+
+```
+Peer signature type: mldsa65
+Negotiated TLS1.3 group: X25519MLKEM768
+```
+
+This confirms:
+- **Hybrid key exchange** was used (X25519MLKEM768)
+- **PQC certificate signature** was verified (mldsa65)
+
+The session is now protected by both classical (X25519) and post-quantum (ML-KEM-768) algorithms.
+
+You'll also see:
 
 ```
 New, TLSv1.3, Cipher is TLS_AES_256_GCM_SHA384
-...
-Server Temp Key: X25519MLKEM768
+Server public key is 15616 bit
+Verification: OK
 ```
 
 Type `GET /` to see the server response, then `QUIT` to exit.
@@ -179,18 +427,103 @@ Return to the original terminal and press `Ctrl+C` to stop the server.
 
 ---
 
-### Step 5: Verify Negotiated Group
+### Step 4: Quick Key Exchange Comparison
 
-To see more details about the key exchange, use:
+Start the server again:
 
 ```bash
-openssl s_client \
+openssl s_server \
+    -key /opt/sassycorp-pqc/requests/www.sassycorp.lab.key \
+    -cert /opt/sassycorp-pqc/requests/www.sassycorp.lab.fullchain.pem \
+    -port 4433 \
+    -tls1_3 \
+    -groups X25519MLKEM768:X25519 \
+    -www
+```
+
+In the client terminal, compare hybrid vs classical key exchange:
+
+**Hybrid:**
+
+```bash
+echo | openssl s_client \
     -connect localhost:4433 \
     -tls1_3 \
     -groups X25519MLKEM768 \
-    -CAfile /opt/sassycorp-pqc/intermediate-ca/certs/ca-chain.crt \
-    -msg 2>&1 | grep -i "server temp key\|group"
+    -CAfile /opt/sassycorp-pqc/intermediate-ca/certs/ca-chain.crt 2>&1 | \
+    grep "Negotiated TLS1.3 group"
 ```
+
+**Output:** `Negotiated TLS1.3 group: X25519MLKEM768`
+
+**Classical only:**
+
+```bash
+echo | openssl s_client \
+    -connect localhost:4433 \
+    -tls1_3 \
+    -groups X25519 \
+    -CAfile /opt/sassycorp-pqc/intermediate-ca/certs/ca-chain.crt 2>&1 | \
+    grep "Negotiated TLS1.3 group"
+```
+
+**Output:** `Negotiated TLS1.3 group: X25519`
+
+Stop the server with `Ctrl+C`.
+
+---
+
+### Step 5: Test Fallback Behavior
+
+What happens when a client doesn't support hybrid?
+
+Start the server with hybrid preference:
+
+```bash
+openssl s_server \
+    -key /opt/sassycorp-pqc/requests/www.sassycorp.lab.key \
+    -cert /opt/sassycorp-pqc/requests/www.sassycorp.lab.fullchain.pem \
+    -port 4433 \
+    -tls1_3 \
+    -groups X25519MLKEM768:X25519 \
+    -www
+```
+
+Connect with a client that only supports X25519:
+
+```bash
+echo | openssl s_client \
+    -connect localhost:4433 \
+    -tls1_3 \
+    -groups X25519 \
+    -CAfile /opt/sassycorp-pqc/intermediate-ca/certs/ca-chain.crt 2>&1 | \
+    grep -E "Negotiated TLS1.3 group|Peer signature"
+```
+
+**Output:**
+
+```
+Peer signature type: mldsa65
+Negotiated TLS1.3 group: X25519
+```
+
+The server fell back to classical X25519 for key exchange because that's all the client offered—but still used the ML-DSA-65 certificate for authentication. This demonstrates graceful degradation: hybrid-capable servers remain compatible with legacy clients.
+
+Stop the server with `Ctrl+C`.
+
+---
+
+### Why This Matters
+
+The hybrid key exchange protects against "harvest now, decrypt later" attacks:
+
+| Scenario | X25519 Only | X25519MLKEM768 |
+|----------|-------------|----------------|
+| Classical attacker today | ✅ Secure | ✅ Secure |
+| Quantum attacker in future | ❌ Compromised | ✅ Secure |
+| Flaw found in ML-KEM | N/A | ✅ Still secure (X25519 backup) |
+
+By enabling hybrid key exchange now, you protect today's encrypted sessions against future quantum decryption—even before quantum computers exist.
 
 ---
 
