@@ -1,6 +1,6 @@
 # Security Policy
 
-Well we are an application delivery and security platform company so it would be silly not to support good practices with a security.md policy.
+If you think there's a glaring issue/omission/security issue with the content provided in this repository, please follow the below steps so we can triage accordingly.
 
 ## Reporting a Vulnerability
 

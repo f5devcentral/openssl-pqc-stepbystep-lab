@@ -909,14 +909,14 @@ The complete manual process for revoking a certificate:
 
 You have successfully implemented:
 
-- ✅ Certificate Revocation Lists (CRL) with distribution points
-- ✅ Manual certificate revocation with reason codes
-- ✅ Online Certificate Status Protocol (OCSP) responder
-- ✅ CRL generation and updates
-- ✅ OCSP testing and verification
-- ✅ Revocation logging and reporting
-- ✅ OCSP stapling configuration examples
-- ✅ Complete quantum-resistant CA with revocation features
+- Certificate Revocation Lists (CRL) with distribution points
+- Manual certificate revocation with reason codes
+- Online Certificate Status Protocol (OCSP) responder
+- CRL generation and updates
+- OCSP testing and verification
+- Revocation logging and reporting
+- OCSP stapling configuration examples
+- Complete quantum-resistant CA with revocation features
 
 ## Complete Lab Summary
 
@@ -941,7 +941,7 @@ Your PKI infrastructure is fully compliant with NSA's Commercial National Securi
 
 ### Key Commands Learned
 
-You've mastered these essential OpenSSL commands:
+You've probably mastered these essential OpenSSL commands:
 
 - `openssl genpkey` - Generate quantum-resistant private keys
 - `openssl req` - Create certificate signing requests
@@ -953,10 +953,8 @@ You've mastered these essential OpenSSL commands:
 
 ## 🤝 Contributing
 
-This lab was made because we wanted to learn this ourselves. We encourage you to help us expand this lab so we can cover more quantum-resistant content; or maybe cover more operating systems.  Or we might have inadvertently broken something.  Who knows... either way, characters welcome.
+This lab was made because we wanted to learn this ourselves. We encourage you to help us expand this lab so we can cover more quantum-resistant content; or maybe cover more operating systems.  Or we might have inadvertently broken something.  Who knows... either way, characters welcome. Check out our [Contributing.md](/contributing.md) guidelines and fill in the gaps we probably missed.
 
 Your lab is ready for internal testing of quantum-resistant PKI infrastructure in preparation for the post-quantum cryptography era. Nice work! Go take the rest of the day off.
 
 ---
-
-**[← Return to Introduction](01_quantum_ca_intro.md)**

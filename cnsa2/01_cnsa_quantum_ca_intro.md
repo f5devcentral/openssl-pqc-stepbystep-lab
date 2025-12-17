@@ -1,4 +1,4 @@
-# Quantum-Resistant Certificate Authority Lab Guide
+# Module 1: CNSA 2.0 Post-Quantum Certificate Authority Lab Guide
 
 ## Introduction
 
@@ -20,14 +20,12 @@ The Commercial National Security Algorithm Suite 2.0 specifies the following qua
 | Key Establishment | ML-KEM-1024 (FIPS 203) | mlkem1024 | kyber1024 | Highest security key exchange |
 | Hash Functions | SHA-384 or SHA-512 | sha384, sha512 | - | Integrity verification |
 
-**Important Note**: Only ML-DSA-65 (mldsa65) and ML-DSA-87 (mldsa87) are CNSA 2.0 compliant for digital signatures. Other algorithms like ML-DSA-44, Falcon-512, and Falcon-1024 are NOT part of CNSA 2.0.
-
-**Algorithm Naming**: Newer versions of the OQS provider use NIST standardized names (mldsa65, mldsa87) instead of the legacy names (dilithium3, dilithium5).
+**Important Note**: *Only ML-DSA-65 (mldsa65) and ML-DSA-87 (mldsa87) are CNSA 2.0 compliant for digital signatures. Other algorithms like ML-DSA-44, Falcon-512, and Falcon-1024 are NOT part of CNSA 2.0.*
 
 ### Prerequisites
 
-1. **OpenSSL 3.2+** with OQS provider support
-2. **Operating System**: Ubuntu 25.04 but you do you. Installing liboqs might differ.
+1. **OpenSSL 3.2+** with OQS provider support installed
+2. **Operating System**: Ubuntu 25.04 but you do you. Installing liboqs might differ
 3. **Permissions**: Root or sudo access for initial setup
 4. **Text Editor**: Familiarity with vi, vim, or your preferred editor
 
@@ -102,38 +100,6 @@ Our lab will use the following directory structure:
     └── requests/         # OCSP requests (755)
 ```
 
-### Security Considerations
-
-**⚠️ IMPORTANT**: This lab guide is for **internal testing and educational purposes only**. In a production environment:
-
-1. **Hardware Security Modules (HSMs)** should be used to protect private keys
-2. **Air-gapped systems** should be used for Root CA operations
-3. **Multi-person control** should be implemented for Root CA access
-4. **Audit logging** must be enabled and monitored
-5. **Regular security assessments** should be conducted
-
-### Working with Configuration Files
-
-Throughout this lab, you'll create several configuration files. When you see a configuration file in the guide:
-
-1. Create the file using your preferred text editor
-2. Copy the configuration content carefully
-3. Save the file with the specified name and path
-4. Verify the file permissions match what's specified
-
-Example of creating a configuration file:
-
-```bash
-# Create and edit a file
-vim /path/to/config.cnf
-
-# After saving, set appropriate permissions
-chmod 644 /path/to/config.cnf
-
-# Verify the file was created correctly
-ls -la /path/to/config.cnf
-```
-
 ## Getting Started
 
 Before proceeding to Module 2, install the prerequisite packages and compile the liboqs libraries:
@@ -171,10 +137,10 @@ ls -la /opt/sassycorp-ca/  # Should show three directories
 
 Before proceeding to Module 2, ensure you have:
 
-- ✅ Installed OpenSSL 3.2+ with OQS provider
-- ✅ Created the caadmin user
-- ✅ Created the base directory structure
-- ✅ Verified the OQS provider is available
+- Installed OpenSSL 3.2+ with OQS provider
+- Created the caadmin user
+- Created the base directory structure
+- Verified the OQS provider is available
 
 ### Algorithm Naming and Version Compatibility
 
@@ -192,4 +158,4 @@ If you see dilithium, you snagged an older version of oqs and MIGHT want to go b
 
 ---
 
-**Next**: [Module 2 - Building the Root CA →](02_quantum_ca_root.md)
+**Next**: [Building the Root CA →](02_cnsa_quantum_ca_root.md)
