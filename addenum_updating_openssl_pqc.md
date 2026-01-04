@@ -1,43 +1,48 @@
-# 🔐 Updating OpenSSL for PQC Environments
+# Addendum: PQC Environment Setup
 
-## 📋 Overview
+## Overview
 
-This addendum provides detailed instructions for enabling post-quantum cryptography support on Ubuntu systems. Choose the path that matches your Ubuntu version and requirements. Yea, we know not everyone is using Ubuntu but this is based on our lab guides and that's what we used. What it will do is give you a better idea of what you might want to do internally with our installations, either updating OpenSSL fully or "simply" adding OQS support as needed.
+This addendum provides instructions for installing the Open Quantum Safe (OQS) provider on Ubuntu 25.10 systems with OpenSSL 3.5.3. The OQS provider extends OpenSSL's native PQC support with additional algorithms not included in the NIST FIPS standards.
 
-And [contributions](/contributing.md) welcome! Add your linux flavor or unique use case we're probably forgetting.
+| Component | Version | Purpose |
+|-----------|---------|---------|
+| Ubuntu | 25.10 | Operating system |
+| OpenSSL | 3.5.3 (native) | Cryptographic library with FIPS PQC |
+| liboqs | Latest | OQS algorithm implementations |
+| oqs-provider | Latest | OpenSSL provider for OQS algorithms |
 
-| Ubuntu Version | Default OpenSSL | Recommended Path | Result |
-|----------------|-----------------|------------------|--------|
-| 24.04 LTS (Noble) 🦫 | 3.0.x | Path A: OQS Provider | Adds PQC to system OpenSSL |
-| 25.04 (Plucky) 🐧 | 3.4.x | Path B: OpenSSL 3.5 | Parallel install with `openssl-pqc` command |
+---
 
-<br>
+## What You Get
 
-## 🧭 Decision Guide
+### Native OpenSSL 3.5.3 Algorithms (No OQS Required)
 
-###  Choose Path A (OQS Provider) if:
+Ubuntu 25.10 includes OpenSSL 3.5.3 with native support for NIST FIPS algorithms:
 
-- ✅ You are running older linux versions and can't just willy nilly upgrade OSs.
-- ✅ You want PQC algorithms available system-wide
-- ✅ You love compiling libraries into existing packages
-- ✅ You prefer using the Open Quantum Safe project's implementation (needed for alternate algorithms)
+| Algorithm | Type | Standard |
+|-----------|------|----------|
+| ML-KEM-512/768/1024 | KEM | FIPS 203 |
+| ML-DSA-44/65/87 | Signature | FIPS 204 |
+| SLH-DSA variants | Signature | FIPS 205 |
+| X25519MLKEM768 | Hybrid KEM | TLS 1.3 |
 
-###  Choose Path B (OpenSSL 3.5) if:
+### Additional Algorithms via OQS Provider
 
-- ✅ You need FIPS/CNSA 2.0 algorithm suites (including ML-DSA-44, SLH-DSA) but don't care about life outside of NIST
-- ✅ You want to preserve system OpenSSL while adding PQC capability
+The OQS provider adds algorithms not in the NIST FIPS standards:
 
-<br>
+| Algorithm | Type | Use Case |
+|-----------|------|----------|
+| FrodoKEM | KEM | Conservative unstructured lattice |
+| NTRU | KEM | Compact keys, long security history |
+| Classic McEliece | KEM | Maximum conservative security |
+| BIKE | KEM | Code-based alternative |
+| HQC | KEM | NIST-selected backup (2027 standard) |
 
-## Path A: OQS Provider for Ubuntu 24.04 LTS
+---
 
-This path installs the Open Quantum Safe (OQS) provider alongside your existing OpenSSL 3.0.x installation, enabling post-quantum algorithms through the provider mechanism.
+## Prerequisites
 
-> 📝 **Note:** The OQS provider now uses the official NIST FIPS standard names (ML-KEM, ML-DSA) rather than the draft competition names (Kyber, Dilithium). Ensure you are using OQS provider version 0.8.0 or later.
-
-## 📋 Prerequisites
-
-Verify your Ubuntu and OpenSSL versions:
+### Verify Ubuntu Version
 
 ```bash
 lsb_release -d
@@ -46,8 +51,10 @@ lsb_release -d
 **Expected output:**
 
 ```
-Description:    Ubuntu 24.04.x LTS
+Description:    Ubuntu 25.10
 ```
+
+### Verify OpenSSL Version
 
 ```bash
 openssl version
@@ -56,12 +63,29 @@ openssl version
 **Expected output:**
 
 ```
-OpenSSL 3.0.x <date>
+OpenSSL 3.5.3 <date>
+```
+
+### Verify Native PQC Support
+
+Confirm ML-KEM is available natively:
+
+```bash
+openssl list -kem-algorithms | grep -i mlkem
+```
+
+**Expected output:**
+
+```
+MLKEM512 @ default
+MLKEM768 @ default
+MLKEM1024 @ default
+X25519MLKEM768 @ default
 ```
 
 ---
 
-## 🛠️ Step A1: Install Build Dependencies
+## Step 1: Install Build Dependencies
 
 Update package lists:
 
@@ -72,24 +96,52 @@ sudo apt update
 Install required build tools and libraries:
 
 ```bash
-sudo apt install -y build-essential cmake ninja-build git libssl-dev python3 python3-pip astyle pkg-config
+sudo apt install -y \
+    build-essential \
+    cmake \
+    ninja-build \
+    git \
+    libssl-dev \
+    pkg-config \
+    python3 \
+    python3-pip \
+    astyle
+```
+
+**Package purposes:**
+
+| Package | Purpose |
+|---------|---------|
+| build-essential | GCC, make, standard build tools |
+| cmake | Build system for liboqs and oqs-provider |
+| ninja-build | Fast build system |
+| git | Source code retrieval |
+| libssl-dev | OpenSSL development headers |
+| pkg-config | Library detection (required for liboqs) |
+| python3 | Build script requirements |
+| astyle | Code formatting |
+
+---
+
+## Step 2: Create Build Directory
+
+Create a working directory for the build process:
+
+```bash
+mkdir -p ~/oqs-build
+```
+
+```bash
+cd ~/oqs-build
 ```
 
 ---
 
-## 📦 Step A2: Clone and Build liboqs
+## Step 3: Clone and Build liboqs
 
-Create a working directory:
+liboqs is the underlying library that implements the alternative PQC algorithms.
 
-```bash
-mkdir -p ~/pqc-build
-```
-
-```bash
-cd ~/pqc-build
-```
-
-Clone the liboqs repository:
+### Clone the Repository
 
 ```bash
 git clone --depth 1 https://github.com/open-quantum-safe/liboqs.git
@@ -99,7 +151,7 @@ git clone --depth 1 https://github.com/open-quantum-safe/liboqs.git
 cd liboqs
 ```
 
-Create build directory and configure:
+### Create Build Directory
 
 ```bash
 mkdir build
@@ -109,45 +161,76 @@ mkdir build
 cd build
 ```
 
+### Configure the Build
+
 ```bash
-cmake -GNinja -DCMAKE_INSTALL_PREFIX=/usr/local ..
+cmake -GNinja \
+    -DCMAKE_INSTALL_PREFIX=/usr/local \
+    -DBUILD_SHARED_LIBS=ON \
+    ..
 ```
 
-Build liboqs: 🔨
+**Configuration options:**
+
+| Option | Purpose |
+|--------|---------|
+| -GNinja | Use Ninja build system (faster) |
+| -DCMAKE_INSTALL_PREFIX=/usr/local | Install to standard system location |
+| -DBUILD_SHARED_LIBS=ON | Build shared libraries |
+
+### Build liboqs
 
 ```bash
 ninja
 ```
 
-Run tests to verify the build: 🧪
+Build time varies by system (typically 2-5 minutes).
+
+### Run Tests (Optional but Recommended)
 
 ```bash
 ninja run_tests
 ```
 
-Install liboqs:
+All tests should pass. Minor failures in specific algorithm tests are usually acceptable.
+
+### Install liboqs
 
 ```bash
 sudo ninja install
 ```
 
-Update the shared library cache:
+### Update Library Cache
 
 ```bash
 sudo ldconfig
 ```
 
+### Verify Installation
+
+```bash
+ls -la /usr/local/lib/liboqs*
+```
+
+**Expected output (similar to):**
+
+```
+-rw-r--r-- 1 root root <size> <date> /usr/local/lib/liboqs.so
+-rw-r--r-- 1 root root <size> <date> /usr/local/lib/liboqs.so.0
+-rw-r--r-- 1 root root <size> <date> /usr/local/lib/liboqs.so.0.x.x
+```
+
 ---
 
-## 📦 Step A3: Clone and Build OQS Provider
+## Step 4: Clone and Build OQS Provider
 
 Return to the build directory:
 
 ```bash
-cd ~/pqc-build
+cd ~/oqs-build
 ```
 
-Clone the OQS provider repository:
+### Clone the Repository
 
 ```bash
 git clone --depth 1 https://github.com/open-quantum-safe/oqs-provider.git
@@ -157,7 +240,7 @@ git clone --depth 1 https://github.com/open-quantum-safe/oqs-provider.git
 cd oqs-provider
 ```
 
-Create build directory and configure:
+### Create Build Directory
 
 ```bash
 mkdir build
@@ -167,51 +250,77 @@ mkdir build
 cd build
 ```
 
+### Configure the Build
+
 ```bash
-cmake -GNinja -DCMAKE_INSTALL_PREFIX=/usr/local ..
+cmake -GNinja \
+    -DCMAKE_INSTALL_PREFIX=/usr/local \
+    -Dliboqs_DIR=/usr/local \
+    ..
 ```
 
-Build the provider: 🔨
+### Build the Provider
 
 ```bash
 ninja
 ```
 
+### Verify the Provider Built Successfully
+
+```bash
+ls -la lib/oqsprovider.so
+```
+
+**Expected output:**
+
+```
+-rwxr-xr-x 1 <user> <group> <size> <date> lib/oqsprovider.so
+```
+
 ---
 
-## 📂 Step A4: Install the OQS Provider
+## Step 5: Install the OQS Provider
 
-Determine the OpenSSL providers directory:
+### Locate OpenSSL Providers Directory
+
+Find where OpenSSL expects providers:
 
 ```bash
 openssl version -d
 ```
 
-Note the OPENSSLDIR path (typically `/usr/lib/ssl`).
-
-Find the providers directory:
+Note the OPENSSLDIR path.
 
 ```bash
 ls /usr/lib/x86_64-linux-gnu/ossl-modules/
 ```
 
-Copy the provider to the correct location:
+This shows existing providers.
+
+### Copy Provider to System Location
 
 ```bash
-sudo cp ~/pqc-build/oqs-provider/build/lib/oqsprovider.so /usr/lib/x86_64-linux-gnu/ossl-modules/
+sudo cp ~/oqs-build/oqs-provider/build/lib/oqsprovider.so \
+    /usr/lib/x86_64-linux-gnu/ossl-modules/
 ```
 
-Set permissions:
+### Set Permissions
 
 ```bash
 sudo chmod 644 /usr/lib/x86_64-linux-gnu/ossl-modules/oqsprovider.so
 ```
 
+### Verify Installation
+
+```bash
+ls -la /usr/lib/x86_64-linux-gnu/ossl-modules/oqsprovider.so
+```
+
 ---
 
-## ⚙️ Step A5: Configure OpenSSL to Load OQS Provider
+## Step 6: Configure OpenSSL to Load OQS Provider
 
-Edit the OpenSSL configuration file:
+### Edit OpenSSL Configuration
 
 ```bash
 sudo vim /etc/ssl/openssl.cnf
@@ -237,15 +346,15 @@ activate = 1
 activate = 1
 ```
 
-Save and exit (Ctrl+X, Y, Enter).
+Save and exit (`:wq` in vim).
 
-> ⚠️ **Important:** Ensure there are no duplicate `openssl_conf` lines in the file. If one exists, modify it rather than adding a new one.
+**Important:** Ensure there are no duplicate `openssl_conf` lines in the file. If one exists, modify it rather than adding a new one.
 
 ---
 
-## ✅ Step A6: Verify OQS Provider Installation
+## Step 7: Verify OQS Provider Activation
 
-List available providers:
+### List Active Providers
 
 ```bash
 openssl list -providers
@@ -257,618 +366,295 @@ openssl list -providers
 Providers:
   default
     name: OpenSSL Default Provider
-    version: 3.0.x
+    version: 3.5.3
     status: active
   oqsprovider
     name: OpenSSL OQS Provider
-    version: 0.8.x
+    version: 0.x.x
     status: active
 ```
 
-List available PQC signature algorithms: ✍️
+Both `default` and `oqsprovider` should show `status: active`.
+
+---
+
+## Step 8: Verify Algorithm Availability
+
+### Native NIST Algorithms (default provider)
 
 ```bash
-openssl list -signature-algorithms -provider oqsprovider | grep -i ml-dsa
+openssl list -kem-algorithms | grep -i mlkem
 ```
 
 **Expected output:**
 
 ```
-  mldsa44 @ oqsprovider
-  mldsa65 @ oqsprovider
-  mldsa87 @ oqsprovider
-  ...
+MLKEM512 @ default
+MLKEM768 @ default
+MLKEM1024 @ default
+X25519MLKEM768 @ default
 ```
 
-List available PQC KEM algorithms: 🔑
+### OQS Alternative Algorithms
 
 ```bash
-openssl list -kem-algorithms -provider oqsprovider | grep -i mlkem
+openssl list -kem-algorithms | grep -i frodo
 ```
 
 **Expected output:**
 
 ```
-  mlkem512 @ oqsprovider
-  mlkem768 @ oqsprovider
-  mlkem1024 @ oqsprovider
-  ...
+frodo640aes @ oqsprovider
+frodo640shake @ oqsprovider
+frodo976aes @ oqsprovider
+frodo976shake @ oqsprovider
+frodo1344aes @ oqsprovider
+frodo1344shake @ oqsprovider
 ```
 
----
-
-## 🧪 Step A7: Test PQC Key Generation
-
-Test ML-DSA key generation:
-
 ```bash
-openssl genpkey -provider oqsprovider -provider default -algorithm mldsa65 -out /tmp/test-mldsa65.key
-```
-
-Verify the key:
-
-```bash
-openssl pkey -provider oqsprovider -provider default -in /tmp/test-mldsa65.key -noout -text | head -5
-```
-
-Clean up: 🧹
-
-```bash
-rm /tmp/test-mldsa65.key
-```
-
----
-
-## 📊 Step A8: Algorithm Name Reference
-
-The OQS provider uses the NIST FIPS standard algorithm names:
-
-| FIPS Standard | OQS Provider Name | Security Level | CNSA 2.0 Approved |
-|---------------|-------------------|----------------|-------------------|
-| ML-DSA-44 (FIPS 204) | mldsa44 | Level 2 | ❌ No |
-| ML-DSA-65 (FIPS 204) | mldsa65 | Level 3 | ✅ Yes |
-| ML-DSA-87 (FIPS 204) | mldsa87 | Level 5 | ✅ Yes |
-| ML-KEM-512 (FIPS 203) | mlkem512 | Level 1 | ❌ No |
-| ML-KEM-768 (FIPS 203) | mlkem768 | Level 3 | ✅ Yes |
-| ML-KEM-1024 (FIPS 203) | mlkem1024 | Level 5 | ✅ Yes |
-
-**🔀 Hybrid algorithms also available:**
-- X25519MLKEM768
-- X448MLKEM1024
-- SecP256r1MLKEM768
-- SecP384r1MLKEM1024
-
-> 🏛️ **Note for CNSA 2.0 compliance:** Only use mldsa65 (ML-DSA-65), mldsa87 (ML-DSA-87), mlkem768 (ML-KEM-768), and mlkem1024 (ML-KEM-1024).
-
----
-
-## 🎉 Path A Complete!
-
-Your Ubuntu 24.04 LTS system now has PQC support via the OQS provider. When using OpenSSL commands with PQC algorithms, include the provider flags:
-
-```bash
-openssl genpkey -provider oqsprovider -provider default -algorithm dilithium3 -out key.pem
-```
-
-**Continue to:** [Return to your learning path documentation] ➡️
-
----
-
-# 🅱️ Path B: OpenSSL 3.5 for Ubuntu 25.04
-
-This path compiles OpenSSL 3.5.x from source and installs it alongside your system OpenSSL, preserving system stability while providing access to native PQC algorithms via the `openssl-pqc` command.
-
-## 📋 Prerequisites
-
-Verify your Ubuntu and OpenSSL versions:
-
-```bash
-lsb_release -d
+openssl list -kem-algorithms | grep -i ntru
 ```
 
 **Expected output:**
 
 ```
-Description:    Ubuntu 25.04
+ntru_hps2048509 @ oqsprovider
+ntru_hps2048677 @ oqsprovider
+ntru_hps4096821 @ oqsprovider
+ntru_hrss701 @ oqsprovider
 ```
 
 ```bash
-openssl version
+openssl list -kem-algorithms | grep -i mceliece
 ```
 
 **Expected output:**
 
 ```
-OpenSSL 3.4.x <date>
-```
-
----
-
-## 🛠️ Step B1: Install Build Dependencies
-
-Update package lists:
-
-```bash
-sudo apt update
-```
-
-Install required build tools:
-
-```bash
-sudo apt install -y build-essential checkinstall zlib1g-dev libffi-dev perl wget
-```
-
----
-
-## 📥 Step B2: Download OpenSSL 3.5
-
-Create a working directory:
-
-```bash
-mkdir -p ~/openssl-build
+mceliece348864 @ oqsprovider
+mceliece460896 @ oqsprovider
+mceliece6688128 @ oqsprovider
+mceliece6960119 @ oqsprovider
+mceliece8192128 @ oqsprovider
 ```
 
 ```bash
-cd ~/openssl-build
-```
-
-Download OpenSSL 3.5.3 source code:
-
-```bash
-wget https://github.com/openssl/openssl/releases/download/openssl-3.5.3/openssl-3.5.3.tar.gz
-```
-
-Verify the download with SHA256 checksum: 🔍
-
-```bash
-sha256sum openssl-3.5.3.tar.gz
-```
-
-Compare the output against the checksum published on the [OpenSSL releases page](https://github.com/openssl/openssl/releases).
-
-Extract the archive:
-
-```bash
-tar -xzf openssl-3.5.3.tar.gz
-```
-
-```bash
-cd openssl-3.5.3
-```
-
----
-
-## ⚙️ Step B3: Configure the Build
-
-Configure OpenSSL to install in a separate directory (not replacing system OpenSSL):
-
-```bash
-./Configure --prefix=/opt/openssl-3.5.3 --openssldir=/opt/openssl-3.5.3/ssl shared
-```
-
-**Configuration options explained:**
-
-| Option | Purpose |
-|--------|---------|
-| `--prefix=/opt/openssl-3.5.3` | 📂 Installation directory (separate from system) |
-| `--openssldir=/opt/openssl-3.5.3/ssl` | 📂 Configuration and certificate directory |
-| `shared` | 📚 Build shared libraries |
-
-Review the configuration:
-
-```bash
-perl configdata.pm --dump | head -30
-```
-
----
-
-## 🔨 Step B4: Build OpenSSL
-
-Compile OpenSSL (this takes a few minutes depending on your system): ☕
-
-```bash
-make -j$(nproc)
-```
-
-The `-j$(nproc)` flag parallelizes the build using all available CPU cores.
-
----
-
-## 🧪 Step B5: Run Tests (Optional but Recommended)
-
-Run the test suite to verify the build:
-
-```bash
-make test
-```
-
-All tests should pass. Minor failures in network-related tests are acceptable if you're behind a firewall.
-
----
-
-## 📦 Step B6: Install OpenSSL 3.5
-
-Install to the prefix directory:
-
-```bash
-sudo make install
-```
-
-Verify installation: ✅
-
-```bash
-/opt/openssl-3.5.3/bin/openssl version
+openssl list -kem-algorithms | grep -i bike
 ```
 
 **Expected output:**
 
 ```
-OpenSSL 3.5.3 <date>
+bike1l1fo @ oqsprovider
+bike1l3fo @ oqsprovider
+bike1l5fo @ oqsprovider
+```
+
+```bash
+openssl list -kem-algorithms | grep -i hqc
+```
+
+**Expected output:**
+
+```
+hqc128 @ oqsprovider
+hqc192 @ oqsprovider
+hqc256 @ oqsprovider
 ```
 
 ---
 
-## 📚 Step B7: Configure Library Path
+## Cleanup (Optional)
 
-Create a library configuration file:
+After successful installation, remove the build directories to save space:
 
 ```bash
-sudo vim /etc/ld.so.conf.d/openssl-3.5.3.conf
+rm -rf ~/oqs-build
 ```
 
-Add the following line:
+---
 
-```
-/opt/openssl-3.5.3/lib64
-```
+## Troubleshooting
 
-Save and exit.
+### Provider Not Loading
 
-Update the shared library cache:
+**Symptom:** `openssl list -providers` doesn't show oqsprovider
+
+**Solutions:**
+
+1. Check provider file exists:
+   ```bash
+   ls -la /usr/lib/x86_64-linux-gnu/ossl-modules/oqsprovider.so
+   ```
+
+2. Verify configuration syntax in `/etc/ssl/openssl.cnf`
+
+3. Check for duplicate `openssl_conf` lines
+
+### Library Loading Errors
+
+**Symptom:** `error while loading shared libraries: liboqs.so`
+
+**Solution:**
 
 ```bash
 sudo ldconfig
 ```
 
----
-
-## 🔗 Step B8: Create the openssl-pqc Command
-
-Create a symbolic link for easy access:
+If still failing:
 
 ```bash
-sudo ln -sf /opt/openssl-3.5.3/bin/openssl /usr/local/bin/openssl-pqc
-```
-
-Verify the command works: ✅
-
-```bash
-openssl-pqc version
-```
-
-**Expected output:**
-
-```
-OpenSSL 3.5.3 <date>
-```
-
-Verify system OpenSSL is unchanged: 🔒
-
-```bash
-openssl version
-```
-
-**Expected output:**
-
-```
-OpenSSL 3.4.x <date>
-```
-
----
-
-## 💻 Step B9: Create Shell Alias (Optional)
-
-For convenience, you can add an alias to your shell configuration:
-
-```bash
-echo 'alias openssl-pqc="/opt/openssl-3.5.3/bin/openssl"' >> ~/.bashrc
-```
-
-```bash
-source ~/.bashrc
-```
-
----
-
-## ✅ Step B10: Verify PQC Algorithm Availability
-
-List available ML-DSA signature algorithms: ✍️
-
-```bash
-openssl-pqc list -signature-algorithms | grep -i ml-dsa
-```
-
-**Expected output:**
-
-```
-  ML-DSA-44 @ default
-  ML-DSA-65 @ default
-  ML-DSA-87 @ default
-```
-
-List available SLH-DSA signature algorithms: 🌳
-
-```bash
-openssl-pqc list -signature-algorithms | grep -i slh-dsa
-```
-
-**Expected output (partial):**
-
-```
-  SLH-DSA-SHA2-128f @ default
-  SLH-DSA-SHA2-128s @ default
-  SLH-DSA-SHA2-192f @ default
-  ...
-```
-
-List available ML-KEM algorithms: 🔑
-
-```bash
-openssl-pqc list -kem-algorithms | grep -i mlkem
-```
-
-**Expected output:**
-
-```
-  MLKEM512 @ default
-  MLKEM768 @ default
-  MLKEM1024 @ default
-```
-
-List hybrid KEM algorithms: 🔀
-
-```bash
-openssl-pqc list -kem-algorithms | grep -i x25519mlkem
-```
-
-**Expected output:**
-
-```
-  X25519MLKEM768 @ default
-```
-
----
-
-## 🧪 Step B11: Test PQC Key Generation
-
-Test ML-DSA key generation:
-
-```bash
-openssl-pqc genpkey -algorithm ML-DSA-65 -out /tmp/test-ml-dsa-65.key
-```
-
-Verify the key:
-
-```bash
-openssl-pqc pkey -in /tmp/test-ml-dsa-65.key -noout -text | head -5
-```
-
-**Expected output:**
-
-```
-ML-DSA-65 Private-Key:
-priv:
-    <hex values>
-```
-
-Clean up: 🧹
-
-```bash
-rm /tmp/test-ml-dsa-65.key
-```
-
-Test ML-KEM key generation:
-
-```bash
-openssl-pqc genpkey -algorithm MLKEM768 -out /tmp/test-mlkem768.key
-```
-
-Verify and clean up:
-
-```bash
-openssl-pqc pkey -in /tmp/test-mlkem768.key -noout -text | head -5
-```
-
-```bash
-rm /tmp/test-mlkem768.key
-```
-
----
-
-## 🎉 Path B Complete!
-
-Your Ubuntu 25.04 system now has OpenSSL 3.5.3 with native PQC support available via the `openssl-pqc` command. Your system OpenSSL remains unchanged.
-
-**Usage Pattern:**
-
-| Task | Command |
-|------|---------|
-| 🖥️ System operations | `openssl` (uses 3.4.x) |
-| 🔐 PQC operations | `openssl-pqc` (uses 3.5.3) |
-
-**Continue to:** [Return to your learning path documentation] ➡️
-
----
-
-# 📖 Command Reference Summary
-
-## Path A: OQS Provider Commands
-
-When using the OQS provider on Ubuntu 24.04, include provider flags:
-
-```bash
-# 🔑 Generate an ML-DSA-65 key
-openssl genpkey -provider oqsprovider -provider default -algorithm mldsa65 -out key.pem
-
-# 📝 Create a CSR
-openssl req -provider oqsprovider -provider default -new -key key.pem -out request.csr
-
-# ✍️ Sign a certificate
-openssl ca -provider oqsprovider -provider default -in request.csr -out certificate.crt
-
-# 👁️ View a certificate
-openssl x509 -provider oqsprovider -provider default -in certificate.crt -noout -text
-```
-
-## 🅱️ Path B: OpenSSL 3.5 Commands
-
-When using OpenSSL 3.5 on Ubuntu 25.04, use the `openssl-pqc` command:
-
-```bash
-# 🔑 Generate an ML-DSA-65 key
-openssl-pqc genpkey -algorithm ML-DSA-65 -out key.pem
-
-# 📝 Create a CSR
-openssl-pqc req -new -key key.pem -out request.csr
-
-# ✍️ Sign a certificate
-openssl-pqc ca -in request.csr -out certificate.crt
-
-# 👁️ View a certificate
-openssl-pqc x509 -in certificate.crt -noout -text
-```
-
----
-
-# 🔄 Algorithm Name Comparison
-
-Both paths use the official NIST FIPS standard names, with slight formatting differences:
-
-| FIPS Standard | OQS Provider (Path A) | OpenSSL 3.5 (Path B) |
-|---------------|----------------------|----------------------|
-| ML-DSA-44 | mldsa44 | ML-DSA-44 |
-| ML-DSA-65 | mldsa65 | ML-DSA-65 |
-| ML-DSA-87 | mldsa87 | ML-DSA-87 |
-| ML-KEM-512 | mlkem512 | MLKEM512 |
-| ML-KEM-768 | mlkem768 | MLKEM768 |
-| ML-KEM-1024 | mlkem1024 | MLKEM1024 |
-| SLH-DSA-SHA2-128f | slhdsa128f | SLH-DSA-SHA2-128f |
-
-> 📝 **Note:** OpenSSL 3.5 uses hyphenated names (ML-DSA-65), while OQS provider uses lowercase concatenated names (mldsa65). Both refer to the same FIPS 204 standard algorithm.
-
----
-
-# 🔧 Troubleshooting
-
-## 🅰️ Path A Issues
-
-### ❌ Provider Not Found
-
-**Problem:** `oqsprovider` not listed in providers
-
-**Solution:** Verify the provider file location:
-```bash
-ls -la /usr/lib/x86_64-linux-gnu/ossl-modules/oqsprovider.so
-```
-
-If missing, re-copy from build directory:
-```bash
-sudo cp ~/pqc-build/oqs-provider/build/lib/oqsprovider.so /usr/lib/x86_64-linux-gnu/ossl-modules/
-```
-
-### ❌ Algorithm Not Available
-
-**Problem:** PQC algorithms not listed
-
-**Solution:** Check OpenSSL configuration:
-```bash
-grep -A 10 "openssl_init" /etc/ssl/openssl.cnf
-```
-
-Ensure provider sections are at the top of the file.
-
-### ❌ liboqs Not Found
-
-**Problem:** Provider fails to load with library errors
-
-**Solution:** Verify liboqs installation:
-```bash
-ls -la /usr/local/lib/liboqs*
 sudo ldconfig -p | grep oqs
 ```
 
----
+### pkg-config Not Found During Build
 
-## 🅱️ Path B Issues
+**Symptom:** cmake fails with pkg-config errors
 
-### ❌ openssl-pqc Command Not Found
+**Solution:**
 
-**Problem:** `openssl-pqc: command not found`
-
-**Solution:** Verify symbolic link:
 ```bash
-ls -la /usr/local/bin/openssl-pqc
+sudo apt install -y pkg-config
 ```
 
-Recreate if necessary:
-```bash
-sudo ln -sf /opt/openssl-3.5.3/bin/openssl /usr/local/bin/openssl-pqc
-```
+Then re-run cmake.
 
-### ❌ Library Loading Errors
+### Algorithm Not Found
 
-**Problem:** `error while loading shared libraries`
+**Symptom:** grep returns no results for expected algorithm
 
-**Solution:** Update library cache:
-```bash
-cat /etc/ld.so.conf.d/openssl-3.5.3.conf
-sudo ldconfig
-```
+**Solutions:**
 
-### ❌ Build Failures
+1. Verify OQS provider is active:
+   ```bash
+   openssl list -providers
+   ```
 
-**Problem:** Compilation errors during `make`
+2. Check OQS provider version supports the algorithm
 
-**Solution:** Ensure all dependencies are installed:
-```bash
-sudo apt install -y build-essential zlib1g-dev libffi-dev perl
-```
-
-Clean and reconfigure:
-```bash
-make clean
-./Configure --prefix=/opt/openssl-3.5.3 --openssldir=/opt/openssl-3.5.3/ssl shared
-make -j$(nproc)
-```
+3. Rebuild with algorithm enabled if necessary
 
 ---
 
-# 🧹 Cleanup (Optional)
+## Algorithm Quick Reference
 
-## 🗑️ Remove Build Directories
+### Using Native Algorithms (No Provider Flags Needed)
 
-After successful installation, you can remove the build directories to save space:
-
-**Path A:**
 ```bash
-rm -rf ~/pqc-build
+openssl genpkey -algorithm mldsa65 -out key.pem
+
+openssl req -new -x509 -key key.pem -out cert.crt -days 365 \
+    -subj "/CN=test.example.com"
+
+openssl s_server -key key.pem -cert cert.crt -port 4433 \
+    -tls1_3 -groups X25519MLKEM768 -www
 ```
 
-**Path B:**
+### Using OQS Algorithms (Automatic via Provider)
+
+With the OQS provider configured system-wide, OQS algorithms are available automatically:
+
 ```bash
-rm -rf ~/openssl-build
+openssl s_server -key key.pem -cert cert.crt -port 4433 \
+    -tls1_3 -groups frodo640aes -www
+
+openssl s_client -connect localhost:4433 \
+    -tls1_3 -groups ntru_hps2048677
 ```
 
 ---
 
-# 🚀 Next Steps
+## Next Steps
 
-After completing your chosen path, return to your learning path documentation:
+Your Ubuntu 25.10 system now has full PQC support with both native NIST algorithms and OQS alternative algorithms. Continue to one of the learning paths:
 
-- [**FIPS 203/204/205 Path:**](/fipsqs/00_fips_quantum_ca_intro.md) Continue with the FIPS Lab
-- [**CNSA 2.0 Path:**](/cnsa2/01_cnsa_quantum_ca_intro.md) Continue with the CNSA 2.0 Lab
-- [**Alternate PQC Path:**](/altpqc/00_alt_pqc_introduction.md) Continue wit Altnerate PQC Algorithm Lab
+### Learning Path 1: NIST FIPS 203/204/205
 
-Remember to use the appropriate command syntax:
-- 🅰️ **Path A (OQS):** Include `-provider oqsprovider -provider default` flags
-- 🅱️ **Path B (OpenSSL 3.5):** Use `openssl-pqc` instead of `openssl`
+**For commercial organizations implementing quantum-resistant cryptography using NIST standards.**
+
+Uses native OpenSSL 3.5.x PQC support for ML-KEM, ML-DSA, and SLH-DSA.
+
+**Start here:** [FIPS Path - Module 00: Introduction](FIPS-Path/00-INTRODUCTION.md)
+
+---
+
+### Learning Path 2: NSA CNSA 2.0
+
+**For government contractors and organizations requiring CNSA 2.0 compliance.**
+
+Focuses on ML-DSA-65/87 and ML-KEM-768/1024 for classified system requirements.
+
+**Start here:** [CNSA Path - Module 00: Introduction](CNSA-Path/00-INTRODUCTION.md)
+
+---
+
+### Learning Path 3: Alternative PQC Algorithms
+
+**For researchers, organizations requiring algorithm diversity, and international compliance.**
+
+Explores FrodoKEM, NTRU, Classic McEliece, BIKE, and HQC using the OQS provider you just installed.
+
+**Start here:** [Alt Path - Module 00: Introduction](Alt-Path/00-INTRODUCTION.md)
+
+---
+
+---
+
+## OpenSSL and OQS Compatibility Matrix
+
+### OpenSSL Version Support
+
+| OpenSSL Version | OQS Provider Support | Native NIST PQC | TLS 1.3 Signatures | Notes |
+|-----------------|---------------------|-----------------|-------------------|-------|
+| 3.0.0 - 3.0.13 | ✅ Yes | ❌ No | ❌ No | Groups limit bug present |
+| 3.0.14+ | ✅ Yes | ❌ No | ❌ No | Groups limit fixed |
+| 3.1.0 - 3.1.5 | ✅ Yes | ❌ No | ❌ No | Groups limit bug present |
+| 3.1.6+ | ✅ Yes | ❌ No | ❌ No | Groups limit fixed |
+| 3.2.0 - 3.2.1 | ✅ Yes | ❌ No | ✅ Yes | TLS sig support added; groups limit bug |
+| 3.2.2+ | ✅ Yes | ❌ No | ✅ Yes | Groups limit fixed |
+| 3.3.0+ | ✅ Yes | ❌ No | ✅ Yes | Full support |
+| 3.4.x | ✅ Yes | ❌ No | ✅ Yes | Full support |
+| **3.5.x** | ✅ Yes | ✅ Yes | ✅ Yes | Native ML-KEM/ML-DSA; OQS auto-disables duplicates |
+
+### OQS Provider and liboqs Version Alignment
+
+| OQS Provider | liboqs | Release Date | Key Features |
+|--------------|--------|--------------|--------------|
+| 0.10.0 | 0.14.0 | July 2025 | Current stable; composite signatures removed |
+| 0.9.0 | 0.13.0 | May 2025 | OpenSSL 3.5 native algorithm detection |
+| 0.8.0 | 0.12.0 | December 2024 | FIPS algorithm names (ML-KEM, ML-DSA) |
+| 0.7.0 | 0.11.0 | October 2024 | Algorithm updates |
+| 0.6.1 | 0.10.1 | June 2024 | Bug fixes |
+| 0.6.0 | 0.10.0 | April 2024 | First standardized PQ algorithms |
+
+### Important Notes
+
+**OpenSSL 3.5+ with OQS Provider:**
+- OQS provider version 0.9.0+ automatically disables ML-KEM and ML-DSA when it detects OpenSSL 3.5+ native support
+- This prevents algorithm conflicts and ensures you use native implementations for NIST algorithms
+- OQS provider continues to provide FrodoKEM, NTRU, Classic McEliece, BIKE, and other non-NIST algorithms
+
+**Groups Limit Bug:**
+- OpenSSL versions before 3.0.14, 3.1.6, 3.2.2, and 3.3.0 have a limit of 44 default TLS groups
+- Enabling too many KEMs via OQS provider can cause crashes on affected versions
+- This is resolved in newer OpenSSL releases
+
+**Minimum Requirements:**
+- OQS provider requires OpenSSL 3.0.0 or later
+- TLS 1.3 signature functionality requires OpenSSL 3.2.0 or later
+- For best experience, use OpenSSL 3.5.x with OQS provider 0.9.0+
+
+---
+
+## Additional Resources
+
+- [Open Quantum Safe Project](https://openquantumsafe.org/)
+- [OQS Provider GitHub](https://github.com/open-quantum-safe/oqs-provider)
+- [liboqs GitHub](https://github.com/open-quantum-safe/liboqs)
+- [OpenSSL 3.5 Documentation](https://www.openssl.org/docs/)
+- [NIST Post-Quantum Cryptography](https://csrc.nist.gov/projects/post-quantum-cryptography)
+
+---
+
+**Return to:** [Main README](README.md)
