@@ -2,35 +2,34 @@
 
 ## 📋 Overview
 
-This addendum provides detailed instructions for enabling post-quantum cryptography support on Ubuntu systems. Choose the path that matches your Ubuntu version and requirements. Yea, we know not everyone is using Ubuntu but this is based on our lab guides and that's what we used. 🐧 What it will do is give you a better idea of what you might want to do internally with our installations, either updating OpenSSL fully or "simply" adding OQS support as needed. 
+This addendum provides detailed instructions for enabling post-quantum cryptography support on Ubuntu systems. Choose the path that matches your Ubuntu version and requirements. Yea, we know not everyone is using Ubuntu but this is based on our lab guides and that's what we used. What it will do is give you a better idea of what you might want to do internally with our installations, either updating OpenSSL fully or "simply" adding OQS support as needed.
 
-And [contributions](contributing.md) welcome! 🤝 Add your linux flavor or unique use case we're probably forgetting.
+And [contributions](/contributing.md) welcome! Add your linux flavor or unique use case we're probably forgetting.
 
 | Ubuntu Version | Default OpenSSL | Recommended Path | Result |
 |----------------|-----------------|------------------|--------|
 | 24.04 LTS (Noble) 🦫 | 3.0.x | Path A: OQS Provider | Adds PQC to system OpenSSL |
 | 25.04 (Plucky) 🐧 | 3.4.x | Path B: OpenSSL 3.5 | Parallel install with `openssl-pqc` command |
 
----
+<br>
 
 ## 🧭 Decision Guide
 
-### 🅰️ Choose Path A (OQS Provider) if:
+###  Choose Path A (OQS Provider) if:
 
-- ✅ You are running Ubuntu 24.04 LTS
+- ✅ You are running older linux versions and can't just willy nilly upgrade OSs.
 - ✅ You want PQC algorithms available system-wide
 - ✅ You love compiling libraries into existing packages
-- ✅ You prefer using the Open Quantum Safe project's implementation
+- ✅ You prefer using the Open Quantum Safe project's implementation (needed for alternate algorithms)
 
-### 🅱️ Choose Path B (OpenSSL 3.5) if:
+###  Choose Path B (OpenSSL 3.5) if:
 
-- ✅ You are running Ubuntu 25.04 or similar with OpenSSL 3.4.x
-- ✅ You need FIPS algorithm suites (including ML-DSA-44, SLH-DSA) but don't care about life outside of NIST
+- ✅ You need FIPS/CNSA 2.0 algorithm suites (including ML-DSA-44, SLH-DSA) but don't care about life outside of NIST
 - ✅ You want to preserve system OpenSSL while adding PQC capability
 
----
+<br>
 
-# 🅰️ Path A: OQS Provider for Ubuntu 24.04 LTS
+## Path A: OQS Provider for Ubuntu 24.04 LTS
 
 This path installs the Open Quantum Safe (OQS) provider alongside your existing OpenSSL 3.0.x installation, enabling post-quantum algorithms through the provider mechanism.
 
@@ -703,7 +702,7 @@ Your Ubuntu 25.04 system now has OpenSSL 3.5.3 with native PQC support available
 
 # 📖 Command Reference Summary
 
-## 🅰️ Path A: OQS Provider Commands
+## Path A: OQS Provider Commands
 
 When using the OQS provider on Ubuntu 24.04, include provider flags:
 
@@ -866,14 +865,10 @@ rm -rf ~/openssl-build
 
 After completing your chosen path, return to your learning path documentation:
 
-- 📘 [**FIPS 203/204/205 Path:**](/fipsqs/00_fips_quantum_ca_intro.md) Continue with the FIPS Lab
-- 📗 [**CNSA 2.0 Path:**](/cnsa2/01_cnsa_quantum_ca_intro.md) Continue with the CNSA 2.0 Lab
+- [**FIPS 203/204/205 Path:**](/fipsqs/00_fips_quantum_ca_intro.md) Continue with the FIPS Lab
+- [**CNSA 2.0 Path:**](/cnsa2/01_cnsa_quantum_ca_intro.md) Continue with the CNSA 2.0 Lab
+- [**Alternate PQC Path:**](/altpqc/00_alt_pqc_introduction.md) Continue wit Altnerate PQC Algorithm Lab
 
 Remember to use the appropriate command syntax:
 - 🅰️ **Path A (OQS):** Include `-provider oqsprovider -provider default` flags
 - 🅱️ **Path B (OpenSSL 3.5):** Use `openssl-pqc` instead of `openssl`
-
----
-<br>
-<br>
-🔐 Happy quantum-safe computing, Rebecca! 🎉🦾
