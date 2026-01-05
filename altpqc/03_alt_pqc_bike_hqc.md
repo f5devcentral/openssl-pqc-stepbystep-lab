@@ -1,12 +1,10 @@
-# Module 05: BIKE and HQC - Code-Based KEM Alternatives
+# Module 03: BIKE and HQC - Code-Based KEM Alternatives
 
 ## Overview
 
 BIKE (Bit Flipping Key Encapsulation) and HQC (Hamming Quasi-Cyclic) are code-based KEMs that provide alternatives to lattice-based cryptography. In March 2025, NIST selected HQC as the backup standard to ML-KEM, with a draft standard expected in 2026 and finalization in 2027.
 
 Both algorithms are based on different mathematical problems than ML-KEM, providing algorithm diversity for defense-in-depth strategies.
-
----
 
 ## Learning Objectives
 
@@ -18,7 +16,7 @@ After completing this module, you will be able to:
 - Understand why HQC was selected as the ML-KEM backup
 - Recognize appropriate deployment scenarios for code-based KEMs
 
----
+<br>
 
 ## Understanding Code-Based Cryptography
 
@@ -27,7 +25,7 @@ After completing this module, you will be able to:
 Code-based cryptography relies on the difficulty of decoding random linear codes:
 
 | Problem | Description | Used By |
-|---------|-------------|---------|
+| --------- | ------------- | --------- |
 | Syndrome Decoding | Decode arbitrary linear code | Classic McEliece |
 | MDPC Decoding | Decode moderate-density parity-check codes | BIKE |
 | Quasi-Cyclic Decoding | Decode quasi-cyclic codes | HQC |
@@ -37,12 +35,12 @@ Code-based cryptography relies on the difficulty of decoding random linear codes
 If a breakthrough occurs in lattice cryptanalysis, code-based algorithms provide a fallback:
 
 | Family | Mathematical Problem | Primary Standard | Backup Option |
-|--------|---------------------|------------------|---------------|
+| -------- | --------------------- | ------------------ | --------------- |
 | Lattice | Module-LWE | ML-KEM | FrodoKEM, NTRU |
 | Code-based | Syndrome Decoding | **HQC (2027)** | BIKE, Classic McEliece |
 | Hash-based | Hash Function Security | SLH-DSA | LMS, XMSS |
 
----
+<br>
 
 ## BIKE Overview
 
@@ -73,7 +71,7 @@ BIKE has faced some implementation challenges:
 - **2023**: Patches and mitigations implemented
 - **Current**: Secure implementations available
 
----
+<br>
 
 ## HQC Overview
 
@@ -82,7 +80,7 @@ BIKE has faced some implementation challenges:
 HQC uses quasi-cyclic codes with a different construction than BIKE. NIST selected HQC as the backup to ML-KEM in March 2025.
 
 | Variant | Security Level | Public Key | Secret Key | Ciphertext |
-|---------|---------------|------------|------------|------------|
+| --------- | --------------- | ------------ | ------------ | ------------ |
 | hqc128 | 1 | 2,249 B | 2,289 B | 4,497 B |
 | hqc192 | 3 | 4,522 B | 4,562 B | 9,042 B |
 | hqc256 | 5 | 7,245 B | 7,285 B | 14,485 B |
@@ -90,7 +88,7 @@ HQC uses quasi-cyclic codes with a different construction than BIKE. NIST select
 ### HQC Characteristics
 
 | Aspect | HQC | Notes |
-|--------|-----|-------|
+| -------- | ----- | ------- |
 | Key sizes | Medium-large | Larger ciphertexts than BIKE |
 | Performance | Good | Slightly better than BIKE |
 | Decryption failures | Very rare | Addressed in recent versions |
@@ -105,7 +103,7 @@ NIST's selection rationale:
 3. **Reasonable performance**: Practical for most applications
 4. **Implementation maturity**: Years of refinement through NIST process
 
----
+<br>
 
 ## Step 1: Verify BIKE and HQC Availability
 
@@ -135,7 +133,7 @@ hqc192 @ oqsprovider
 hqc256 @ oqsprovider
 ```
 
----
+<br>
 
 ## Step 2: Start TLS Server with BIKE
 
@@ -159,7 +157,7 @@ openssl s_server \
 
 Open a **new terminal** for client testing.
 
----
+<br>
 
 ## Step 3: Connect with BIKE Key Exchange
 
@@ -189,7 +187,7 @@ Negotiated TLS1.3 group: bike1l3fo
 
 Type `GET /` then `QUIT` to exit.
 
----
+<br>
 
 ## Step 4: Measure BIKE Handshake Size
 
@@ -208,7 +206,7 @@ echo | openssl s_client \
 SSL handshake has read 13547 bytes and written 4021 bytes
 ```
 
----
+<br>
 
 ## Step 5: Start TLS Server with HQC
 
@@ -224,7 +222,7 @@ openssl s_server \
     -www
 ```
 
----
+<br>
 
 ## Step 6: Connect with HQC Key Exchange
 
@@ -244,7 +242,7 @@ Server Temp Key: hqc192
 
 Type `GET /` then `QUIT` to exit.
 
----
+<br>
 
 ## Step 7: Measure HQC Handshake Size
 
@@ -263,14 +261,14 @@ echo | openssl s_client \
 SSL handshake has read 19876 bytes and written 5432 bytes
 ```
 
----
+<br>
 
 ## Step 8: Compare BIKE and HQC
 
 ### Size Comparison
 
 | Algorithm | Public Key | Ciphertext | Total Overhead |
-|-----------|------------|------------|----------------|
+| ----------- | ------------ | ------------ | ---------------- |
 | bike1l1fo | 1,541 B | 1,573 B | 3,114 B |
 | bike1l3fo | 3,083 B | 3,115 B | 6,198 B |
 | hqc128 | 2,249 B | 4,497 B | 6,746 B |
@@ -280,13 +278,13 @@ SSL handshake has read 19876 bytes and written 5432 bytes
 ### Observations
 
 | Metric | BIKE | HQC | Notes |
-|--------|------|-----|-------|
+| -------- | ------ | ----- | ------- |
 | Public key size | Smaller | Larger | BIKE ~30% smaller |
 | Ciphertext size | Smaller | Larger | HQC has larger ciphertexts |
 | Total overhead | Lower | Higher | BIKE more compact |
 | NIST status | Round 4 | **Selected** | HQC will be standardized |
 
----
+<br>
 
 ## Step 9: Test Different Security Levels
 
@@ -382,7 +380,7 @@ echo | openssl s_client \
     grep "SSL handshake has read"
 ```
 
----
+<br>
 
 ## Step 10: Record Performance Metrics
 
@@ -413,7 +411,7 @@ Fill in your measured values above.
 EOF
 ```
 
----
+<br>
 
 ## BIKE vs HQC: When to Use Each
 
@@ -449,12 +447,12 @@ Need code-based KEM for algorithm diversity?
 └── No → Use ML-KEM (FIPS 203)
 ```
 
----
+<br>
 
 ## HQC Standardization Timeline
 
 | Date | Milestone |
-|------|-----------|
+| ------ | ----------- |
 | March 2025 | NIST selects HQC as backup |
 | Early 2026 | Draft FIPS standard expected |
 | 2027 | Final FIPS standard expected |
@@ -465,7 +463,7 @@ Organizations planning to use HQC should:
 2. Test with current OQS implementation
 3. Plan migration from ML-KEM when diversity needed
 
----
+<br>
 
 ## Summary
 
@@ -481,16 +479,14 @@ BIKE and HQC provide code-based alternatives to lattice cryptography:
 
 **Bottom line:** HQC will be the standardized code-based backup to ML-KEM. Organizations needing algorithm diversity should plan for HQC adoption when the standard finalizes in 2027. BIKE remains viable for non-NIST deployments where smaller sizes matter.
 
----
+<br>
 
 ## Next Steps
 
-Proceed to **[Module 06: International PQC](06-INTERNATIONAL-PQC.md)** to learn about post-quantum cryptography standards from South Korea, China, and European agencies.
-
----
+Proceed to **[Module 04: International PQC](04_alt_pqc_interational.md)** to learn about post-quantum cryptography standards from South Korea, China, and European agencies.
 
 **Module Navigation:**
 
 | Previous | Current | Next |
 |----------|---------|------|
-| [04 - Classic McEliece](04-CLASSIC-MCELIECE.md) | **05 - BIKE and HQC** | [06 - International PQC](06-INTERNATIONAL-PQC.md) |
+| [02 - FrodoKEM](02_alt_pqc_frodokem.md) | **03 - BIKE and HQC** | [04 - International PQC](04_alt_pqc_interational.md) |

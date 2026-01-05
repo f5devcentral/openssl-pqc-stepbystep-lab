@@ -2,11 +2,9 @@
 
 ## Overview
 
-FrodoKEM represents the most conservative approach to lattice-based cryptography. Unlike ML-KEM (which uses structured lattices with algebraic ring properties), FrodoKEM is based on the "plain" Learning With Errors (LWE) problem without additional mathematical structure.
+FrodoKEM represents the most conservative approach to lattice-based cryptography. Unlike ML-KEM (which uses structured lattices with algebraic ring properties), FrodoKEM is based on Learning With Errors (LWE) problem without additional mathematical structure.
 
 This conservative design means FrodoKEM has stronger theoretical security guarantees but significantly larger key sizes and slower performance.
-
----
 
 ## Learning Objectives
 
@@ -18,14 +16,14 @@ After completing this module, you will be able to:
 - Understand when FrodoKEM is the appropriate choice
 - Compare FrodoKEM variants (AES vs SHAKE)
 
----
+<br>
 
 ## Understanding FrodoKEM
 
 ### Structured vs Unstructured Lattices
 
 | Property | ML-KEM (Structured) | FrodoKEM (Unstructured) |
-|----------|---------------------|------------------------|
+| ---------- | --------------------- | ------------------------ |
 | Mathematical basis | Module-LWE | Plain LWE |
 | Ring structure | Yes (polynomial rings) | No |
 | Key sizes | Small (800-1,568 B) | Large (9,616-21,632 B) |
@@ -43,7 +41,7 @@ The algebraic structure in ML-KEM (and NTRU) enables efficiency but also provide
 ### FrodoKEM Variants
 
 | Variant | Security Level | Public Key | Ciphertext | Use Case |
-|---------|---------------|------------|------------|----------|
+| --------- | --------------- | ------------ | ------------ | ---------- |
 | frodo640aes | 1 (128-bit) | 9,616 B | 9,720 B | General high-security |
 | frodo640shake | 1 (128-bit) | 9,616 B | 9,720 B | SHAKE-based PRF |
 | frodo976aes | 3 (192-bit) | 15,632 B | 15,744 B | Enhanced security |
@@ -53,7 +51,7 @@ The algebraic structure in ML-KEM (and NTRU) enables efficiency but also provide
 
 **AES vs SHAKE:** The variants differ only in the pseudorandom function used internally. AES variants may be faster on hardware with AES-NI instructions; SHAKE variants align with NIST hash standards.
 
----
+<br>
 
 ## Step 1: Verify FrodoKEM Availability
 
@@ -74,7 +72,7 @@ frodo1344aes @ oqsprovider
 frodo1344shake @ oqsprovider
 ```
 
----
+<br>
 
 ## Step 2: List Available FrodoKEM TLS Groups
 
@@ -86,7 +84,7 @@ openssl list -tls1-groups | grep -i frodo
 
 **Note:** Group availability depends on OQS provider version and configuration.
 
----
+<br>
 
 ## Step 3: Start TLS Server with FrodoKEM
 
@@ -111,14 +109,14 @@ openssl s_server \
 **Options explained:**
 
 | Option | Purpose |
-|--------|---------|
+| -------- | --------- |
 | -tls1_3 | Force TLS 1.3 (required for PQC KEMs) |
 | -groups frodo640aes | Use FrodoKEM-640 with AES |
 | -www | Serve simple HTTP response |
 
 The server is now listening. Open a **new terminal** for client testing.
 
----
+<br>
 
 ## Step 4: Connect with FrodoKEM Key Exchange
 
@@ -167,7 +165,7 @@ The presence of `frodo640aes` confirms FrodoKEM was used for key exchange.
 
 Type `GET /` to see the server response, then `QUIT` to exit.
 
----
+<br>
 
 ## Step 5: Measure FrodoKEM Handshake Size
 
@@ -210,7 +208,7 @@ echo | openssl s_client \
 ### Handshake Size Comparison
 
 | Algorithm | Client Writes | Server Reads | Total Overhead |
-|-----------|---------------|--------------|----------------|
+| ----------- | --------------- | -------------- | ---------------- |
 | X25519 (classical) | ~350 B | ~10,000 B | ~10,350 B |
 | X25519MLKEM768 (hybrid) | ~1,500 B | ~11,000 B | ~12,500 B |
 | frodo640aes | ~10,500 B | ~30,000 B | ~40,500 B |
@@ -280,7 +278,7 @@ echo | openssl s_client \
 
 The handshake sizes should be identical between AES and SHAKE variants—the difference is internal computation only.
 
----
+<br>
 
 ## Step 8: Record Performance Metrics
 
@@ -306,14 +304,14 @@ Fill in your measured values above.
 EOF
 ```
 
----
+<br>
 
 ## When to Use FrodoKEM
 
 ### Appropriate Use Cases
 
 | Use Case | Why FrodoKEM |
-|----------|--------------|
+| ---------- | -------------- |
 | **Government/Defense** | Maximum security assurance required |
 | **Long-term secrets** | Data must remain secure for 50+ years |
 | **European compliance** | BSI/ANSSI recommendations |
@@ -323,7 +321,7 @@ EOF
 ### Inappropriate Use Cases
 
 | Use Case | Why Not FrodoKEM |
-|----------|------------------|
+| ---------- | ------------------ |
 | **High-volume TLS** | Performance overhead too high |
 | **IoT/embedded** | Key sizes exceed memory constraints |
 | **Mobile apps** | Bandwidth costs for handshakes |
@@ -331,7 +329,7 @@ EOF
 
 ### Decision Framework
 
-```
+```ini
 Need maximum security assurance?
 ├── Yes → Can accept 4-5x larger handshakes?
 │         ├── Yes → Use FrodoKEM
@@ -339,41 +337,11 @@ Need maximum security assurance?
 └── No → Use ML-KEM (FIPS 203)
 ```
 
----
-
-## FrodoKEM and FPGA Acceleration
-
-For organizations where FrodoKEM's software performance is prohibitive, FPGA acceleration can achieve dramatic improvements:
-
-| Platform | Operations/Second | Relative Speed |
-|----------|-------------------|----------------|
-| ARM Cortex-M4 (software) | ~20 | Baseline |
-| Xilinx Artix-7 (FPGA) | ~840 | 42x faster |
-| Xilinx Ultrascale+ (FPGA) | ~3,164 | 158x faster |
-
-Matrix multiplication accounts for 97.5% of FrodoKEM's runtime—parallelization on FPGA dramatically reduces this bottleneck.
-
----
-
-## Summary
-
-FrodoKEM provides the most conservative lattice-based security at the cost of significant performance and bandwidth overhead:
-
-| Metric | FrodoKEM-640 | ML-KEM-768 | Difference |
-|--------|--------------|------------|------------|
-| Public key | 9,616 B | 1,184 B | 8x larger |
-| Ciphertext | 9,720 B | 1,088 B | 9x larger |
-| Handshake total | ~40 KB | ~12 KB | 3x larger |
-| Key generation | Very slow | Fast | ~100x slower |
-| Security basis | Unstructured LWE | Module-LWE | More conservative |
-
-**Bottom line:** FrodoKEM is for organizations that prioritize security assurance over performance and can accept the overhead. For most applications, ML-KEM provides excellent security with better performance.
-
----
+<br>
 
 ## Next Steps
 
-Proceed to **[Module 03: NTRU](03-NTRU.md)** to explore the most compact lattice-based KEM with 25+ years of security history.
+Proceed to **[Module 03: BIKE and HQC](03_alt_pqc_bike_hqc.md)**
 
 ---
 
@@ -381,4 +349,4 @@ Proceed to **[Module 03: NTRU](03-NTRU.md)** to explore the most compact lattice
 
 | Previous | Current | Next |
 |----------|---------|------|
-| [01 - Environment Setup](01-ENVIRONMENT-SETUP.md) | **02 - FrodoKEM** | [03 - NTRU](03-NTRU.md) |
+| [01 - Environment Setup](01_alt_pqc_environment.md) | **02 - FrodoKEM** | [03 - Bike and HQC](03_alt_pqc_bike_hqc.mdd) |

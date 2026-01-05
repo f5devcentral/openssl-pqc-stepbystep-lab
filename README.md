@@ -14,13 +14,13 @@ This hands-on lab guide provides tutorials for building quantum-resistnt Certifi
 
 ## 🎯 Choose Your Learning Path
 
-This repository offers three parallel learning tracks. Select the path that aligns with your organization's requirements:
+This repository offers three learning paths. Select the path that aligns with your organization's requirements:
 
 | | **FIPS 203/204/205 Path** | **CNSA 2.0 Path** | **Alternative Algorithms Path** |
 | --- | --- | --- | --- |
 | **Target Audience** | Commercial organizations | Government contractors, classified systems | Researchers, international compliance, defense-in-depth |
 | **Compliance Standard** | NIST FIPS standards | NSA CNSA 2.0 | Non-NIST algorithms, international standards |
-| **Algorithm Coverage** | ML-DSA, ML-KEM, SLH-DSA | ML-DSA-65/87, ML-KEM-768/1024 | FrodoKEM, NTRU, Classic McEliece, BIKE, HQC |
+| **Algorithm Coverage** | ML-DSA, ML-KEM, SLH-DSA | ML-DSA-65/87, ML-KEM-768/1024 | FrodoKEM, BIKE, HQC |
 | **Use Case** | General quantum-resistant infrastructure | National security systems | Algorithm diversity, conservative security |
 
 <br>
@@ -84,7 +84,7 @@ This path uses OpenSSL 3.2+ with user-compiled Open Quantum Safe (OQS) providers
 
 **For researchers, organizations requiring algorithm diversity, and those interested in international PQC implementations.**
 
-This path explores post-quantum algorithms outside the primary NIST FIPS standards, providing defense-in-depth options and understanding of the broader PQC landscape. Uses OpenSSL 3.5.x with the OQS provider for algorithm access.
+This path explores post-quantum algorithms outside the primary NIST FIPS standards, providing defense-in-depth options and understanding of the broader PQC landscape. Uses OpenSSL 3.5.x with the OQS provider for algorithm access. The addendum to enable these alternate algorithms is super fun and can be found [here](addenum_updating_openssl_pqc.md).
 
 ### Modules
 
@@ -92,12 +92,10 @@ This path explores post-quantum algorithms outside the primary NIST FIPS standar
 | -------- | ------------- |
 | [00 - Introduction](/altpqc/00_alt_pqc_introduction.md) | Overview of non-NIST algorithms, international standards, use cases |
 | [01 - Environment Setup](/altpqc/01_alt_pqc_environment.md) | Ubuntu 25.10, OpenSSL 3.5.x, OQS provider configuration |
-| [02 - FrodoKEM](/altpqc/02_alt_pqc_frodokem.md) | Conservative unstructured lattice KEM (European recommended) |
-| [03 - NTRU](/altpqc/03_alt_pqc_ntru.md) | Compact lattice-based KEM with 25+ year security history |
-| [04 - Classic McEliece](/altpqc/04_alt_pqc_classic_mceliece.md) | Code-based KEM with 40+ years of cryptanalysis |
-| [05 - BIKE and HQC](/altpqc/05_alt_pqc_bike_hqc.md) | Code-based KEMs (HQC is NIST-selected backup) |
-| [06 - International PQC](/altpqc/06_alt_pqc_interational.md) | South Korean and Chinese algorithm standards |
-| [07 - Performance Analysis](/altpqc/07_alt_pqc_perf_analysis.md) | comparing algorithms, latency impacts, use cases, nerd stats |
+| [02 - FrodoKEM](/altpqc/02_alt_pqc_frodokem.md) | Conservative unstructured lattice KEM (European recommended; BSI, ANSSI) |
+| [03 - BIKE and HQC](/altpqc/03_alt_pqc_bike_hqc.md) | Code-based KEMs (HQC is NIST-selected backup) |
+| [04 - International PQC](/altpqc/04_alt_pqc_interational.md) | South Korean and Chinese algorithm standards |
+| [05 - Performance Analysis](/altpqc/05_alt_pqc_perf_analysis.md) | comparing algorithms, latency impacts, use cases, nerd stats |
 
 ### Algorithms Covered
 
@@ -136,8 +134,10 @@ For detailed instructions on setting up your PQC environment, including building
 ### [ADDENDUM: Compiling Open Quantum Safe (OQS) Libraries for OpenSSL Environment Setup](/addenum_updating_openssl_pqc.md)
 
 This addendum covers:
+
 - OQS provider installation for Ubuntu 24.04 LTS/25.10
-- liboqs and oqs-provider build instructions
+- Building liboqs with HQC enabled
+- Enabling HQC in oqs-provider
 - Troubleshooting common installation issues
 
 

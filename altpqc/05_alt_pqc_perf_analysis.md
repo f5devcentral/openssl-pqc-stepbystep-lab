@@ -1,12 +1,10 @@
-# Module 07: Performance Analysis and Algorithm Selection
+# Module 05: Performance Analysis and Algorithm Selection
 
 ## Overview
 
-This module provides comprehensive performance comparisons across all algorithms covered in this learning path. Understanding these trade-offs is essential for selecting the right algorithm for your specific requirements.
+We can't end without undersanding WHY we have so much more math to deal with now. Let's take a look at performance comparisons across algorithms covered in this learning path (and a few extra used internationally). Understanding these trade-offs is essential for selecting the right algorithm for your specific requirements.
 
 We analyze key sizes, SSL handshake impacts, data transmission overhead, computational performance, and latency implications—then provide guidance on when each algorithm is most appropriate.
-
----
 
 ## Learning Objectives
 
@@ -18,7 +16,7 @@ After completing this module, you will be able to:
 - Identify latency impacts for high-latency networks
 - Select the optimal algorithm for specific use cases
 
----
+<br>
 
 ## Comprehensive Key Size Comparison
 
@@ -54,7 +52,7 @@ After completing this module, you will be able to:
 | hqc192 | 3 | 4,522 B | 4,562 B | 9,042 B | 13,564 B |
 | hqc256 | 5 | 7,245 B | 7,285 B | 14,485 B | 21,730 B |
 
----
+<br>
 
 ## SSL Handshake Impact Analysis
 
@@ -85,7 +83,7 @@ The TLS 1.3 handshake transmits KEM public keys and ciphertexts. Additional over
 | frodo976aes | 6.2x | Significant |
 | mceliece460896 | 52x | Severe |
 
----
+<br>
 
 ## Latency Impact for High-Latency Networks
 
@@ -118,7 +116,7 @@ For networks with high latency (satellite, mobile, international), handshake siz
 3. **Classic McEliece** adds 4+ seconds on constrained links—impractical for dynamic TLS
 4. **BIKE and HQC** fall in the middle—acceptable for most applications
 
----
+<br>
 
 ## Computational Performance
 
@@ -143,7 +141,7 @@ For networks with high latency (satellite, mobile, international), handshake siz
 | frodo640aes | Slow | Static keys strongly preferred |
 | mceliece348864 | **Very slow** | Out-of-band key distribution required |
 
----
+<br>
 
 ## Data Transmission Impact
 
@@ -160,17 +158,7 @@ For each TLS connection established, the KEM overhead is paid once:
 | frodo976aes | 31.4 KB | 31.4 MB | 31.4 GB |
 | mceliece460896 | 524 KB | 524 MB | 524 GB |
 
-### High-Volume Server Considerations
-
-For servers handling millions of connections:
-
-| Scenario | MLKEM768 | FrodoKEM | Classic McEliece |
-|----------|----------|----------|------------------|
-| 1M connections/day | 2.3 GB | 31 GB | 524 GB |
-| Bandwidth cost (@$0.05/GB) | $0.12 | $1.55 | $26.20 |
-| Annual cost | $44 | $566 | $9,563 |
-
----
+<br>
 
 ## Algorithm Selection Guide
 
@@ -237,7 +225,7 @@ Use HQC when:
 ✓ Willing to wait for standard
 ```
 
----
+<br>
 
 ## Performance Summary Table
 
@@ -262,10 +250,10 @@ MLKEM768    █████ 1,184 B
 BIKE        ██████████████ 3,083 B
 HQC         ████████████████████ 4,522 B
 FrodoKEM    █████████████████████████████████████████████████████████████████████ 15,632 B
-McEliece    ████████████████████████████████████████... (524,160 B - scale broken!)
+McEliece    ████████████████████████████████████████... (524,160 B -> It's smaller to download Lord of the Rings Extended Edition!)
 ```
 
----
+<br>
 
 ## Recommendations by Deployment Scenario
 
@@ -324,7 +312,7 @@ Alternative: NTRU (if dynamic keys needed)
 Reason: After initial key distribution, per-message cost is minimal
 ```
 
----
+<br>
 
 ## Test Your Own Environment
 
@@ -368,7 +356,7 @@ SCRIPT
 
 **Note:** Run each algorithm test manually as shown in earlier modules for accurate results. The script above is for reference.
 
----
+<br>
 
 ## Summary
 
@@ -391,7 +379,7 @@ SCRIPT
 | 4 | Conservative Security | FrodoKEM |
 | 5 | Maximum Security | Classic McEliece (static keys only) |
 
----
+<br>
 
 ## Completion
 
@@ -404,7 +392,7 @@ You now understand:
 - International PQC standardization landscape
 - How to select algorithms for specific requirements
 
----
+<br>
 
 **Return to:** [Main README](../README.md)
 
@@ -412,10 +400,8 @@ You now understand:
 - [FIPS 203/204/205 Path](../FIPS-Path/00-INTRODUCTION.md)
 - [CNSA 2.0 Path](../CNSA-Path/00-INTRODUCTION.md)
 
----
-
 **Module Navigation:**
 
 | Previous | Current | Next |
 |----------|---------|------|
-| [06 - International PQC](06-INTERNATIONAL-PQC.md) | **07 - Performance Analysis** | [Main README](../README.md) |
+| [04 - International PQC](04_alt_pqc_interational.md) | **05 - Performance Analysis** | [Main README](../README.md) |
