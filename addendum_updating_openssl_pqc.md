@@ -1,6 +1,6 @@
 # Addendum: PQC Environment Setup
 
-This addendum provides instructions for building and installing the Open Quantum Safe (OQS) provider to access alternative post-quantum algorithms (FrodoKEM, BIKE, HQC) alongside OpenSSL 3.5's native NIST algorithms.
+This addendum provides instructions for building and installing the Open Quantum Safe (OQS) provider to access alternative post-quantum algorithms (FrodoKEM, BIKE, HQC) alongside OpenSSL 3.5's native NIST algorithms. As more algorithms are introduced into OpenSSL and/or the OQS Provider we'll update accordingly.
 
 <br>
 
@@ -8,7 +8,7 @@ This addendum provides instructions for building and installing the Open Quantum
 
 ### What You Get
 
-**Native OpenSSL 3.5.x algorithms (no OQS required):**
+**Native OpenSSL 3.5.x algorithms (no liboqs/oqsprovider required):**
 
 | Algorithm | Type | Standard |
 | ----------- | ------ | ---------- |
@@ -25,7 +25,7 @@ This addendum provides instructions for building and installing the Open Quantum
 | BIKE | KEM | Code-based, compact |
 | HQC | KEM | NIST Round 4 (expected 2027), requires explicit enable |
 
-**Note:** *Support for NTRU and Classic McEliece is currently not enabled in the current oqs-provider releases since they were removed from the initial NIST competition. If you require these algorithms, you'll need to use an older oqs-provider version or access liboqs directly. This is not currently in scope for the supporting lab modules.  For now.*
+**Note:** *Support for NTRU and Classic McEliece is currently not enabled in the current oqs-provider releases since they were removed from the initial NIST competition (per oqs provider release notes). If you require these algorithms, you'll need to use an older oqs-provider version or access liboqs directly. This is not currently in scope for the supporting lab modules.  For now.*
 
 <br>
 
@@ -135,13 +135,13 @@ cmake -GNinja -DCMAKE_INSTALL_PREFIX=/usr/local -DBUILD_SHARED_LIBS=ON -DOQS_ENA
 | -DBUILD_SHARED_LIBS=ON | Build shared libraries |
 | -DOQS_ENABLE_KEM_HQC=ON | Enable HQC (disabled by default in liboqs) |
 
-**Algorithm defaults:** FrodoKEM and BIKE are enabled by default. HQC is disabled for key encapsulation by default in liboqs and must be explicitly enabled with the cmake flag above (which we do). It was disabled by default in oqsprovider v0.9.0 until a [bug can be fixed](https://groups.google.com/a/list.nist.gov/g/pqc-forum/c/Wiu4ZQo3fP8). To verify which algorithms are enabled:
+**Algorithm defaults:** FrodoKEM and BIKE are enabled by default. HQC is disabled for key encapsulation by default in liboqs and must be explicitly enabled with the cmake flag above (which we just did). It's disabled by default in oqsprovider v0.9.0 until a [bug can be fixed](https://groups.google.com/a/list.nist.gov/g/pqc-forum/c/Wiu4ZQo3fP8). To verify which algorithms are enabled:
 
 ```bash
 grep OQS_ENABLE_KEM CMakeCache.txt | grep -v "^//"
 ```
 
-**Note:** NTRU and Classic McEliece are no longer supported in oqs-provider 0.8.0+, even though they exist in liboqs.
+**Note:** NTRU and Classic McEliece are no longer supported in oqs-provider 0.8.0+, even though they exist in liboqs. Sad Panda.
 
 ### Build liboqs
 
@@ -191,8 +191,6 @@ sudo find /usr -name "liboqs*" -type f 2>/dev/null
 echo "/usr/local/lib64" | sudo tee /etc/ld.so.conf.d/liboqs.conf
 sudo ldconfig
 ```
-
-**Alternative:** If no shared library files are found but the build completed successfully, the OQS provider may statically link liboqs. This is fine—proceed to Step 3 and verify the provider works in Step 5.
 
 <br>
 
@@ -357,8 +355,6 @@ ls -la /usr/lib/aarch64-linux-gnu/ossl-modules/oqsprovider.so
 
 ## Step 5: Test Provider Before Configuring System-Wide
 
-**CRITICAL:** Before modifying `/etc/ssl/openssl.cnf`, test that the provider loads correctly. A broken openssl.cnf will break SSH and other OpenSSL-dependent services.
-
 ### Test Provider Loading Manually
 
 ```bash
@@ -391,11 +387,13 @@ You should see FrodoKEM variants listed. If not, the provider is not loading cor
 
 <br>
 
-## Step 6: Configure OpenSSL to Load OQS Provider System-Wide
+## Step 6: Configure OpenSSL to Load the OQS Provider System-Wide
 
 Only proceed if Step 5 was successful.
 
 ### Locate the Correct Configuration File
+
+**CRITICAL:** Before modifying `/etc/ssl/openssl.cnf`, test that the provider loads correctly. A broken openssl.cnf will break SSH and other OpenSSL-dependent services.
 
 On Ubuntu, check where OpenSSL looks for its configuration:
 
@@ -580,23 +578,28 @@ hqc256 @ oqsprovider
 **Solutions:**
 
 1. Verify the .so file exists and has correct permissions:
-   ```bash
+
+```bash
    # x86_64:
    ls -la /usr/lib/x86_64-linux-gnu/ossl-modules/oqsprovider.so
    
    # ARM64:
    ls -la /usr/lib/aarch64-linux-gnu/ossl-modules/oqsprovider.so
-   ```
+```
 
 2. Check for library loading errors:
-   ```bash
+
+```bash
    openssl list -providers -provider oqsprovider -provider default 2>&1
-   ```
+```
 
 3. Verify liboqs is installed and library cache is updated:
-   ```bash
+
+```bash
    sudo ldconfig -p | grep oqs
-   ```
+```
+
+<br>
 
 ### OpenSSL Broken After Editing openssl.cnf
 
@@ -605,12 +608,14 @@ hqc256 @ oqsprovider
 **Solutions:**
 
 1. If you can still access the system (console, recovery mode):
-   ```bash
+
+```bash
    sudo cp /etc/ssl/openssl.cnf.backup /etc/ssl/openssl.cnf
    sudo ldconfig
-   ```
+```
 
 2. Common causes:
+
    - Provider .so file doesn't exist at the specified path
    - Syntax errors in the configuration (missing brackets, typos)
    - Wrong architecture path (x86_64 vs aarch64)
@@ -618,11 +623,13 @@ hqc256 @ oqsprovider
 
 3. Check for syntax errors:
 
-   ```bash
+```bash
    openssl version 2>&1
-   ```
+```
   
    This will output any configuration parsing errors.
+
+<br>
 
 ### liboqs Not Found
 
@@ -636,6 +643,8 @@ sudo ldconfig
 sudo ldconfig -p | grep oqs
 ```
 
+<br>
+
 ### Algorithm Not Available
 
 **Problem:** Specific algorithm not showing in list
@@ -646,9 +655,11 @@ sudo ldconfig -p | grep oqs
 2. Some algorithms may be disabled at compile time
 3. Rebuild liboqs with specific algorithm enabled:
 
-   ```bash
+```bash
    cmake -GNinja -DCMAKE_INSTALL_PREFIX=/usr/local -DBUILD_SHARED_LIBS=ON -DOQS_ENABLE_KEM_FRODOKEM=ON ..
-   ```
+```
+
+<br>
 
 ### Tests Fail with pytest Error
 
@@ -690,7 +701,7 @@ rm -rf ~/liboqs ~/oqs-provider
 
 ### OQS Provider and liboqs Version Alignment
 
-**Note** *At time of writing, liboqs was v0.15 and oqsprovider was rolled "back" from v0.11rc1 to .012.0-dev (release still 0.11). We'll revisit this addedum as OpenSSL, liboqs, and oqsproviders update over time HOPEFULLY adding support for more submissions into NIST.*
+***Note*** *At time of writing, liboqs was v0.15 and oqsprovider was rolled "back" from v0.11rc1 to .012.0-dev (release still 0.11). We'll revisit this addedum as OpenSSL, liboqs, and oqsproviders update over time HOPEFULLY adding support for more submissions into NIST.*
 
 | OQS Provider | liboqs | Release Date | Key Features |
 | -------------- | -------- | -------------- | -------------- |
@@ -704,22 +715,26 @@ rm -rf ~/liboqs ~/oqs-provider
 ### Important Notes
 
 **OpenSSL 3.5+ with OQS Provider:**
-- oquprovider version 0.9.0+ automatically disables ML-KEM and ML-DSA when it detects OpenSSL 3.5+ native support
+
+- oqsprovider version 0.9.0+ automatically disables ML-KEM and ML-DSA when it detects OpenSSL 3.5+ native support
 - This prevents algorithm conflicts and ensures you use native implementations for NIST algorithms
 - oqsprovider continues to provide FrodoKEM, BIKE, and HQC (with HQC requiring explicit enabling)
 
 **Algorithm Availability:**
+
 - NTRU and Classic McEliece have been removed from oqsprovider
 - HQC requires editing `generate.yml` to set `enable_kem: true` before building (ask me how we figured that garbage out)
 - FrodoKEM and BIKE are available by default
 
 **Groups Limit Bug:**
+
 - OpenSSL versions before 3.0.14, 3.1.6, 3.2.2, and 3.3.0 have a limit of 44 default TLS groups
 - Enabling too many KEMs via OQS provider can cause crashes on affected versions (LETS GO!)
 - This is resolved in newer OpenSSL releases (BOOOO!)
 
 **Minimum Requirements:**
-- OQS provider requires OpenSSL 3.0.0 or later
+
+- oqsprovider requires OpenSSL 3.0.x or later
 - TLS 1.3 signature functionality requires OpenSSL 3.2.0 or later
 - For best experience, use OpenSSL 3.5.x with OQS provider 0.10.0+
 

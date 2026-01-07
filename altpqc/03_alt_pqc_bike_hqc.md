@@ -1,4 +1,4 @@
-# Module 03: BIKE and HQC - Code-Based KEM Alternatives
+# Module 3: BIKE and HQC - Code-Based KEM Alternatives
 
 ## Overview
 

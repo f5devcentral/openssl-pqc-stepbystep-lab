@@ -1,10 +1,10 @@
-# Module 00: Introduction to Alternative PQC Algorithms
+# Module 0: Introduction to Alternative PQC Algorithms
 
 ## Overview
 
-This learning path explores post-quantum cryptographic algorithms outside the primary NIST FIPS standards (203/204/205). While ML-KEM and ML-DSA form the foundation of most PQC deployments, a comprehensive security strategy benefits from understanding the broader algorithm landscape. Crytpo Agility is a thing.
+This learning path explores post-quantum cryptographic algorithms outside the primary NIST FIPS standards (203/204/205). While ML-KEM and ML-DSA form the foundation of many PQC deployments, a comprehensive security strategy benefits from understanding the broader algorithm landscape.
 
-These alternative algorithms offer different mathematical foundations, security properties, and trade-offs that may be critical for specific use cases, defense-in-depth strategies, or international compliance requirements.
+These alternative algorithms offer different mathematical foundations, security properties, and trade-offs that may be critical for specific use cases, defense-in-depth strategies, or international compliance requirements. This is where crypto agility will start to become a thing as new algorithms are adopted and we quickly need to swap out or add new methods of key encapsulation or digital signing as standards evolve.
 
 ---
 
@@ -15,6 +15,7 @@ After completing this module, you will be able to:
 - Explain why algorithm diversity matters for quantum-resistant security
 - Improve understanding of international PQC standardization efforts beyond NIST
 - Recognize some use cases for each alternative algorithm
+- Throw shade at your friends who still use AES128. Cowards.
 
 <br>
 
@@ -22,7 +23,7 @@ After completing this module, you will be able to:
 
 ### Defense in Depth
 
-Relying solely on one algorithm family creates systemic risk. If a breakthrough in lattice cryptanalysis occurs, organizations using only ML-KEM/ML-DSA would be vulnerable Alternative algorithms based on different mathematical problems provide backup options.
+Relying solely on one algorithm family creates systemic risk. If a breakthrough in lattice cryptanalysis occurs (which does happen), organizations using only ML-KEM/ML-DSA would be vulnerable. Alternative algorithms based on different mathematical problems provide backup options.
 
 | Algorithm Family | Mathematical Problem | Primary NIST Standard | Alternative Options |
 | ----------------- | --------------------- | ---------------------- | --------------------- |
@@ -52,7 +53,7 @@ Some alternative algorithms provide more conservative security guarantees at the
 
 ### Key Encapsulation Mechanisms (KEMs)
 
-This learning path focuses on KEMs because they protect data in transit and are critical for TLS connections, VPN tunnels, and key exchange protocols.
+This learning path currently focuses on KEMs because they protect data in transit and are critical for TLS connections, VPN tunnels, and key exchange protocols.
 
 | Algorithm | Basis | Key Sizes | Performance | Status |
 | ----------- | ------- | ----------- | ------------- | -------- |
@@ -73,33 +74,6 @@ This path focuses on KEMs because:
 
 <br>
 
-## International PQC Landscape
-
-### South Korea
-
-South Korea's KpqC (Korean Post-Quantum Cryptography) competition has produced several algorithms:
-
-**KEMs:**
-- **NTRU+**: Enhanced NTRU variant
-- **SMAUG-T**: Module-LWE based KEM
-
-**Signatures:**
-- **HAETAE**: Lattice-based signature scheme
-- **ALMer**: Alternative lattice signature
-
-### China
-
-China's approach prioritizes cryptographic sovereignty:
-
-**KEMs:**
-- **Aigis-enc**: LWE-based encryption
-- **LAC.PKE**: Lattice-based encryption
-
-**Signatures:**
-- **Aigis-sig**: Lattice-based signature
-
-The February 2025 ICCS (Institute of Commercial Cryptography Standards) call for new algorithm proposals indicates continued independent development.
-
 ### European Recommendations
 
 European cybersecurity agencies (BSI, ANSSI, NLNCSA) have endorsed:
@@ -107,7 +81,7 @@ European cybersecurity agencies (BSI, ANSSI, NLNCSA) have endorsed:
 - **FrodoKEM**: For applications requiring conservative unstructured lattice security
 - **Classic McEliece**: For high-security applications willing to accept large key sizes
 
-**Note** *Some documentation is stagnant but agencies like BSI note future support for NIST approved alogrithms dependent on algorithm strength and use*
+***Note*** *Some documentation is stagnant but agencies like BSI note future support for NIST approved alogrithms dependent on algorithm strength and use*
 
 ---
 
@@ -115,14 +89,10 @@ European cybersecurity agencies (BSI, ANSSI, NLNCSA) have endorsed:
 
 Throughout this learning path, you will:
 
-1. **Configure the OQS Environment**: Set up OpenSSL 3.5.x with the OQS provider for access to alternative algorithms
-
+1.  **Configure the OQS Environment**: Set up OpenSSL 3.5.x with the OQS provider for access to alternative algorithms
 2.  **Test FrodoKEM**: Experience the conservative unstructured lattice approach and understand its security/performance trade-offs
-
 6.  **Compare BIKE and HQC**: Understand code-based alternatives and why NIST selected HQC as the ML-KEM backup
-
 7.  **Analyze Performance**: Measure and compare handshake sizes, latency impacts, and operational characteristics
-
 8.  **Understand Use Cases**: Learn when each algorithm is the right choice for specific requirements
 
 <br>
@@ -135,14 +105,6 @@ Throughout this learning path, you will:
 - Understanding of TLS handshake process
 - Familiarity with key encapsulation concepts
 - Basic PKI knowledge
-
-### Why Ubuntu 25.10?
-
-Ubuntu 25.10 provides:
-
-- Native OpenSSL 3.5.x support
-- Updated build toolchain for liboqs
-- Kernel optimizations for cryptographic operations
 
 <br>
 
@@ -173,7 +135,7 @@ You will use ML-DSA certificates created in previous learning paths (or create n
 ## Module Structure
 
 | Module | Focus | Key Outcome |
-|--------|-------|-------------|
+| -------- | ------- | ------------- |
 | 01 - Environment Setup | Ubuntu 25.10 + OQS | Working alternative algorithm environment |
 | 02 - FrodoKEM | Unstructured lattice | Conservative KEM implementation |
 | 03 - BIKE and HQC | Code-based alternatives | NIST Round 4 and backup algorithms |
@@ -184,19 +146,10 @@ You will use ML-DSA certificates created in previous learning paths (or create n
 
 ## Security Considerations
 
-### Algorithm Maturity
-
-| Algorithm | Years of Analysis | Standardization Status |
-|-----------|------------------|----------------------|
-| FrodoKEM | 10+ years | NIST Round 3 alternate |
-| BIKE | 8+ years | NIST Round 4 |
-| HQC | 8+ years | NIST selected (2027 standard) |
-
 ### Known Considerations
 
 - **BIKE**: Historical timing attack vulnerabilities (patched)
 - **HQC**: Some implementation concerns (being addressed)
-- **Classic McEliece**: Key generation is extremely slow
 - **FrodoKEM**: Performance overhead may be prohibitive for some applications
 
 <br>

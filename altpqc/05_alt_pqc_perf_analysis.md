@@ -1,4 +1,4 @@
-# Module 05: Performance Analysis and Algorithm Selection
+# Module 5: Performance Analysis and Algorithm Selection
 
 ## Overview
 

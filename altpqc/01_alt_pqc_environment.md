@@ -1,10 +1,8 @@
-# Module 01: Environment Setup for Alternative PQC Algorithms
+# Module 1: Environment Setup for Alternative PQC Algorithms
 
 ## Overview
 
-This module guides you through configuring Ubuntu 25.10 with OpenSSL 3.5.x and the Open Quantum Safe (OQS) provider to access alternative post-quantum algorithms not available in native OpenSSL.
-
-While OpenSSL 3.5.x includes native support for NIST FIPS algorithms (ML-KEM, ML-DSA, SLH-DSA), algorithms like FrodoKEM, BIKE, and HQC require the OQS provider.
+This module guides you through configuring Ubuntu 25.10 with OpenSSL 3.5.x and the Open Quantum Safe (OQS) provider to access alternative post-quantum algorithms not available in native OpenSSL. While OpenSSL 3.5.x includes native support for NIST FIPS algorithms (ML-KEM, ML-DSA, SLH-DSA), algorithms like FrodoKEM, BIKE, and HQC require the OQS provider.
 
 <br>
 
@@ -17,16 +15,15 @@ After completing this module, you will be able to:
 - Build and install the OQS provider for OpenSSL
 - Configure OpenSSL to load the OQS provider
 - Verify access to alternative PQC algorithms
-- Create the lab directory structure
+- Create the lab structure
 
 <br>
 
 ## Prerequisites
 
-- Fresh Ubuntu 25.10 installation (or upgraded system)
+- Fresh Ubuntu 25.10 installation (or upgraded system), you do you
 - Root or sudo access
-- Internet connection for downloading source code
-- Approximately 2GB free disk space for build process
+- Connectivity to github for downloading source code
 
 <br>
 
@@ -59,65 +56,81 @@ OpenSSL 3.5.x <date>
 
 ## Step 2: Update and Build liboqs and oqsprivders for OpenSSL
 
-Ubuntu 25.10 includes OpenSSL 3.5.x by default. To enable alternate algorithms, first compile the liboqs and oqsproviders found in the [Updating Openssl PQC Addendum](../addenum_updating_openssl_pqc.md)).  It's rather annoying but you'll need it.
+Ubuntu 25.10 includes OpenSSL 3.5.x by default. To enable alternate algorithms, first compile the liboqs and oqsproviders found in the [Updating Openssl PQC Addendum](../addendum_updating_openssl_pqc.md)).  It's rather annoying but you'll need it.
 
-### Check Available Native PQC Algorithms
-
-Verify native ML-KEM support:
+### List HQC Algorithms
 
 ```bash
-openssl list -kem-algorithms | grep -i mlkem
+openssl list -kem-algorithms | grep -i hqc
 ```
 
 **Expected output:**
 
 ```
-MLKEM512 @ default
-MLKEM768 @ default
-MLKEM1024 @ default
-X25519MLKEM768 @ default
+hqc128 @ oqsprovider
+hqc192 @ oqsprovider
+hqc256 @ oqsprovider
 ```
 
-These are the NIST-standardized algorithms. The addendum's oqsprovider will add FrodoKEM, BIKE, and HQC.
+If these didn't show up, did you complete the addedum? No?  The link is right above you. The addendum's oqsprovider will add FrodoKEM, BIKE, and HQC.  I'll wait.
 
 <br>
 
-## Step 1: Create Lab Directory Structure
+## Step 3: Create CA Administrator Account
 
-Create the working directory for alternative algorithm testing:
-
-```bash
-sudo mkdir -p /opt/sassycorp-pqc-alt
-```
-
-```bash
-sudo mkdir -p /opt/sassycorp-pqc-alt/certs
-```
-
-```bash
-sudo mkdir -p /opt/sassycorp-pqc-alt/keys
-```
-
-```bash
-sudo mkdir -p /opt/sassycorp-pqc-alt/tests
-```
-
-### Create Lab User (Optional)
-
-If you haven't already created the pqcadmin user from previous learning paths:
+**Create a dedicated user account for CA administration:**
 
 ```bash
 sudo useradd -r -m -d /opt/sassycorp-pqc-alt -s /bin/bash pqcaltadmin
 ```
 
+**Flags explained:**
+
+| Flag | Purpose |
+|------|---------|
+| `-r` | System account |
+| `-m` | Create home directory |
+| `-d /opt/sassycorp-pqc-alt` | Home directory location |
+| `-s /bin/bash` | Login shell |
+
+**Set a password for the account:**
+
 ```bash
-sudo chown -R pqcaltadmin:pqcaltadmin /opt/sassycorp-pqc-alt
+sudo passwd pqcaltadmin
 ```
 
-Or reuse the existing pqcadmin user:
+**Add your user to the pqcadmin group (optional, for easier administration):**
 
 ```bash
-sudo chown -R pqcadmin:pqcadmin /opt/sassycorp-pqc-alt
+sudo usermod -aG pqcaaltdmin $USER
+```
+
+---
+
+## Step 1: Create Lab Directory Structure
+
+**Switch to the pqcadmin user:**
+
+```bash
+sudo su - pqcaltadmin
+```
+
+Create the working directory for alternative algorithm testing:
+
+```bash
+mkdir -p /opt/sassycorp-pqc-alt
+```
+
+```bash
+mkdir -p /opt/sassycorp-pqc-alt/certs
+```
+
+```bash
+mkdir -p /opt/sassycorp-pqc-alt/keys
+```
+
+```bash
+mkdir -p /opt/sassycorp-pqc-alt/tests
 ```
 
 ---
@@ -179,7 +192,7 @@ Before proceeding to the next module, verify:
 
 **Solutions:**
 
-1. Go back to the [OpenSSL oqsprovider addendum](../addenum_updating_openssl_pqc.md) and validate the troubleshooting steps
+1. Go back to the [OpenSSL oqsprovider addendum](../addendum_updating_openssl_pqc.md) and validate the troubleshooting steps (don't run this under your pqcaltadmin)
 
 ### Library Loading Errors
 

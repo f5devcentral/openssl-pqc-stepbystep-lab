@@ -8,7 +8,7 @@
 
 ## Hands-On Learning for Quantum-Resistant PKI Infrastructure
 
-This hands-on lab guide provides tutorials for building quantum-resistnt Certificate Authority (CA) infrastructure using OpenSSL. This repository provides three distinct learning paths based on your compliance requirements and algorithm interests. Who's ready to party?
+This hands-on lab guide provides tutorials for building quantum-resistant Certificate Authority (CA) infrastructure using OpenSSL. This repository provides three distinct learning paths based on your compliance requirements and algorithm interests. Who's ready to party?
 
 <br>
 
@@ -76,7 +76,7 @@ This path uses OpenSSL 3.2+ with user-compiled Open Quantum Safe (OQS) providers
 | Key Establishment | ML-KEM-768, ML-KEM-1024 | FIPS 203 |
 | Hash Functions | SHA-384, SHA-512 | FIPS 180-4 |
 
-**Note:** *CNSA 2.0 currently does NOT approve ML-DSA-44, SLH-DSA, or Falcon algorithms.*
+**Note:** *CNSA 2.0 currently does NOT support ML-DSA-44, SLH-DSA, or Falcon algorithms.*
 
 <br>
 
@@ -84,7 +84,7 @@ This path uses OpenSSL 3.2+ with user-compiled Open Quantum Safe (OQS) providers
 
 **For researchers, organizations requiring algorithm diversity, and those interested in international PQC implementations.**
 
-This path explores post-quantum algorithms outside the primary NIST FIPS standards, providing defense-in-depth options and understanding of the broader PQC landscape. Uses OpenSSL 3.5.x with the OQS provider for algorithm access. The addendum to enable these alternate algorithms is super fun and can be found [here](addenum_updating_openssl_pqc.md).
+This path explores post-quantum algorithms outside the primary NIST FIPS standards, providing options and understanding of the broader PQC landscape. We'll use OpenSSL 3.5.x with OQS provider for alternate algorithm access. The addendum to enable these algorithms is super fun and can be found here [addendum_updating_openssl_pqc](addendum_updating_openssl_pqc.md).
 
 ### Modules
 
@@ -94,7 +94,7 @@ This path explores post-quantum algorithms outside the primary NIST FIPS standar
 | [01 - Environment Setup](/altpqc/01_alt_pqc_environment.md) | Ubuntu 25.10, OpenSSL 3.5.x, OQS provider configuration |
 | [02 - FrodoKEM](/altpqc/02_alt_pqc_frodokem.md) | Conservative unstructured lattice KEM (European recommended; BSI, ANSSI) |
 | [03 - BIKE and HQC](/altpqc/03_alt_pqc_bike_hqc.md) | Code-based KEMs (HQC is NIST-selected backup) |
-| [04 - International PQC](/altpqc/04_alt_pqc_interational.md) | South Korean and Chinese algorithm standards |
+| [04 - International PQC](/altpqc/04_alt_pqc_interational.md) | EU, South Korean, and Chinese algorithm standards |
 | [05 - Performance Analysis](/altpqc/05_alt_pqc_perf_analysis.md) | comparing algorithms, latency impacts, use cases, nerd stats |
 
 ### Algorithms Covered
@@ -102,8 +102,6 @@ This path explores post-quantum algorithms outside the primary NIST FIPS standar
 | Algorithm | Type | Mathematical Basis | Key Characteristic |
 |----------- | ------ | ------------------- | ------------------- |
 | **FrodoKEM** | KEM | Unstructured lattice (LWE) | Conservative security, European endorsed (BSI, ANSSI) |
-| **NTRU** | KEM | Structured lattice | Smallest keys, 25+ year history |
-| **Classic McEliece** | KEM | Code-based (Goppa codes) | 40+ years cryptanalysis, bulky keys |
 | **BIKE** | KEM | Code-based (QC-MDPC) | NIST Round 4 candidate |
 | **HQC** | KEM | Code-based (Quasi-cyclic) | NIST-selected backup to ML-KEM |
 
@@ -115,7 +113,7 @@ This path explores post-quantum algorithms outside the primary NIST FIPS standar
 
 - **Operating System(S):** CNSA 2.0 - Ubuntu 25.04 with OpenSSL 3.2+. NIST FIPS and Alt PQC - Ubuntu 25.10 with OpenSSL 3.5.3.
 - **Permissions:** Root or sudo access
-- ***Note:*** The CNSA guide is intended to require using external OQS libraries with earlier versions of OpenSSL (in this case 3.2). The FIPS and Alt PQC labs rely on a more curent release of Ubuntu (25.10) with current version of OpenSSL (3.5.3) which has all FIPS PQC requirements built in and will support newer versions of the OQS libraries. See the addendum link below for compiling OQS.
+- ***Note:*** *The CNSA guide is intended to require using external OQS libraries with earlier versions of OpenSSL (in this case 3.2). The FIPS and Alt PQC labs rely on a more curent release of Ubuntu (25.10) with current version of OpenSSL (3.5.3) which has all FIPS PQC requirements built in and will support newer versions of the OQS libraries. See the addendum link below for compiling OQS.*
 
 
 ### Required Knowledge
@@ -131,15 +129,14 @@ This path explores post-quantum algorithms outside the primary NIST FIPS standar
 
 For detailed instructions on setting up your PQC environment, including building the OQS provider from source, see:
 
-### [ADDENDUM: Compiling Open Quantum Safe (OQS) Libraries for OpenSSL Environment Setup](/addenum_updating_openssl_pqc.md)
+### [ADDENDUM: Compiling Open Quantum Safe (OQS) Libraries for OpenSSL Environment Setup](/addendum_updating_openssl_pqc.md)
 
 This addendum covers:
 
-- OQS provider installation for Ubuntu 24.04 LTS/25.10
+- OQS provider installation for Ubuntu 25.10
 - Building liboqs with HQC enabled
 - Enabling HQC in oqs-provider
 - Troubleshooting common installation issues
-
 
 <br>
 
@@ -150,7 +147,7 @@ This addendum covers:
 This lab is designed for **educational and internal testing purposes**. Production deployments should:
 
 - Use Hardware Security Modules (HSMs) for key storage
-- Implement air-gapped Root CAs, offline secured storage preferred
+- Implement air-gapped Root CAs, offline secured storage preferred... on zip drives
 - Enable comprehensive audit logging
 - Follow organizational security policies
 

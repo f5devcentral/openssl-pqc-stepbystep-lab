@@ -1,4 +1,4 @@
-# Module 04: International PQC Standards
+# Module 4: International PQC Standards
 
 ## Overview
 
