@@ -23,7 +23,7 @@ After completing this module, you will be able to:
 
 ### Defense in Depth
 
-Relying solely on one algorithm family creates systemic risk. If a breakthrough in lattice cryptanalysis occurs (which does happen), organizations using only ML-KEM/ML-DSA would be vulnerable. Alternative algorithms based on different mathematical problems provide backup options.
+Relying solely on one algorithm family *could* create systemic risk. If a breakthrough in lattice cryptanalysis occurs (which does happen), organizations using only ML-KEM/ML-DSA would be vulnerable. Alternative algorithms based on different mathematical problems provide backup options.
 
 | Algorithm Family | Mathematical Problem | Primary NIST Standard | Alternative Options |
 | ----------------- | --------------------- | ---------------------- | --------------------- |
@@ -34,7 +34,7 @@ Relying solely on one algorithm family creates systemic risk. If a breakthrough 
 
 ### International Compliance
 
-Different regions have different cryptographic requirements and recommendations:
+Different regions have different cryptographic requirements and recommendations (more on this in module 04):
 
 - **Europe (BSI, ANSSI)**: Recommend FrodoKEM and Classic McEliece for high-security applications
 - **South Korea**: Developing national standards including NTRU+, SMAUG-T, HAETAE
@@ -44,8 +44,8 @@ Different regions have different cryptographic requirements and recommendations:
 
 Some alternative algorithms provide more conservative security guarantees at the cost of performance:
 
-- **FrodoKEM**: Uses unstructured lattices without algebraic ring structure—harder to attack but slower
-- **Classic McEliece**: 40+ years of cryptanalysis without practical attacks—extremely conservative
+- **[FrodoKEM](https://frodokem.org/)**: Uses unstructured lattices without algebraic ring structure—harder to attack but slower
+- **[Classic McEliece](https://classic.mceliece.org/comparison.html)**: 40+ years of cryptanalysis without practical attacks—extremely conservative
 
 <br>
 
@@ -58,8 +58,8 @@ This learning path currently focuses on KEMs because they protect data in transi
 | Algorithm | Basis | Key Sizes | Performance | Status |
 | ----------- | ------- | ----------- | ------------- | -------- |
 | **FrodoKEM** | Unstructured lattice | Large (9-21 KB) | Slow | NIST Round 3 alternate |
-| **NTRU** | Structured lattice | Small (0.7-1.2 KB) | Fast encaps/decaps | Not currently available in this lab |
-| **Classic McEliece** | Code-based | Huge (261 KB-1 MB) | Very slow keygen | Not currently available in this lab |
+| **NTRU** | Structured lattice | Small (0.7-1.2 KB) | Fast encaps/decaps | Not currently available in this lab, yet |
+| **Classic McEliece** | Code-based | Huge (261 KB-1 MB) | Very slow keygen | Not currently available in this lab, yet |
 | **BIKE** | Code-based | Medium (1.5-5 KB) | Moderate | NIST Round 4 |
 | **HQC** | Code-based | Medium (2-7 KB) | Good | NIST selected backup, disabled for KEM pending bug fixes |
 
@@ -73,17 +73,6 @@ This path focuses on KEMs because:
 4. **KEMs have more diversity**: Code-based alternatives provide meaningful differentiation
 
 <br>
-
-### European Recommendations
-
-European cybersecurity agencies (BSI, ANSSI, NLNCSA) have endorsed:
-
-- **FrodoKEM**: For applications requiring conservative unstructured lattice security
-- **Classic McEliece**: For high-security applications willing to accept large key sizes
-
-***Note*** *Some documentation is stagnant but agencies like BSI note future support for NIST approved alogrithms dependent on algorithm strength and use*
-
----
 
 ## What You Will Build
 

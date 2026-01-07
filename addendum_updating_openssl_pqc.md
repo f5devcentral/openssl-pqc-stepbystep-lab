@@ -176,20 +176,13 @@ sudo ldconfig
 Check that liboqs was installed:
 
 ```bash
-ls -la /usr/local/lib/liboqs* 2>/dev/null || ls -la /usr/local/lib64/liboqs* 2>/dev/null || echo "Checking alternate locations..."
+ls -la /usr/local/lib/liboqs* 2>/dev/null || ls -la /usr/local/lib64/liboqs* 2>/dev/null || echo "Check alternate locations..."
 ```
 
 If no files are found, check if it installed elsewhere:
 
 ```bash
 sudo find /usr -name "liboqs*" -type f 2>/dev/null
-```
-
-**Note:** On some systems, liboqs installs to `/usr/local/lib64/` instead of `/usr/local/lib/`. If you find it there, update the library path:
-
-```bash
-echo "/usr/local/lib64" | sudo tee /etc/ld.so.conf.d/liboqs.conf
-sudo ldconfig
 ```
 
 <br>
@@ -258,6 +251,12 @@ cmake -GNinja -DCMAKE_INSTALL_PREFIX=/usr/local -Dliboqs_DIR=/usr/local ..
 ninja
 ```
 
+### Install the OQS Provider
+
+```bash
+sudo ninja install
+```
+
 ### Verify the Provider Built Successfully
 
 ```bash
@@ -271,71 +270,6 @@ ls -la lib/oqsprovider.so
 ```
 
 <br>
-
-## Step 4: Install the OQS Provider
-
-### Determine Your Architecture
-
-Check your system architecture:
-
-```bash
-dpkg --print-architecture
-```
-
-- **amd64** → Use `/usr/lib/x86_64-linux-gnu/ossl-modules/`
-- **arm64** → Use `/usr/lib/aarch64-linux-gnu/ossl-modules/`
-
-### Locate OpenSSL Providers Directory
-
-Find where OpenSSL expects providers:
-
-```bash
-openssl version -d
-```
-
-Note the OPENSSLDIR path.
-
-List existing providers:
-
-For x86_64 (amd64):
-
-```bash
-ls /usr/lib/x86_64-linux-gnu/ossl-modules/
-```
-
-For ARM64 (aarch64):
-
-```bash
-ls /usr/lib/aarch64-linux-gnu/ossl-modules/
-```
-
-### Copy Provider to System Location
-
-**For x86_64 (amd64):**
-
-```bash
-sudo cp ~/oqs-provider/build/lib/oqsprovider.so /usr/lib/x86_64-linux-gnu/ossl-modules/
-```
-
-**For ARM64 (aarch64):**
-
-```bash
-sudo cp ~/oqs-provider/build/lib/oqsprovider.so /usr/lib/aarch64-linux-gnu/ossl-modules/
-```
-
-### Set Permissions
-
-**For x86_64:**
-
-```bash
-sudo chmod 644 /usr/lib/x86_64-linux-gnu/ossl-modules/oqsprovider.so
-```
-
-**For ARM64:**
-
-```bash
-sudo chmod 644 /usr/lib/aarch64-linux-gnu/ossl-modules/oqsprovider.so
-```
 
 ### Verify Installation
 
@@ -353,7 +287,7 @@ ls -la /usr/lib/aarch64-linux-gnu/ossl-modules/oqsprovider.so
 
 ---
 
-## Step 5: Test Provider Before Configuring System-Wide
+## Step 4: Test Provider Before Configuring System-Wide
 
 ### Test Provider Loading Manually
 
@@ -387,7 +321,7 @@ You should see FrodoKEM variants listed. If not, the provider is not loading cor
 
 <br>
 
-## Step 6: Configure OpenSSL to Load the OQS Provider System-Wide
+## Step 5: Configure OpenSSL to Load the OQS Provider System-Wide
 
 Only proceed if Step 5 was successful.
 
@@ -513,7 +447,7 @@ sudo cp /etc/ssl/openssl.cnf.backup /etc/ssl/openssl.cnf
 
 <br>
 
-## Step 7: Verify Alternative Algorithm Access
+## Step 6: Verify Alternative Algorithm Access
 
 ### List FrodoKEM Algorithms
 
@@ -645,22 +579,6 @@ sudo ldconfig -p | grep oqs
 
 <br>
 
-### Algorithm Not Available
-
-**Problem:** Specific algorithm not showing in list
-
-**Solutions:**
-
-1. Check OQS provider version supports the algorithm
-2. Some algorithms may be disabled at compile time
-3. Rebuild liboqs with specific algorithm enabled:
-
-```bash
-   cmake -GNinja -DCMAKE_INSTALL_PREFIX=/usr/local -DBUILD_SHARED_LIBS=ON -DOQS_ENABLE_KEM_FRODOKEM=ON ..
-```
-
-<br>
-
 ### Tests Fail with pytest Error
 
 **Problem:** `ninja run_tests` fails with pytest-related errors
@@ -703,15 +621,6 @@ rm -rf ~/liboqs ~/oqs-provider
 
 ***Note*** *At time of writing, liboqs was v0.15 and oqsprovider was rolled "back" from v0.11rc1 to .012.0-dev (release still 0.11). We'll revisit this addedum as OpenSSL, liboqs, and oqsproviders update over time HOPEFULLY adding support for more submissions into NIST.*
 
-| OQS Provider | liboqs | Release Date | Key Features |
-| -------------- | -------- | -------------- | -------------- |
-| 0.10.0 | 0.14.0 | July 2025 | Current stable; composite signatures removed |
-| 0.9.0 | 0.13.0 | May 2025 | OpenSSL 3.5 native algorithm detection |
-| 0.8.0 | 0.12.0 | December 2024 | FIPS algorithm names (ML-KEM, ML-DSA) |
-| 0.7.0 | 0.11.0 | October 2024 | Algorithm updates |
-| 0.6.1 | 0.10.1 | June 2024 | Bug fixes |
-| 0.6.0 | 0.10.0 | April 2024 | First standardized PQ algorithms |
-
 ### Important Notes
 
 **OpenSSL 3.5+ with OQS Provider:**
@@ -722,8 +631,8 @@ rm -rf ~/liboqs ~/oqs-provider
 
 **Algorithm Availability:**
 
-- NTRU and Classic McEliece have been removed from oqsprovider
-- HQC requires editing `generate.yml` to set `enable_kem: true` before building (ask me how we figured that garbage out)
+- NTRU and Classic McEliece were removed from oqsprovider
+- HQC requires editing `generate.yml` to set `enable_kem: true` before building
 - FrodoKEM and BIKE are available by default
 
 **Groups Limit Bug:**

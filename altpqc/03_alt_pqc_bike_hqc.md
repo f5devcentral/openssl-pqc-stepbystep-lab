@@ -169,7 +169,7 @@ cd /opt/sassycorp-pqc-alt
 openssl s_client \
     -connect localhost:4433 \
     -tls1_3 \
-    -groups bike1l3fo \
+    -groups bike1l3 \
     -CAfile certs/test.crt
 ```
 

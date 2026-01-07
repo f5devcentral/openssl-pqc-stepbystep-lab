@@ -2,7 +2,7 @@
 
 ## Overview
 
-FrodoKEM represents the most conservative approach to lattice-based cryptography. Unlike ML-KEM (which uses structured lattices with algebraic ring properties), FrodoKEM is based on Learning With Errors (LWE) problem without additional mathematical structure.
+FrodoKEM represents the most conservative approach to lattice-based cryptography. Unlike ML-KEM (which uses structured lattices with algebraic ring properties), FrodoKEM is based on [Learning With Errors (LWE)](https://cims.nyu.edu/~regev/papers/lwesurvey.pdf).
 
 This conservative design means FrodoKEM has stronger theoretical security guarantees but significantly larger key sizes and slower performance.
 
@@ -10,7 +10,6 @@ This conservative design means FrodoKEM has stronger theoretical security guaran
 
 After completing this module, you will be able to:
 
-- Explain the difference between structured and unstructured lattice cryptography
 - Configure TLS connections using FrodoKEM key exchange
 - Measure FrodoKEM's performance characteristics
 - Understand when FrodoKEM is the appropriate choice
@@ -147,12 +146,9 @@ openssl s_client \
 ```
 Peer signature type: mldsa65
 Negotiated TLS1.3 group: frodo640aes
-```
-
-Or:
-
-```
-Negotiated TLS1.3 group: frodo640aes
+---
+SSL handshake has read 18983 bytes and written 9978 bytes
+Verification: OK
 ```
 
 The presence of `frodo640aes` confirms FrodoKEM was used for key exchange.
@@ -181,7 +177,7 @@ echo | openssl s_client \
 **Example output:**
 
 ```
-SSL handshake has read 29847 bytes and written 10521 bytes
+SSL handshake has read 18983 bytes and written 9978 bytes
 ```
 
 ### Compare to ML-KEM (Native)
@@ -303,20 +299,10 @@ EOF
 
 | Use Case | Why Not FrodoKEM |
 | ---------- | ------------------ |
-| **High-volume TLS** | Performance overhead too high |
+| **High-volume TLS** | Performance overhead too high currenty (without FPGA/ASIC acceleration) |
 | **IoT/embedded** | Key sizes exceed memory constraints |
 | **Mobile apps** | Bandwidth costs for handshakes |
 | **Latency-sensitive** | Handshake delay unacceptable |
-
-### Decision Framework
-
-```ini
-Need maximum security assurance?
-├── Yes → Can accept 4-5x larger handshakes?
-│         ├── Yes → Use FrodoKEM
-│         └── No → Use ML-KEM, accept structured lattice risk
-└── No → Use ML-KEM (FIPS 203)
-```
 
 <br>
 

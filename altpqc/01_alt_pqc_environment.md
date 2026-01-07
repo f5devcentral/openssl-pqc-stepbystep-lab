@@ -118,19 +118,7 @@ sudo su - pqcaltadmin
 Create the working directory for alternative algorithm testing:
 
 ```bash
-mkdir -p /opt/sassycorp-pqc-alt
-```
-
-```bash
-mkdir -p /opt/sassycorp-pqc-alt/certs
-```
-
-```bash
-mkdir -p /opt/sassycorp-pqc-alt/keys
-```
-
-```bash
-mkdir -p /opt/sassycorp-pqc-alt/tests
+mkdir -p /opt/sassycorp-pqc-alt/{certs,keys,tests}
 ```
 
 ---
@@ -175,8 +163,6 @@ Before proceeding to the next module, verify:
 
 | Check | Command | Expected Result |
 | ------- | --------- | ----------------- |
-| Ubuntu version | `lsb_release -d` | Ubuntu 25.10 |
-| OpenSSL version | `openssl version` | 3.5.x |
 | OQS provider active | `openssl list -providers` | oqsprovider: active |
 | FrodoKEM available | `openssl list -kem-algorithms \| grep frodo` | frodo640aes, etc. |
 | BIKE available | `openssl list -kem-algorithms \| grep bike` | bike1l1fo, etc. |
@@ -208,16 +194,6 @@ If still failing, check library path:
 
 ```bash
 sudo ldconfig -p | grep oqs
-```
-
-<br>
-
-## Cleanup (Optional)
-
-After successful installation, you can remove the build directories to save space:
-
-```bash
-rm -rf ~/pqc-alt-build
 ```
 
 <br>
