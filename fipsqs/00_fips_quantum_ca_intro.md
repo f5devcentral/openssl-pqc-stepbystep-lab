@@ -1,8 +1,8 @@
-# FIPS 203/204/205 Post-Quantum Certificate Authority Lab Guide
+# Module 0: FIPS 203/204/205 Post-Quantum Certificate Authority Lab Guide
 
 ## Overview
 
-This learning path guides you through building a complete quantum-resistant Public Key Infrastructure (PKI) using the NIST post-quantum cryptography standards: FIPS 203, FIPS 204, and FIPS 205. You will use OpenSSL 3.5.3's native support for these algorithms—no external providers required. For the enjoyment of compiling OQS libraries, we created an addenum for [OpenSSL alternate installs](/addenum_updating_openssl_pqc.md).
+This learning path guides you through building a complete quantum-resistant Public Key Infrastructure (PKI) using the NIST post-quantum cryptography standards: FIPS 203, FIPS 204, and FIPS 205. You will use OpenSSL 3.5.3's native support for these algorithms—no external providers required. For the enjoyment of compiling OQS libraries, we created an addendum for [OpenSSL alternate installs](/addendum_updating_openssl_pqc.md).
 
 By the end of this lab, you will have built a fully functional Certificate Authority hierarchy for Sassy Corp, resistant to attacks from quantum relevant systems.
 

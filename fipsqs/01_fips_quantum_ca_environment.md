@@ -31,7 +31,7 @@ openssl version
 OpenSSL 3.5.x <date>
 ```
 
-If your version is below 3.5.0, you will need to upgrade your operating system or [install a newer OpenSSL package](/addenum_updating_openssl_pqc.md) before continuing.
+If your version is below 3.5.0, you will need to upgrade your operating system or [install a newer OpenSSL package](/addendum_updating_openssl_pqc.md) before continuing.
 
 ---
 

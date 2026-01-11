@@ -1,8 +1,8 @@
-# Module 02: FrodoKEM - Conservative Unstructured Lattice KEM
+# Module 2: FrodoKEM - Conservative Unstructured Lattice KEM
 
 ## Overview
 
-FrodoKEM represents the most conservative approach to lattice-based cryptography. Unlike ML-KEM (which uses structured lattices with algebraic ring properties), FrodoKEM is based on Learning With Errors (LWE) problem without additional mathematical structure.
+FrodoKEM represents the most conservative approach to lattice-based cryptography. Unlike ML-KEM (which uses structured lattices with algebraic ring properties), FrodoKEM is based on [Learning With Errors (LWE)](https://cims.nyu.edu/~regev/papers/lwesurvey.pdf).
 
 This conservative design means FrodoKEM has stronger theoretical security guarantees but significantly larger key sizes and slower performance.
 
@@ -10,7 +10,6 @@ This conservative design means FrodoKEM has stronger theoretical security guaran
 
 After completing this module, you will be able to:
 
-- Explain the difference between structured and unstructured lattice cryptography
 - Configure TLS connections using FrodoKEM key exchange
 - Measure FrodoKEM's performance characteristics
 - Understand when FrodoKEM is the appropriate choice
@@ -79,7 +78,7 @@ frodo1344shake @ oqsprovider
 Check which FrodoKEM groups are available for TLS:
 
 ```bash
-openssl list -tls1-groups | grep -i frodo
+openssl list -tls-groups | grep -i frodo
 ```
 
 **Note:** Group availability depends on OQS provider version and configuration.
@@ -120,13 +119,7 @@ The server is now listening. Open a **new terminal** for client testing.
 
 ## Step 4: Connect with FrodoKEM Key Exchange
 
-In the new terminal, switch to the lab user:
-
-```bash
-sudo su - pqcadmin
-```
-
-Or if using the alternative user:
+In the new terminal, switch to the CA admin:
 
 ```bash
 sudo su - pqcaltadmin
@@ -151,19 +144,16 @@ openssl s_client \
 **Look for these indicators in the output:**
 
 ```
-New, TLSv1.3, Cipher is TLS_AES_256_GCM_SHA384
-Server Temp Key: frodo640aes
-```
-
-Or:
-
-```
+Peer signature type: mldsa65
 Negotiated TLS1.3 group: frodo640aes
+---
+SSL handshake has read 18983 bytes and written 9978 bytes
+Verification: OK
 ```
 
 The presence of `frodo640aes` confirms FrodoKEM was used for key exchange.
 
-Type `GET /` to see the server response, then `QUIT` to exit.
+Type `GET /` to see the server response, this will also close the connection.
 
 <br>
 
@@ -187,7 +177,7 @@ echo | openssl s_client \
 **Example output:**
 
 ```
-SSL handshake has read 29847 bytes and written 10521 bytes
+SSL handshake has read 18983 bytes and written 9978 bytes
 ```
 
 ### Compare to ML-KEM (Native)
@@ -202,19 +192,6 @@ echo | openssl s_client \
     -CAfile certs/test.crt 2>&1 | \
     grep "SSL handshake has read"
 ```
-
-**Note:** This may fail if the server doesn't offer MLKEM768. Start a new server with `-groups frodo640aes:MLKEM768` to test both.
-
-### Handshake Size Comparison
-
-| Algorithm | Client Writes | Server Reads | Total Overhead |
-| ----------- | --------------- | -------------- | ---------------- |
-| X25519 (classical) | ~350 B | ~10,000 B | ~10,350 B |
-| X25519MLKEM768 (hybrid) | ~1,500 B | ~11,000 B | ~12,500 B |
-| frodo640aes | ~10,500 B | ~30,000 B | ~40,500 B |
-| frodo976aes | ~16,500 B | ~48,000 B | ~64,500 B |
-
-**Key insight:** FrodoKEM adds approximately 3-5x more handshake data compared to hybrid ML-KEM methods.
 
 ---
 
@@ -280,7 +257,7 @@ The handshake sizes should be identical between AES and SHAKE variants—the dif
 
 <br>
 
-## Step 8: Record Performance Metrics
+## Step 8: Record Performance Metrics (optional)
 
 Create a test results file:
 
@@ -322,20 +299,10 @@ EOF
 
 | Use Case | Why Not FrodoKEM |
 | ---------- | ------------------ |
-| **High-volume TLS** | Performance overhead too high |
+| **High-volume TLS** | Performance overhead too high currenty (without FPGA/ASIC acceleration) |
 | **IoT/embedded** | Key sizes exceed memory constraints |
 | **Mobile apps** | Bandwidth costs for handshakes |
 | **Latency-sensitive** | Handshake delay unacceptable |
-
-### Decision Framework
-
-```ini
-Need maximum security assurance?
-├── Yes → Can accept 4-5x larger handshakes?
-│         ├── Yes → Use FrodoKEM
-│         └── No → Use ML-KEM, accept structured lattice risk
-└── No → Use ML-KEM (FIPS 203)
-```
 
 <br>
 

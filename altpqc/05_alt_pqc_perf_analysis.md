@@ -1,4 +1,4 @@
-# Module 05: Performance Analysis and Algorithm Selection
+# Module 5: Performance Analysis and Algorithm Selection
 
 ## Overview
 
@@ -44,9 +44,9 @@ After completing this module, you will be able to:
 | mceliece460896 | 3 | 524,160 B | 13,608 B | 156 B | 524,316 B |
 | mceliece6688128 | 5 | 1,044,992 B | 13,932 B | 208 B | 1,045,200 B |
 | **BIKE** |
-| bike1l1fo | 1 | 1,541 B | 3,114 B | 1,573 B | 3,114 B |
-| bike1l3fo | 3 | 3,083 B | 6,198 B | 3,115 B | 6,198 B |
-| bike1l5fo | 5 | 5,122 B | 10,276 B | 5,154 B | 10,276 B |
+| bikel1 | 1 | 1,541 B | 3,114 B | 1,573 B | 3,114 B |
+| bikel3 | 3 | 3,083 B | 6,198 B | 3,115 B | 6,198 B |
+| bikel5 | 5 | 5,122 B | 10,276 B | 5,154 B | 10,276 B |
 | **HQC** |
 | hqc128 | 1 | 2,249 B | 2,289 B | 4,497 B | 6,746 B |
 | hqc192 | 3 | 4,522 B | 4,562 B | 9,042 B | 13,564 B |
@@ -66,7 +66,7 @@ The TLS 1.3 handshake transmits KEM public keys and ciphertexts. Additional over
 | X25519MLKEM768 | ~1,500 B | ~11,000 B | ~12,500 B |
 | MLKEM768 | ~1,200 B | ~11,500 B | ~12,700 B |
 | ntru_hps2048677 | ~1,100 B | ~11,200 B | ~12,300 B |
-| bike1l3fo | ~3,400 B | ~13,500 B | ~16,900 B |
+| bikel3 | ~3,400 B | ~13,500 B | ~16,900 B |
 | hqc192 | ~5,000 B | ~19,500 B | ~24,500 B |
 | frodo976aes | ~16,500 B | ~48,000 B | ~64,500 B |
 | mceliece460896 | ~1,500 B | ~536,000 B | ~537,500 B |
@@ -78,7 +78,7 @@ The TLS 1.3 handshake transmits KEM public keys and ciphertexts. Additional over
 | X25519MLKEM768 | 1.2x | Negligible |
 | MLKEM768 | 1.2x | Negligible |
 | ntru_hps2048677 | 1.2x | Negligible |
-| bike1l3fo | 1.6x | Minor |
+| bikel3 | 1.6x | Minor |
 | hqc192 | 2.4x | Moderate |
 | frodo976aes | 6.2x | Significant |
 | mceliece460896 | 52x | Severe |
@@ -104,7 +104,7 @@ For networks with high latency (satellite, mobile, international), handshake siz
 | X25519 | ~10 KB | 600ms + 80ms = 680ms | 300ms + 80ms = 380ms | 30ms + 2ms |
 | MLKEM768 | ~13 KB | 600ms + 104ms = 704ms | 300ms + 104ms = 404ms | 30ms + 2ms |
 | ntru_hps2048677 | ~12 KB | 600ms + 96ms = 696ms | 300ms + 96ms = 396ms | 30ms + 2ms |
-| bike1l3fo | ~17 KB | 600ms + 136ms = 736ms | 300ms + 136ms = 436ms | 30ms + 3ms |
+| bikel3 | ~17 KB | 600ms + 136ms = 736ms | 300ms + 136ms = 436ms | 30ms + 3ms |
 | hqc192 | ~25 KB | 600ms + 200ms = 800ms | 300ms + 200ms = 500ms | 30ms + 4ms |
 | frodo976aes | ~65 KB | 600ms + 520ms = 1,120ms | 300ms + 520ms = 820ms | 30ms + 10ms |
 | mceliece460896 | ~538 KB | 600ms + 4,304ms = 4,904ms | 300ms + 4,304ms = 4,604ms | 30ms + 86ms |
@@ -128,7 +128,7 @@ For networks with high latency (satellite, mobile, international), handshake siz
 | MLKEM768 | ~15,000 | ~20,000 | ~18,000 |
 | ntru_hps2048677 | ~3,000 | ~15,000 | ~15,000 |
 | frodo640aes | ~150 | ~200 | ~200 |
-| bike1l3fo | ~5,000 | ~8,000 | ~6,000 |
+| bikel3 | ~5,000 | ~8,000 | ~6,000 |
 | hqc192 | ~6,000 | ~9,000 | ~7,000 |
 | mceliece348864 | ~5 | ~10,000 | ~8,000 |
 
@@ -153,7 +153,7 @@ For each TLS connection established, the KEM overhead is paid once:
 |-----------|------------------------|----------------------|-------------------|
 | MLKEM768 | 2.3 KB | 2.3 MB | 2.3 GB |
 | ntru_hps2048677 | 1.9 KB | 1.9 MB | 1.9 GB |
-| bike1l3fo | 6.2 KB | 6.2 MB | 6.2 GB |
+| bikel3 | 6.2 KB | 6.2 MB | 6.2 GB |
 | hqc192 | 13.6 KB | 13.6 MB | 13.6 GB |
 | frodo976aes | 31.4 KB | 31.4 MB | 31.4 GB |
 | mceliece460896 | 524 KB | 524 MB | 524 GB |
@@ -237,7 +237,7 @@ Use HQC when:
 | **ntru_hps2048677** | 930 B | 930 B | Moderate | Fast | Compact keys |
 | **frodo976aes** | 15,632 B | 15,744 B | Slow | Slow | Max security |
 | **mceliece460896** | 524,160 B | 156 B | Very slow | Fast | Static keys |
-| **bike1l3fo** | 3,083 B | 3,115 B | Moderate | Moderate | Code diversity |
+| **bikel3** | 3,083 B | 3,115 B | Moderate | Moderate | Code diversity |
 | **hqc192** | 4,522 B | 9,042 B | Moderate | Moderate | NIST code backup |
 
 ### Visual Size Comparison
@@ -330,7 +330,7 @@ echo "Date: $(date)"
 echo "System: $(uname -a)"
 echo ""
 
-ALGORITHMS="MLKEM768 ntru_hps2048677 frodo640aes bike1l3fo hqc192"
+ALGORITHMS="MLKEM768 ntru_hps2048677 frodo640aes bikel3 hqc192"
 CERT="/opt/sassycorp-pqc-alt/certs/test.crt"
 KEY="/opt/sassycorp-pqc-alt/keys/test.key"
 
