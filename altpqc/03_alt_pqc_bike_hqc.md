@@ -50,9 +50,9 @@ BIKE uses QC-MDPC (Quasi-Cyclic Moderate Density Parity-Check) codes for key enc
 
 | Variant | Security Level | Public Key | Secret Key | Ciphertext |
 |---------|---------------|------------|------------|------------|
-| bike1l1fo | 1 | 1,541 B | 3,114 B | 1,573 B |
-| bike1l3fo | 3 | 3,083 B | 6,198 B | 3,115 B |
-| bike1l5fo | 5 | 5,122 B | 10,276 B | 5,154 B |
+| bike1 | 1 | 1,541 B | 3,114 B | 1,573 B |
+| bikel3 | 3 | 3,083 B | 6,198 B | 3,115 B |
+| bikel5 | 5 | 5,122 B | 10,276 B | 5,154 B |
 
 ### BIKE Characteristics
 
@@ -116,9 +116,9 @@ openssl list -kem-algorithms | grep -i bike
 **Expected output:**
 
 ```
-bike1l1fo @ oqsprovider
-bike1l3fo @ oqsprovider
-bike1l5fo @ oqsprovider
+bikel1 @ oqsprovider
+bikel3 @ oqsprovider
+bikel5 @ oqsprovider
 ```
 
 ```bash
@@ -151,7 +151,7 @@ openssl s_server \
     -cert certs/test.crt \
     -port 4433 \
     -tls1_3 \
-    -groups bike1l3fo \
+    -groups bikel3 \
     -www
 ```
 
@@ -169,20 +169,20 @@ cd /opt/sassycorp-pqc-alt
 openssl s_client \
     -connect localhost:4433 \
     -tls1_3 \
-    -groups bike1l3 \
+    -groups bikel3 \
     -CAfile certs/test.crt
 ```
 
 **Look for:**
 
 ```
-Server Temp Key: bike1l3fo
+Server Temp Key: bikel3
 ```
 
 Or:
 
 ```
-Negotiated TLS1.3 group: bike1l3fo
+Negotiated TLS1.3 group: bikel3
 ```
 
 Type `GET /` then `QUIT` to exit.
@@ -195,7 +195,7 @@ Type `GET /` then `QUIT` to exit.
 echo | openssl s_client \
     -connect localhost:4433 \
     -tls1_3 \
-    -groups bike1l3fo \
+    -groups bikel3 \
     -CAfile certs/test.crt 2>&1 | \
     grep "SSL handshake has read"
 ```
@@ -269,8 +269,8 @@ SSL handshake has read 19876 bytes and written 5432 bytes
 
 | Algorithm | Public Key | Ciphertext | Total Overhead |
 | ----------- | ------------ | ------------ | ---------------- |
-| bike1l1fo | 1,541 B | 1,573 B | 3,114 B |
-| bike1l3fo | 3,083 B | 3,115 B | 6,198 B |
+| bike1 | 1,541 B | 1,573 B | 3,114 B |
+| bikel3 | 3,083 B | 3,115 B | 6,198 B |
 | hqc128 | 2,249 B | 4,497 B | 6,746 B |
 | hqc192 | 4,522 B | 9,042 B | 13,564 B |
 | MLKEM768 | 1,184 B | 1,088 B | 2,272 B |
@@ -300,7 +300,7 @@ openssl s_server \
     -cert certs/test.crt \
     -port 4433 \
     -tls1_3 \
-    -groups bike1l1fo \
+    -groups bikel3 \
     -www
 ```
 
@@ -308,7 +308,7 @@ openssl s_server \
 echo | openssl s_client \
     -connect localhost:4433 \
     -tls1_3 \
-    -groups bike1l1fo \
+    -groups bikel3 \
     -CAfile certs/test.crt 2>&1 | \
     grep "SSL handshake has read"
 ```
@@ -321,7 +321,7 @@ openssl s_server \
     -cert certs/test.crt \
     -port 4433 \
     -tls1_3 \
-    -groups bike1l5fo \
+    -groups bikel5 \
     -www
 ```
 
@@ -329,7 +329,7 @@ openssl s_server \
 echo | openssl s_client \
     -connect localhost:4433 \
     -tls1_3 \
-    -groups bike1l5fo \
+    -groups bikel5 \
     -CAfile certs/test.crt 2>&1 | \
     grep "SSL handshake has read"
 ```
@@ -396,9 +396,9 @@ System: $(uname -a)
 BIKE Results:
 Algorithm     | Public Key | Ciphertext | Handshake Read | Handshake Write
 --------------|------------|------------|----------------|----------------
-bike1l1fo     | 1,541 B    | 1,573 B    |                |
-bike1l3fo     | 3,083 B    | 3,115 B    |                |
-bike1l5fo     | 5,122 B    | 5,154 B    |                |
+bike1     | 1,541 B    | 1,573 B    |                |
+bikel3     | 3,083 B    | 3,115 B    |                |
+bikel5     | 5,122 B    | 5,154 B    |                |
 
 HQC Results:
 Algorithm     | Public Key | Ciphertext | Handshake Read | Handshake Write
@@ -415,7 +415,7 @@ EOF
 
 ## BIKE vs HQC: When to Use Each
 
-### BIKE Considerations
+### BIKE Considerations (for Bike L3+)
 
 | Factor | Assessment |
 |--------|------------|
@@ -434,18 +434,6 @@ EOF
 | **Standardization** | **NIST selected (2027)** |
 | **Implementation history** | Clean security record |
 | **Future** | Will be FIPS standard |
-
-### Decision Framework
-
-```
-Need code-based KEM for algorithm diversity?
-├── Yes → Need NIST standardized algorithm?
-│         ├── Yes → Use HQC (wait for 2027 standard)
-│         └── No → Which matters more?
-│                   ├── Smaller sizes → Use BIKE
-│                   └── Standards compliance → Use HQC
-└── No → Use ML-KEM (FIPS 203)
-```
 
 <br>
 
@@ -477,7 +465,26 @@ BIKE and HQC provide code-based alternatives to lattice cryptography:
 | Standardization | Round 4 | **NIST selected** | FIPS 203 |
 | Mathematical basis | QC-MDPC | Quasi-cyclic | Module-LWE |
 
-**Bottom line:** HQC will be the standardized code-based backup to ML-KEM. Organizations needing algorithm diversity should plan for HQC adoption when the standard finalizes in 2027. BIKE remains viable for non-NIST deployments where smaller sizes matter.
+**Bottom line:** HQC will be the next standardized code-based backup to ML-KEM. Organizations needing algorithm diversity should plan for HQC adoption when the standard finalizes in 2027. BIKE remains viable for non-NIST deployments where smaller sizes matter.
+
+## Why bikel1 is disabled for TLS by default
+
+You'll notice we started TLS servers with bikel3 and not l1.  Wanna know why?
+
+NIST security levels map to:
+
+Level 1 = AES-128 equivalent (128-bit security)
+Level 3 = AES-192 equivalent (192-bit security)
+Level 5 = AES-256 equivalent (256-bit security)
+
+NIST recommends that practitioners use Category 3 or higher for sensitive applications like banking and finance to provide a safety margin. The OQS team made a smart choice to not enable Level 1 algorithms for TLS. Level 1 is a minimum acceptable security floor, not a recommendation for production TLS.
+
+***ANOTHER note***: *The IETF draft shows HQC-192 ciphertext as 8978 bytes IETF while other sources show 9042. This variation is due to different HQC specification versions—the numbers have shifted slightly between rounds. Our 9,042 figure matches the Round 4/current OQS implementation. The below links are where we pull all of this together.*
+
+[Open Quantum Safe liboqs](https://openquantumsafe.org/liboqs/algorithms/kem/bike.html)
+[BIKE official specification](https://bikesuite.org)
+[HQC official specification](https://pqc-hqc.org)
+[IETF PQC Guidance Draft](https://datatracker.ietf.org/doc/draft-prabel-pquip-pqc-guidance/)
 
 <br>
 

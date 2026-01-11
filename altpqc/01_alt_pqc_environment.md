@@ -165,7 +165,7 @@ Before proceeding to the next module, verify:
 | ------- | --------- | ----------------- |
 | OQS provider active | `openssl list -providers` | oqsprovider: active |
 | FrodoKEM available | `openssl list -kem-algorithms \| grep frodo` | frodo640aes, etc. |
-| BIKE available | `openssl list -kem-algorithms \| grep bike` | bike1l1fo, etc. |
+| BIKE available | `openssl list -kem-algorithms \| grep bike` | bikel1, etc. |
 | HQC available | `openssl list -kem-algorithms \| grep hqc` | hqc128, etc. |
 
 ---
