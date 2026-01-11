@@ -64,7 +64,7 @@ This path uses OpenSSL 3.2+ with user-compiled Open Quantum Safe (OQS) providers
 | -------- | ------------- |
 | [01 - Introduction](/cnsa2/01_cnsa_quantum_ca_intro.md) | Overview of CNSA 2.0 requirements and compliance deadlines
 | [02 - Root CA](/cnsa2/02_cnsa_quantum_ca_root.md) | Building a Root CA with ML-DSA-87
-| [03 - Intermediate CA](/cnsa2/03_cnsa_quantum_ca_intermediate.mdd) | Creating an Intermediate CA with ML-DSA-65
+| [03 - Intermediate CA](/cnsa2/03_cnsa_quantum_ca_intermediate.md) | Creating an Intermediate CA with ML-DSA-65
 | [04 - Certificates](/cnsa2/04_cnsa_quantum_ca_certificates.md) | Issuing CNSA 2.0 compliant certificates
 | [05 - Revocation](/cnsa2/05_cnsa_quantum_ca_revocation.md) | Implementing OCSP and CRL certificate revocation
 
@@ -202,7 +202,7 @@ Contributions are welcome! Please:
 2. Create a feature branch
 3. Submit a pull request with clear documentation
 
-Please refer to [contributing.md](/contributing.) for more details.
+Please refer to [contributing](/contributing.md) for more details.
 
 <br>
 
