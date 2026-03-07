@@ -346,17 +346,18 @@ subject=C=US, ST=Washington, L=Winthrop, O=Sassy Corp, OU=PKI Operations, CN=Sas
 **Verify the signature algorithm:**
 
 ```bash
-openssl x509 -in /opt/sassycorp-pqc/intermediate-ca/certs/intermediate-ca.crt -noout -text | grep "Signature Algorithm"
+openssl x509 -in /opt/sassycorp-pqc/intermediate-ca/certs/intermediate-ca.crt -noout -text | grep "Algorithm"
 ```
 
 **Expected output:**
 
 ```
     Signature Algorithm: ML-DSA-87
-    Signature Algorithm: ML-DSA-87
+        Public Key Algorithm: ML-DSA-65
+    ...
 ```
 
-> Note: The signature is ML-DSA-87 because the Root CA signed the certificate.
+> Note: The second line is the Intermediate CA's own algorithm (ML-DSA-65). The first is the algorithm the Root CA used to sign it (ML-DSA-87). This is expected.
 
 **Verify Basic Constraints:**
 
