@@ -20,7 +20,7 @@ This repository offers three learning paths. Select the path that aligns with yo
 | --- | --- | --- | --- |
 | **Target Audience** | Commercial organizations | Government contractors, classified systems | Researchers, international compliance, defense-in-depth |
 | **Compliance Standard** | NIST FIPS standards | NSA CNSA 2.0 | Non-NIST algorithms, international standards |
-| **Algorithm Coverage** | ML-DSA, ML-KEM, SLH-DSA | ML-DSA-65/87, ML-KEM-768/1024 | FrodoKEM, BIKE, HQC |
+| **Algorithm Coverage** | ML-DSA, ML-KEM, SLH-DSA | ML-DSA-87, ML-KEM-1024 | FrodoKEM, BIKE, HQC |
 | **Use Case** | General quantum-resistant infrastructure | National security systems | Algorithm diversity, conservative security |
 
 <br>
@@ -64,7 +64,7 @@ This path uses OpenSSL 3.2+ with user-compiled Open Quantum Safe (OQS) providers
 | -------- | ------------- |
 | [01 - Introduction](/cnsa2/01_cnsa_quantum_ca_intro.md) | Overview of CNSA 2.0 requirements and compliance deadlines
 | [02 - Root CA](/cnsa2/02_cnsa_quantum_ca_root.md) | Building a Root CA with ML-DSA-87
-| [03 - Intermediate CA](/cnsa2/03_cnsa_quantum_ca_intermediate.md) | Creating an Intermediate CA with ML-DSA-65
+| [03 - Intermediate CA](/cnsa2/03_cnsa_quantum_ca_intermediate.md) | Creating an Intermediate CA with ML-DSA-87
 | [04 - Certificates](/cnsa2/04_cnsa_quantum_ca_certificates.md) | Issuing CNSA 2.0 compliant certificates
 | [05 - Revocation](/cnsa2/05_cnsa_quantum_ca_revocation.md) | Implementing OCSP and CRL certificate revocation
 
@@ -72,8 +72,8 @@ This path uses OpenSSL 3.2+ with user-compiled Open Quantum Safe (OQS) providers
 
 | Algorithm Type | Approved Algorithms | NIST Designation |
 | ---------------- | --------------------- | ------------------ |
-| Digital Signatures | ML-DSA-65, ML-DSA-87 | FIPS 204 |
-| Key Establishment | ML-KEM-768, ML-KEM-1024 | FIPS 203 |
+| Digital Signatures | ML-DSA-87 | FIPS 204 |
+| Key Establishment | ML-KEM-1024 | FIPS 203 |
 | Hash Functions | SHA-384, SHA-512 | FIPS 180-4 |
 
 **Note:** *CNSA 2.0 currently does NOT support ML-DSA-44, SLH-DSA, or Falcon algorithms.*

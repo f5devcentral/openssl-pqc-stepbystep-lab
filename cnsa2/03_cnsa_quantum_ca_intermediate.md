@@ -151,8 +151,8 @@ default_md          = sha512
 x509_extensions     = v3_intermediate_ca
 
 # Quantum-resistant signature algorithm
-# Using ML-DSA-65 (mldsa65) for intermediate CA
-default_sigalg      = mldsa65
+# Using ML-DSA-87 (mldsa87) for intermediate CA
+default_sigalg      = mldsa87
 
 [ req_distinguished_name ]
 countryName                     = Country Name (2 letter code)
@@ -255,17 +255,17 @@ Navigate to the Intermediate CA directory (if you went wandering around):
 cd /opt/sassycorp-ca/intermediate-ca
 ```
 
-Generate an ML-DSA-65 (mldsa65) private key for standard CNSA 2.0 security level:
+Generate an ML-DSA-87 (mldsa87) private key for standard CNSA 2.0 security level:
 
 ```bash
 openssl genpkey \
     -provider oqsprovider \
     -provider default \
-    -algorithm mldsa65 \
+    -algorithm mldsa87 \
     -out private/intermediate-ca.key
 ```
 
-**Note**: We use ML-DSA-65 (mldsa65) for the Intermediate CA as it provides Level 3 security, which is suitable for most operational certificates while being CNSA 2.0 compliant.
+**Note**: *CNSA 2.0 requires ML-DSA-87 (mldsa87) for every certificate and CRL in the chain — root, intermediate, end-entity, and OCSP responder. Unlike classical PKI, there is no approved tiering of parameter sets under CNSA 2.0.*
 
 Set restrictive permissions on the private key:
 
@@ -412,17 +412,17 @@ openssl crl -provider oqsprovider -provider default -in crl/intermediate-ca.crl 
 
 ## Step 8: Create OCSP Signing Certificate
 
-Generate an OCSP signing key using ML-DSA-65 (mldsa65) for CNSA 2.0 compliance:
+Generate an OCSP signing key using ML-DSA-87 (mldsa87) for CNSA 2.0 compliance:
 
 ```bash
 openssl genpkey \
     -provider oqsprovider \
     -provider default \
-    -algorithm mldsa65 \
+    -algorithm mldsa87 \
     -out private/ocsp.key
 ```
 
-**Note**: The OCSP responder certificate also uses ML-DSA-65 (mldsa65) to maintain CNSA 2.0 compliance throughout the infrastructure.
+**Note**: *OCSP responses must be signed conformant with the same requirements as certificates per draft-jenkins-cnsa2-pkix-profile §9, so the OCSP responder certificate uses ML-DSA-87 (mldsa87).*
 
 Set restrictive permissions:
 
@@ -485,13 +485,13 @@ Display certificate details:
 openssl x509 -provider oqsprovider -provider default -in /opt/sassycorp-ca/intermediate-ca/certs/intermediate-ca.crt -noout -subject -issuer -dates
 ```
 
-Verify signature algorithm is CNSA 2.0 compliant (should show mldsa65 or mldsa87):
+Verify signature algorithm is CNSA 2.0 compliant (should show mldsa87):
 
 ```bash
 openssl x509 -provider oqsprovider -provider default -in /opt/sassycorp-ca/intermediate-ca/certs/intermediate-ca.crt -noout -text | grep "Signature Algorithm" | head -1
 ```
 
-**Expected Output**: The signature algorithm should show `mldsa65` (ML-DSA-65) or `mldsa87` (ML-DSA-87) for CNSA 2.0 compliance.
+**Expected Output**: The signature algorithm should show `mldsa87` (ML-DSA-87) for CNSA 2.0 compliance.
 
 Check key usage:
 
@@ -676,11 +676,11 @@ openssl x509 -in certs/intermediate-ca.crt -noout -text | grep -A1 "Basic Constr
 
 You have successfully created a CNSA 2.0 compliant quantum-resistant Intermediate CA that is:
 
-- CNSA 2.0 compliant using ML-DSA-65 (mldsa65)
+- CNSA 2.0 compliant using ML-DSA-87 (mldsa87)
 - Signed by the Root CA with 5-year validity
 - Using SHA-512 for hashing (CNSA 2.0 requirement)
 - Includes CRL Distribution Points and OCSP configuration
-- Has OCSP responder certificate ready (also using ML-DSA-65)
+- Has OCSP responder certificate ready (also using ML-DSA-87)
 
 ---
 
