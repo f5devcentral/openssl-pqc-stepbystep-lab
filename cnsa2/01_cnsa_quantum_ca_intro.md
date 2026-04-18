@@ -14,13 +14,11 @@ The Commercial National Security Algorithm Suite 2.0 specifies the following qua
 
 | Algorithm Type | CNSA 2.0 Requirement | OpenSSL Algorithm Name | Legacy Name | Use Case |
 |---------------|---------------------|------------------------|-------------|----------|
-| Digital Signatures | ML-DSA-65 (FIPS 204) | mldsa65 | dilithium3 | Standard security certificate signing |
 | Digital Signatures | ML-DSA-87 (FIPS 204) | mldsa87 | dilithium5 | Highest security certificate signing |
-| Key Establishment | ML-KEM-768 (FIPS 203) | mlkem768 | kyber768 | Standard security key exchange |
 | Key Establishment | ML-KEM-1024 (FIPS 203) | mlkem1024 | kyber1024 | Highest security key exchange |
 | Hash Functions | SHA-384 or SHA-512 | sha384, sha512 | - | Integrity verification |
 
-**Important Note**: *Only ML-DSA-65 (mldsa65) and ML-DSA-87 (mldsa87) are CNSA 2.0 compliant for digital signatures. Other algorithms like ML-DSA-44, Falcon-512, and Falcon-1024 are NOT part of CNSA 2.0.*
+**Important Note**: ***Important Note**: *CNSA 2.0 requires ML-DSA-87 for all digital signatures and ML-KEM-1024 for all key establishment — no other parameter sets are permitted. ML-DSA-44, ML-DSA-65, SLH-DSA, Falcon, and the smaller ML-KEM parameter sets are NOT part of CNSA 2.0, even though they appear in FIPS 203/204/205. [draft-jenkins-cnsa2-pkix-profile-02](https://datatracker.ietf.org/doc/html/draft-jenkins-cnsa2-pkix-profile-02)*
 
 ### Prerequisites
 

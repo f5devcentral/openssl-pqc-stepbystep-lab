@@ -2,7 +2,7 @@
 
 ## Overview
 
-This module demonstrates creating various types of end-entity certificates using CNSA 2.0 compliant quantum-resistant algorithms. We'll generate certificates manually using OpenSSL commands with the two approved ML-DSA algorithms.
+This module demonstrates creating various types of end-entity certificates using the CNSA 2.0 approved quantum-resistant signature algorithm. All end-entity certificates in a CNSA 2.0 PKI use ML-DSA-87 per draft-jenkins-cnsa2-pkix-profile §4.
 
 ## CNSA 2.0 Compliant Algorithms
 
@@ -10,10 +10,9 @@ For strict CNSA 2.0 compliance, we use only these quantum-resistant signature al
 
 | Algorithm | NIST Designation | Security Level | OpenSSL Name | Legacy Name | Use Case |
 |-----------|-----------------|----------------|--------------|-------------|----------|
-| ML-DSA-65 | FIPS 204 | Level 3 | mldsa65 | dilithium3 | Standard security applications |
 | ML-DSA-87 | FIPS 204 | Level 5 | mldsa87 | dilithium5 | Highest security applications |
 
-**Note**: The newer OQS provider uses NIST standardized names (mldsa65, mldsa87) instead of the legacy names (dilithium3, dilithium5). Other post-quantum algorithms are NOT CNSA 2.0 compliant and should not be used in production systems requiring CNSA 2.0 compliance.
+**Note**: *The newer OQS provider uses the NIST standardized name (mldsa87) instead of the legacy name (dilithium5). Other post-quantum algorithms — including ML-DSA-44, ML-DSA-65, SLH-DSA, and Falcon — are NOT CNSA 2.0 compliant, even though several are FIPS-approved.*
 
 ## Step 1: Create Certificate Configuration Templates
 
@@ -157,7 +156,7 @@ Save and set permissions:
 chmod 644 templates/user-cert.cnf
 ```
 
-## Step 2: Generate a Web Server Certificate (ML-DSA-65 / mldsa65)
+## Step 2: Generate a Web Server Certificate (ML-DSA-87 / mldsa87)
 
 Create a directory for the server certificate:
 
@@ -167,13 +166,13 @@ chmod 755 certs/server/webserver01
 cd certs/server/webserver01
 ```
 
-Generate an ML-DSA-65 (mldsa65) private key for CNSA 2.0 compliance:
+Generate an ML-DSA-87 (mldsa87 private key for CNSA 2.0 compliance:
 
 ```bash
 openssl genpkey \
     -provider oqsprovider \
     -provider default \
-    -algorithm mldsa65 \
+    -algorithm mldsa87 \
     -out webserver01.key
 ```
 
@@ -242,7 +241,7 @@ Check the Subject Alternative Names:
 openssl x509 -provider oqsprovider -provider -in certs/server/webserver01/webserver01.crt -noout -text | grep -A10 "Subject Alternative Name"
 ```
 
-## Step 3: Generate a User Certificate (ML-DSA-65 / mldsa65)
+## Step 3: Generate a User Certificate (ML-DSA-87 / mldsa87)
 
 Create a directory for user certificates:
 
@@ -252,13 +251,13 @@ chmod 755 certs/users/sassy.molassy
 cd certs/users/sassy.molassy
 ```
 
-Generate an ML-DSA-65 (mldsa65) private key:
+Generate an ML-DSA-87 (mldsa87) private key:
 
 ```bash
 openssl genpkey \
     -provider oqsprovider \
     -provider default \
-    -algorithm mldsa65 \
+    -algorithm mldsa87 \
     -out sassy.molassy.key
 ```
 
@@ -313,7 +312,7 @@ chmod 444 certs/users/sassy.molassy/sassy.molassy.crt
 
 ## Step 4: Generate a High-Security Database Server Certificate (ML-DSA-87 / mldsa87)
 
-For critical infrastructure requiring the highest level of quantum resistance, use ML-DSA-87 (mldsa87):
+For critical infrastructure requiring the highest level of quantum resistance, ML-DSA-87 (mldsa87):
 
 ```bash
 mkdir -p certs/server/db-primary01
@@ -419,9 +418,9 @@ Set permissions:
 chmod 444 certs/server/db-primary01/db-primary01.crt
 ```
 
-## Step 5: Generate an API Server Certificate (ML-DSA-65 / mldsa65)
+## Step 5: Generate an API Server Certificate (ML-DSA-87 / mldsa87)
 
-Create another server certificate using standard CNSA 2.0 security:
+Create another server certificate:
 
 ```bash
 mkdir -p certs/server/api-server01
@@ -429,13 +428,13 @@ chmod 755 certs/server/api-server01
 cd certs/server/api-server01
 ```
 
-Generate an ML-DSA-65 (mldsa65) private key:
+Generate an ML-DSA87 (mldsa87) private key:
 
 ```bash
 openssl genpkey \
     -provider oqsprovider \
     -provider default \
-    -algorithm mldsa65 \
+    -algorithm mldsa87 \
     -out api-server01.key
 ```
 
@@ -644,19 +643,14 @@ Compare the key sizes of the two CNSA 2.0 compliant algorithms:
 cd /opt/sassycorp-ca/intermediate-ca
 
 echo "=== CNSA 2.0 Algorithm Key Size Comparison ==="
-
-# Check ML-DSA-65 (mldsa65) key sizes
-echo "ML-DSA-65 (mldsa65) - Standard Security:"
+echo "=== ML-DSA-87 Key Sizes Across Certificates ==="
 ls -lh certs/server/webserver01/webserver01.key
 ls -lh certs/users/sassy.molassy/sassy.molassy.key
 ls -lh certs/server/api-server01/api-server01.key
-
-echo ""
-echo "ML-DSA-87 (mldsa87) - Highest Security:"
 ls -lh certs/server/db-primary01/db-primary01.key
 ```
 
-You'll notice that ML-DSA-87 (mldsa87) keys are larger than ML-DSA-65 (mldsa65) keys, reflecting the higher security level. Husky key bois ammiright?
+**Note** *All CNSA 2.0 certificates use the same ~4.9KB ML-DSA-87 private key — roughly 15× the size of a P-256 ECDSA key. This size inflation is a core operational consideration for CNSA 2.0 migration and something to measure against your MTU, cert chain, and handshake budgets.*
 
 ## Step 10: View Certificate Details
 
@@ -683,7 +677,7 @@ openssl x509 -in certs/server/webserver01/webserver01.crt -provider oqsprovider 
 # Serial number
 openssl x509 -in certs/server/webserver01/webserver01.crt -provider oqsprovider -provider default -noout -serial
 
-# Signature algorithm (should show mldsa65 or mldsa87)
+# Signature algorithm (should show mldsa87)
 openssl x509 -in certs/server/webserver01/webserver01.crt -provider oqsprovider -provider default -noout -text | grep "Signature Algorithm" | head -1
 
 # Subject Alternative Names
@@ -773,7 +767,7 @@ echo "=== CNSA 2.0 Algorithm Verification ==="
 for cert in $(find certs -name "*.crt" -type f); do
     ALGO=$(openssl x509 -in "$cert" -provider oqsprovider -provider default -noout -text | grep "Signature Algorithm" | head -1 | awk '{print $3}')
     echo -n "$(basename $cert): $ALGO"
-    if [[ "$ALGO" == "mldsa65" ]] || [[ "$ALGO" == "mldsa87" ]]; then
+    if [[ "$ALGO" == "mldsa87" ]]; then
         echo " ✓ CNSA 2.0 Compliant"
     else
         echo " ✗ Not CNSA 2.0 Compliant"
@@ -802,7 +796,7 @@ find /opt/sassycorp-ca/intermediate-ca/certs -name "*.crt" -exec ls -la {} \;
 
 All certificates created in this module use:
 
-- ✅ **ML-DSA-65 (mldsa65)** for standard security requirements
+- ✅ **ML-DSA-87 (mldsa87)** for all certificates in the hierarchy per draft-jenkins-cnsa2-pkix-profile §4
 - ✅ **ML-DSA-87 (mldsa87)** for highest security requirements  
 - ✅ **SHA-512** for all hashing operations
 - ✅ **Proper Subject Alternative Names** per RFC specifications
@@ -826,7 +820,7 @@ Verify OQS provider is loaded:
 
 ```bash
 openssl list -providers -provider oqsprovider
-openssl list -signature-algorithms -provider oqsprovider | grep -E "mldsa65|mldsa87"
+openssl list -signature-algorithms -provider oqsprovider | grep -E "mldsa87"
 ```
 
 ### Subject Alternative Names Not Showing
@@ -841,9 +835,9 @@ grep -A5 "v3_req" [config-file.cnf]
 
 You have successfully learned how to:
 
-- Generate CNSA 2.0 compliant certificates using ML-DSA-65 (mldsa65) and ML-DSA-87 (mldsa87)
+- Generate CNSA 2.0 compliant certificates using ML-DSA-87 (mldsa87)
 - Create certificates for different purposes (server, user, critical infrastructure)
-- Choose between ML-DSA-65 for standard and ML-DSA-87 for highest security
+- Understand why CNSA 2.0 mandates a single parameter set across the entire PKI hierarchy
 - Export certificates in multiple formats for different platforms
 - Verify certificate compliance and validity
 - Manage certificate inventory and tracking

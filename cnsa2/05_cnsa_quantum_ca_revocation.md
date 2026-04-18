@@ -103,13 +103,13 @@ mkdir -p certs/test/revoke-test
 cd certs/test/revoke-test
 ```
 
-Generate a key using CNSA 2.0 compliant ML-DSA-65 (mldsa65):
+Generate a key using CNSA 2.0 compliant ML-DSA-87 (mldsa87):
 
 ```bash
 openssl genpkey \
     -provider oqsprovider \
     -provider default \
-    -algorithm mldsa65 \
+    -algorithm mldsa87 \
     -out revoke-test.key
 
 chmod 400 revoke-test.key
@@ -582,11 +582,11 @@ cd /opt/sassycorp-ca/intermediate-ca
 mkdir -p certs/test/revoke-test2
 cd certs/test/revoke-test2
 
-# Generate key using CNSA 2.0 compliant ML-DSA-65 (mldsa65)
+# Generate key using CNSA 2.0 compliant ML-DSA-87 (mldsa87)
 openssl genpkey \
     -provider oqsprovider \
     -provider default \
-    -algorithm mldsa65 \
+    -algorithm mldsa87 \
     -out revoke-test2.key
 
 chmod 400 revoke-test2.key
@@ -923,8 +923,8 @@ You have successfully implemented:
 Congratulations! You have built a complete CNSA 2.0 compliant quantum-resistant Certificate Authority infrastructure that includes:
 
 1. **Root CA** - 10-year validity with ML-DSA-87 (mldsa87) - CNSA 2.0 compliant
-2. **Intermediate CA** - 5-year validity with ML-DSA-65 (mldsa65) - CNSA 2.0 compliant
-3. **End-Entity Certificates** - Using ML-DSA-65 (mldsa65) and ML-DSA-87 (mldsa87) - CNSA 2.0 compliant
+2. **Intermediate CA** - 5-year validity with ML-DSA87 (mldsa87) - CNSA 2.0 compliant
+3. **End-Entity Certificates** - Using ML-DSA-87 (mldsa87) - CNSA 2.0 compliant
 4. **Revocation Infrastructure** - Both CRL and OCSP with quantum-resistant signatures
 5. **Security Best Practices** - Proper Unix permissions throughout
 6. **RFC Compliance** - Proper SAN configuration
@@ -934,7 +934,7 @@ Congratulations! You have built a complete CNSA 2.0 compliant quantum-resistant 
 
 Your PKI infrastructure is fully compliant with NSA's Commercial National Security Algorithm Suite 2.0:
 
-- ✅ Uses only ML-DSA-65 (mldsa65) and ML-DSA-87 (mldsa87) for signatures
+- ✅ Uses only ML-DSA-87 (mldsa87) for signatures
 - ✅ Implements SHA-512 for all hashing operations
 - ✅ Ready for post-quantum cryptography requirements
 - ✅ Suitable for protecting classified information
@@ -953,7 +953,7 @@ You've probably mastered these essential OpenSSL commands:
 
 ## 🤝 Contributing
 
-This lab was made because we wanted to learn this ourselves. We encourage you to help us expand this lab so we can cover more quantum-resistant content; or maybe cover more operating systems.  Or we might have inadvertently broken something.  Who knows... either way, characters welcome. Check out our [Contributing.md](/contributing.md) guidelines and fill in the gaps we probably missed.
+This lab was made because we wanted to learn this ourselves. We encourage you to help us expand this lab so we can cover more PQC content; or maybe cover more operating systems.  Or we might have inadvertently broken something.  Who knows... either way, characters welcome. Check out our [Contributing.md](/contributing.md) guidelines and fill in the gaps we probably missed.
 
 Your lab is ready for internal testing of quantum-resistant PKI infrastructure in preparation for the post-quantum cryptography era. Nice work! Go take the rest of the day off.
 
